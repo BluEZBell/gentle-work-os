@@ -151,8 +151,8 @@ export default function Dashboard() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Today's Tasks</h2>
-          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.dueDate === "2026-05-29" && t.status !== "Done").length} due today</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Today's Tasks (งานวันนี้)</h2>
+          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.dueDate === "2026-05-29" && t.status !== "Done").length} รายการครบกำหนดวันนี้</p>
           <div className="space-y-2">
             {tasks.filter(t => t.status !== "Done").slice(0, 5).map(t => (
               <div key={t.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -162,43 +162,43 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          <Link to="/tasks" className="text-xs text-primary hover:underline mt-3 inline-block">All tasks →</Link>
+          <Link to="/tasks" className="text-xs text-primary hover:underline mt-3 inline-block">ดูงานทั้งหมด →</Link>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Overdue Tasks</h2>
-          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.status === "Overdue").length} overdue</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Overdue Tasks (งานเกินกำหนด)</h2>
+          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.status === "Overdue").length} รายการเกินกำหนด</p>
           <div className="space-y-2">
             {tasks.filter(t => t.status === "Overdue").map(t => (
               <div key={t.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
                 <div><div className="font-medium">{t.name}</div>
-                  <div className="text-xs text-muted-foreground">Due {t.dueDate}</div></div>
+                  <div className="text-xs text-muted-foreground">ครบกำหนด {t.dueDate}</div></div>
                 <StatusBadge status="Overdue" tone="danger" />
               </div>
             ))}
-            {tasks.filter(t => t.status === "Overdue").length === 0 && <div className="text-xs text-muted-foreground">No overdue tasks.</div>}
+            {tasks.filter(t => t.status === "Overdue").length === 0 && <div className="text-xs text-muted-foreground">ไม่มีงานที่เกินกำหนด</div>}
           </div>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Incoming Customer Payments</h2>
-          <p className="text-xs text-muted-foreground mb-3">Accounts receivable</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Incoming Customer Payments (เงินที่จะเข้าจากลูกค้า)</h2>
+          <p className="text-xs text-muted-foreground mb-3">ยอดที่ต้องรับจากลูกค้า</p>
           <div className="space-y-2">
             {customerInvoices.filter(i => i.status !== "Paid").map(i => (
               <div key={i.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
                 <div className="min-w-0"><div className="truncate font-medium">{findCustomer(i.customerId)?.name}</div>
-                  <div className="text-xs text-muted-foreground">{i.number} • due {i.dueDate}</div></div>
+                  <div className="text-xs text-muted-foreground">{i.number} • ครบกำหนด {i.dueDate}</div></div>
                 <div className="text-right"><div className="font-medium">{fmtTHB(i.total)}</div>
                   <StatusBadge status={i.status} /></div>
               </div>
             ))}
           </div>
-          <Link to="/invoices" className="text-xs text-primary hover:underline mt-3 inline-block">All invoices →</Link>
+          <Link to="/invoices" className="text-xs text-primary hover:underline mt-3 inline-block">ดูใบแจ้งหนี้ทั้งหมด →</Link>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Pending Purchase Orders</h2>
-          <p className="text-xs text-muted-foreground mb-3">Awaiting supplier action</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Pending Purchase Orders (ใบสั่งซื้อรอดำเนินการ)</h2>
+          <p className="text-xs text-muted-foreground mb-3">รอซัพพลายเออร์ตอบรับ</p>
           <div className="space-y-2">
             {purchaseOrders.filter(p => p.status === "Draft" || p.status === "Sent" || p.status === "Confirmed").map(p => (
               <div key={p.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -208,12 +208,12 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          <Link to="/purchase-orders" className="text-xs text-primary hover:underline mt-3 inline-block">All POs →</Link>
+          <Link to="/purchase-orders" className="text-xs text-primary hover:underline mt-3 inline-block">ดูใบสั่งซื้อทั้งหมด →</Link>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">QC Issues</h2>
-          <p className="text-xs text-muted-foreground mb-3">Failed or rework needed</p>
+          <h2 className="font-display text-lg font-semibold mb-1">QC Issues (ปัญหาคุณภาพงาน)</h2>
+          <p className="text-xs text-muted-foreground mb-3">รายการที่ไม่ผ่าน QC หรือต้องแก้ไข</p>
           <div className="space-y-2">
             {receivingRecords.filter(r => r.issueFound || r.needRework).map(r => (
               <div key={r.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -222,25 +222,25 @@ export default function Dashboard() {
                 <StatusBadge status={r.qcStatus} tone="warning" />
               </div>
             ))}
-            {receivingRecords.filter(r => r.issueFound || r.needRework).length === 0 && <div className="text-xs text-muted-foreground">No active QC issues.</div>}
+            {receivingRecords.filter(r => r.issueFound || r.needRework).length === 0 && <div className="text-xs text-muted-foreground">ยังไม่มีปัญหา QC</div>}
           </div>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Change Orders Pending</h2>
-          <p className="text-xs text-muted-foreground mb-3">Awaiting approval</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Change Orders Pending (คำขอเปลี่ยนแปลงรออนุมัติ)</h2>
+          <p className="text-xs text-muted-foreground mb-3">รอการอนุมัติจากผู้รับผิดชอบ</p>
           <div className="space-y-2">
             {changeOrders.filter(c => c.approvalStatus === "Pending").map(c => (
               <div key={c.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
                 <div className="min-w-0"><div className="truncate font-medium">{c.number}</div>
                   <div className="text-xs text-muted-foreground">{c.description}</div></div>
                 <div className="text-right"><div className="font-medium">{fmtTHB(c.costImpact)}</div>
-                  <div className="text-xs text-muted-foreground">+{c.timelineImpactDays}d</div></div>
+                  <div className="text-xs text-muted-foreground">+{c.timelineImpactDays} วัน</div></div>
               </div>
             ))}
-            {changeOrders.filter(c => c.approvalStatus === "Pending").length === 0 && <div className="text-xs text-muted-foreground">None pending.</div>}
+            {changeOrders.filter(c => c.approvalStatus === "Pending").length === 0 && <div className="text-xs text-muted-foreground">ไม่มีคำขอที่รออนุมัติ</div>}
           </div>
-          <Link to="/change-orders" className="text-xs text-primary hover:underline mt-3 inline-block">All change orders →</Link>
+          <Link to="/change-orders" className="text-xs text-primary hover:underline mt-3 inline-block">ดูคำขอเปลี่ยนแปลงทั้งหมด →</Link>
         </Card>
       </div>
 
