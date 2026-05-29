@@ -119,11 +119,11 @@ export default function Deals() {
                             {d.status === "Won" && (
                               <Button size="sm" className="w-full mt-2 bg-success hover:bg-success/90 text-success-foreground"
                                 onClick={() => onWin(d.id)}>
-                                <Trophy className="w-3.5 h-3.5 mr-1" /> Create Job
+                                <Trophy className="w-3.5 h-3.5 mr-1" /> สร้างงาน
                               </Button>
                             )}
                             {d.reasonLost && (
-                              <div className="text-xs text-destructive mt-2">Lost: {d.reasonLost}</div>
+                              <div className="text-xs text-destructive mt-2">เหตุผลที่เสียดีล: {d.reasonLost}</div>
                             )}
                           </Card>
                         );
