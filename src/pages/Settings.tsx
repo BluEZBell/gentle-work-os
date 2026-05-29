@@ -124,6 +124,7 @@ export default function Settings() {
             <Button variant="outline" className="w-full mt-2" onClick={tryExport}>
               {can("export") ? "Request export (Owner)" : "Export blocked — Owner only"}
             </Button>
+          </div>
         </Card>
 
         <Card className="card-soft p-5 lg:col-span-2">
