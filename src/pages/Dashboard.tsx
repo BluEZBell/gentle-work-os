@@ -246,8 +246,8 @@ export default function Dashboard() {
 
       <Card className="card-soft p-5 mt-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-display text-lg font-semibold">All Reminders</h2>
-          <Link to="/calendar" className="text-sm text-primary hover:underline">Open calendar →</Link>
+          <h2 className="font-display text-lg font-semibold">All Reminders (การแจ้งเตือนทั้งหมด)</h2>
+          <Link to="/calendar" className="text-sm text-primary hover:underline">ดูปฏิทิน →</Link>
         </div>
         <div className="grid md:grid-cols-2 gap-2">
           {reminders.map((r) => (
