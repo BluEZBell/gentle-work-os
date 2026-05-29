@@ -183,8 +183,8 @@ export function CustomerDetail() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <Card className="card-soft p-5">
-              <h3 className="font-semibold mb-3">Quotations ({cQuots.length})</h3>
-              {cQuots.length === 0 ? <div className="text-xs text-muted-foreground">None</div> : cQuots.map((q) => (
+              <h3 className="font-semibold mb-3">ใบเสนอราคา ({cQuots.length})</h3>
+              {cQuots.length === 0 ? <div className="text-xs text-muted-foreground">ไม่มี</div> : cQuots.map((q) => (
                 <div key={q.id} className="flex justify-between py-1.5 text-sm border-b last:border-0">
                   <span>{q.number}</span>
                   <StatusBadge status={q.status} />
