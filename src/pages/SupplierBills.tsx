@@ -56,7 +56,7 @@ export default function SupplierBills() {
       </Alert>
 
       <Card className="card-soft p-5 mb-4">
-        <h3 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">Automated Workflow (Demo)</h3>
+        <h3 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">ขั้นตอนอัตโนมัติ (ตัวอย่าง)</h3>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {flow.map((step, i) => (
             <div key={step.label} className="flex items-center gap-2">
