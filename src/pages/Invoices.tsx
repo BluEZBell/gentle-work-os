@@ -78,7 +78,7 @@ export default function Invoices() {
                 <TableCell className="text-sm text-muted-foreground">{findJob(i.jobId)?.number}</TableCell>
                 <TableCell className="text-sm">
                   <div>{i.date}</div>
-                  <div className="text-xs text-muted-foreground">due {i.dueDate}{i.paymentDate ? ` • paid ${i.paymentDate}` : ""}</div>
+                  <div className="text-xs text-muted-foreground">ครบกำหนด {i.dueDate}{i.paymentDate ? ` • ชำระแล้ว ${i.paymentDate}` : ""}</div>
                 </TableCell>
                 <TableCell className="text-right">{fmtTHB(i.amount)}</TableCell>
                 <TableCell className="text-right text-muted-foreground">{fmtTHB(i.vat)}</TableCell>
