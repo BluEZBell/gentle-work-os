@@ -216,8 +216,38 @@ export function CustomerDetail() {
               ))}
             </Card>
           )}
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <Card className="card-soft p-5">
+              <h3 className="font-semibold mb-3">Timeline</h3>
+              <Timeline events={buildCustomerTimeline(c.id)} />
+            </Card>
+            <Card className="card-soft p-5">
+              <Attachments module="Customer" id={c.id} />
+            </Card>
+          </div>
         </div>
       </div>
     </>
   );
 }
+
+function buildCustomerTimeline(customerId: string): TimelineEvent[] {
+  const events: TimelineEvent[] = [];
+  const c = findCustomer(customerId);
+  if (c) events.push({ id: `c-${c.id}`, date: c.createdAt, title: "Customer created", detail: c.name, tone: "info" });
+  deals.filter((d) => d.customerId === customerId).forEach((d) =>
+    events.push({ id: `d-${d.id}`, date: d.expectedCloseDate, title: `Deal — ${d.status}`, detail: d.name,
+      tone: d.status === "Won" ? "success" : d.status === "Lost" ? "danger" : "info" }));
+  quotations.filter((q) => q.customerId === customerId).forEach((q) =>
+    events.push({ id: `q-${q.id}`, date: q.date, title: `Quotation ${q.status.toLowerCase()}`, detail: q.number, tone: "info" }));
+  jobs.filter((j) => j.customerId === customerId).forEach((j) =>
+    events.push({ id: `j-${j.id}`, date: j.startDate, title: `Job created`, detail: j.number, tone: "info" }));
+  customerInvoices.filter((i) => i.customerId === customerId).forEach((i) =>
+    events.push({ id: `i-${i.id}`, date: i.date, title: `Invoice ${i.status.toLowerCase()}`, detail: i.number,
+      tone: i.status === "Paid" ? "success" : i.status === "Overdue" ? "danger" : "warning" }));
+  serviceRecords.filter((s) => s.customerId === customerId).forEach((s) =>
+    events.push({ id: `sv-${s.id}`, date: s.deliveryDate, title: "Service reminder created", detail: s.partName, tone: "info" }));
+  return events.sort((a, b) => b.date.localeCompare(a.date));
+}
+
