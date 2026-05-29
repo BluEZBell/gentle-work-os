@@ -30,12 +30,12 @@ export function NotificationCenter() {
       </PopoverTrigger>
       <PopoverContent align="end" className="w-[340px] p-0">
         <div className="px-4 py-3 border-b">
-          <div className="font-semibold text-sm">Notifications</div>
-          <div className="text-xs text-muted-foreground">{items.length} total • {urgent} need attention</div>
+          <div className="font-semibold text-sm">การแจ้งเตือน</div>
+          <div className="text-xs text-muted-foreground">ทั้งหมด {items.length} • ต้องดำเนินการ {urgent}</div>
         </div>
         <div className="max-h-[420px] overflow-y-auto divide-y">
           {items.length === 0 && (
-            <div className="p-6 text-center text-sm text-muted-foreground">All clear.</div>
+            <div className="p-6 text-center text-sm text-muted-foreground">ไม่มีการแจ้งเตือน</div>
           )}
           {items.map((n) => (
             <button key={n.id} onClick={() => nav(n.link)}

@@ -32,7 +32,7 @@ export default function Dashboard() {
     <>
       <PageHeader
         title="Dashboard" thai="แดชบอร์ด"
-        description="A calm overview of your business — sales, jobs, payments, and after-sales reminders."
+        description="ภาพรวมธุรกิจของคุณ ทั้งงานขาย งานที่กำลังดำเนินการ การชำระเงิน และการแจ้งเตือนหลังการขาย"
       />
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -53,10 +53,10 @@ export default function Dashboard() {
         <Card className="card-soft p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-display text-lg font-semibold">Sales Pipeline Overview</h2>
-              <p className="text-xs text-muted-foreground">{deals.length} deals across {pipelineCols.length} stages</p>
+              <h2 className="font-display text-lg font-semibold">Sales Pipeline Overview (ภาพรวมไปป์ไลน์การขาย)</h2>
+              <p className="text-xs text-muted-foreground">{deals.length} ดีลใน {pipelineCols.length} ขั้น</p>
             </div>
-            <Link to="/deals" className="text-sm text-primary hover:underline">Open pipeline →</Link>
+            <Link to="/deals" className="text-sm text-primary hover:underline">ดูไปป์ไลน์ทั้งหมด →</Link>
           </div>
           <div className="grid grid-cols-3 lg:grid-cols-6 gap-2">
             {pipeline.map(({ col, deals: ds }) => (
@@ -74,8 +74,8 @@ export default function Dashboard() {
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Profit Snapshot</h2>
-          <p className="text-xs text-muted-foreground mb-4">Active & completed jobs</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Profit Snapshot (สรุปกำไร)</h2>
+          <p className="text-xs text-muted-foreground mb-4">งานที่กำลังทำและงานที่เสร็จแล้ว</p>
           <div className="space-y-3">
             {jobs.map((j) => {
               const profit = j.sellPrice - j.actualCost;
@@ -88,7 +88,7 @@ export default function Dashboard() {
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-success">{fmtTHB(profit)}</div>
-                    <div className="text-xs text-muted-foreground">{margin}% margin</div>
+                    <div className="text-xs text-muted-foreground">มาร์จิ้น {margin}%</div>
                   </div>
                 </div>
               );
@@ -99,13 +99,13 @@ export default function Dashboard() {
 
       <div className="grid lg:grid-cols-3 gap-4 mt-4">
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-3">Upcoming Payments</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">Upcoming Payments (รายการที่ต้องจ่าย)</h2>
           <div className="space-y-2">
             {supplierBills.filter((b) => b.status !== "Paid").map((b) => (
               <div key={b.id} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
                 <div>
                   <div className="font-medium">{findSupplier(b.supplierId)?.name}</div>
-                  <div className="text-xs text-muted-foreground">{b.number} • due {b.dueDate}</div>
+                  <div className="text-xs text-muted-foreground">{b.number} • ครบกำหนด {b.dueDate}</div>
                 </div>
                 <div className="text-right">
                   <div className="font-medium">{fmtTHB(b.total)}</div>
@@ -117,14 +117,14 @@ export default function Dashboard() {
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-3">Upcoming Service / Calibration</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">Upcoming Service / Calibration (บริการที่ใกล้ครบ)</h2>
           <div className="space-y-2">
             {serviceRecords.filter((s) => s.status !== "Completed").map((s) => (
               <div key={s.id} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
                 <div className="min-w-0">
                   <div className="font-medium truncate">{findCustomer(s.customerId)?.name}</div>
                   <div className="text-xs text-muted-foreground truncate">
-                    {s.partName} • due {s.calibrationDueDate}
+                    {s.partName} • ครบกำหนด {s.calibrationDueDate}
                   </div>
                 </div>
                 <StatusBadge status={s.status} />
@@ -134,7 +134,7 @@ export default function Dashboard() {
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-3">Recent Activity</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">Recent Activity (กิจกรรมล่าสุด)</h2>
           <div className="space-y-2">
             {auditLogs.slice(0, 6).map((a) => (
               <div key={a.id} className="text-sm py-2 border-b last:border-0">
@@ -151,8 +151,8 @@ export default function Dashboard() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Today's Tasks</h2>
-          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.dueDate === "2026-05-29" && t.status !== "Done").length} due today</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Today's Tasks (งานวันนี้)</h2>
+          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.dueDate === "2026-05-29" && t.status !== "Done").length} รายการครบกำหนดวันนี้</p>
           <div className="space-y-2">
             {tasks.filter(t => t.status !== "Done").slice(0, 5).map(t => (
               <div key={t.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -162,43 +162,43 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          <Link to="/tasks" className="text-xs text-primary hover:underline mt-3 inline-block">All tasks →</Link>
+          <Link to="/tasks" className="text-xs text-primary hover:underline mt-3 inline-block">ดูงานทั้งหมด →</Link>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Overdue Tasks</h2>
-          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.status === "Overdue").length} overdue</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Overdue Tasks (งานเกินกำหนด)</h2>
+          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.status === "Overdue").length} รายการเกินกำหนด</p>
           <div className="space-y-2">
             {tasks.filter(t => t.status === "Overdue").map(t => (
               <div key={t.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
                 <div><div className="font-medium">{t.name}</div>
-                  <div className="text-xs text-muted-foreground">Due {t.dueDate}</div></div>
+                  <div className="text-xs text-muted-foreground">ครบกำหนด {t.dueDate}</div></div>
                 <StatusBadge status="Overdue" tone="danger" />
               </div>
             ))}
-            {tasks.filter(t => t.status === "Overdue").length === 0 && <div className="text-xs text-muted-foreground">No overdue tasks.</div>}
+            {tasks.filter(t => t.status === "Overdue").length === 0 && <div className="text-xs text-muted-foreground">ไม่มีงานที่เกินกำหนด</div>}
           </div>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Incoming Customer Payments</h2>
-          <p className="text-xs text-muted-foreground mb-3">Accounts receivable</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Incoming Customer Payments (เงินที่จะเข้าจากลูกค้า)</h2>
+          <p className="text-xs text-muted-foreground mb-3">ยอดที่ต้องรับจากลูกค้า</p>
           <div className="space-y-2">
             {customerInvoices.filter(i => i.status !== "Paid").map(i => (
               <div key={i.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
                 <div className="min-w-0"><div className="truncate font-medium">{findCustomer(i.customerId)?.name}</div>
-                  <div className="text-xs text-muted-foreground">{i.number} • due {i.dueDate}</div></div>
+                  <div className="text-xs text-muted-foreground">{i.number} • ครบกำหนด {i.dueDate}</div></div>
                 <div className="text-right"><div className="font-medium">{fmtTHB(i.total)}</div>
                   <StatusBadge status={i.status} /></div>
               </div>
             ))}
           </div>
-          <Link to="/invoices" className="text-xs text-primary hover:underline mt-3 inline-block">All invoices →</Link>
+          <Link to="/invoices" className="text-xs text-primary hover:underline mt-3 inline-block">ดูใบแจ้งหนี้ทั้งหมด →</Link>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Pending Purchase Orders</h2>
-          <p className="text-xs text-muted-foreground mb-3">Awaiting supplier action</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Pending Purchase Orders (ใบสั่งซื้อรอดำเนินการ)</h2>
+          <p className="text-xs text-muted-foreground mb-3">รอซัพพลายเออร์ตอบรับ</p>
           <div className="space-y-2">
             {purchaseOrders.filter(p => p.status === "Draft" || p.status === "Sent" || p.status === "Confirmed").map(p => (
               <div key={p.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -208,12 +208,12 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          <Link to="/purchase-orders" className="text-xs text-primary hover:underline mt-3 inline-block">All POs →</Link>
+          <Link to="/purchase-orders" className="text-xs text-primary hover:underline mt-3 inline-block">ดูใบสั่งซื้อทั้งหมด →</Link>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">QC Issues</h2>
-          <p className="text-xs text-muted-foreground mb-3">Failed or rework needed</p>
+          <h2 className="font-display text-lg font-semibold mb-1">QC Issues (ปัญหาคุณภาพงาน)</h2>
+          <p className="text-xs text-muted-foreground mb-3">รายการที่ไม่ผ่าน QC หรือต้องแก้ไข</p>
           <div className="space-y-2">
             {receivingRecords.filter(r => r.issueFound || r.needRework).map(r => (
               <div key={r.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -222,32 +222,32 @@ export default function Dashboard() {
                 <StatusBadge status={r.qcStatus} tone="warning" />
               </div>
             ))}
-            {receivingRecords.filter(r => r.issueFound || r.needRework).length === 0 && <div className="text-xs text-muted-foreground">No active QC issues.</div>}
+            {receivingRecords.filter(r => r.issueFound || r.needRework).length === 0 && <div className="text-xs text-muted-foreground">ยังไม่มีปัญหา QC</div>}
           </div>
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Change Orders Pending</h2>
-          <p className="text-xs text-muted-foreground mb-3">Awaiting approval</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Change Orders Pending (คำขอเปลี่ยนแปลงรออนุมัติ)</h2>
+          <p className="text-xs text-muted-foreground mb-3">รอการอนุมัติจากผู้รับผิดชอบ</p>
           <div className="space-y-2">
             {changeOrders.filter(c => c.approvalStatus === "Pending").map(c => (
               <div key={c.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
                 <div className="min-w-0"><div className="truncate font-medium">{c.number}</div>
                   <div className="text-xs text-muted-foreground">{c.description}</div></div>
                 <div className="text-right"><div className="font-medium">{fmtTHB(c.costImpact)}</div>
-                  <div className="text-xs text-muted-foreground">+{c.timelineImpactDays}d</div></div>
+                  <div className="text-xs text-muted-foreground">+{c.timelineImpactDays} วัน</div></div>
               </div>
             ))}
-            {changeOrders.filter(c => c.approvalStatus === "Pending").length === 0 && <div className="text-xs text-muted-foreground">None pending.</div>}
+            {changeOrders.filter(c => c.approvalStatus === "Pending").length === 0 && <div className="text-xs text-muted-foreground">ไม่มีคำขอที่รออนุมัติ</div>}
           </div>
-          <Link to="/change-orders" className="text-xs text-primary hover:underline mt-3 inline-block">All change orders →</Link>
+          <Link to="/change-orders" className="text-xs text-primary hover:underline mt-3 inline-block">ดูคำขอเปลี่ยนแปลงทั้งหมด →</Link>
         </Card>
       </div>
 
       <Card className="card-soft p-5 mt-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-display text-lg font-semibold">All Reminders</h2>
-          <Link to="/calendar" className="text-sm text-primary hover:underline">Open calendar →</Link>
+          <h2 className="font-display text-lg font-semibold">All Reminders (การแจ้งเตือนทั้งหมด)</h2>
+          <Link to="/calendar" className="text-sm text-primary hover:underline">ดูปฏิทิน →</Link>
         </div>
         <div className="grid md:grid-cols-2 gap-2">
           {reminders.map((r) => (

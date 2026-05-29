@@ -38,34 +38,34 @@ export default function Customers() {
   return (
     <>
       <PageHeader title="Customers" thai="ลูกค้า"
-        description="Your CRM. Confidential customers are flagged and protected."
+        description="จัดการข้อมูลลูกค้า ผู้ติดต่อ ประวัติการคุย และงานที่เกี่ยวข้องในที่เดียว"
         actions={<NewCustomerDialog />}
       />
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search customers…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาลูกค้า…" className="pl-9" />
         </div>
         <Select value={type} onValueChange={setType}>
-          <SelectTrigger className="w-44"><SelectValue placeholder="Type" /></SelectTrigger>
+          <SelectTrigger className="w-44"><SelectValue placeholder="ประเภท" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All types</SelectItem>
+            <SelectItem value="all">ทุกประเภท</SelectItem>
             <SelectItem value="New">New</SelectItem>
             <SelectItem value="Existing">Existing</SelectItem>
             <SelectItem value="Corporate">Corporate</SelectItem>
           </SelectContent>
         </Select>
         <Select value={lead} onValueChange={setLead}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="Lead source" /></SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="ที่มา" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All lead sources</SelectItem>
+            <SelectItem value="all">ทุกที่มาของลูกค้า</SelectItem>
             {LEAD_SOURCES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
       </Card>
       <Card className="card-soft overflow-hidden">
         {filtered.length === 0 ? (
-          <EmptyState title="No customers match" hint="Try changing the search or filter." />
+          <EmptyState title="ไม่พบลูกค้าที่ตรงกับการค้นหา" hint="ลองเปลี่ยนคำค้นหรือเปลี่ยนตัวกรองดู" />
         ) : (
         <Table>
           <TableHeader>
@@ -113,7 +113,7 @@ export function CustomerDetail() {
   useTick();
   const { id } = useParams();
   const c = findCustomer(id!);
-  if (!c) return <div>Customer not found. <Link to="/customers" className="text-primary">Back</Link></div>;
+  if (!c) return <div>ไม่พบข้อมูลลูกค้า <Link to="/customers" className="text-primary">กลับ</Link></div>;
 
   const cContacts = contacts.filter((x) => x.customerId === c.id);
   const cDeals = deals.filter((d) => d.customerId === c.id);
@@ -124,22 +124,22 @@ export function CustomerDetail() {
   return (
     <>
       <Link to="/customers" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-3">
-        <ArrowLeft className="w-4 h-4 mr-1" /> Back to customers
+        <ArrowLeft className="w-4 h-4 mr-1" /> กลับไปหน้าลูกค้า
       </Link>
       <PageHeader title={c.name}
-        description={c.confidential ? "Confidential account — handle with care." : undefined}
+        description={c.confidential ? "ลูกค้าลับ — กรุณาดูแลข้อมูลเป็นพิเศษ" : undefined}
         actions={<StatusBadge status={c.type} tone={c.type === "Corporate" ? "primary" : "info"} />}
       />
 
       <div className="grid lg:grid-cols-3 gap-4">
         <Card className="card-soft p-5 lg:col-span-1">
-          <h3 className="font-semibold mb-3">Profile</h3>
+          <h3 className="font-semibold mb-3">โปรไฟล์ (Profile)</h3>
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-muted-foreground" /> {c.email}</div>
             <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-muted-foreground" /> {c.phone}</div>
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-muted-foreground" /> {c.address}</div>
             <div className="pt-3 border-t mt-3 text-muted-foreground text-xs">
-              Source: {c.source} • Created {c.createdAt}
+              ที่มา: {c.source} • สร้างเมื่อ {c.createdAt}
             </div>
             {c.notes && <div className="mt-3 p-3 bg-secondary/60 rounded text-sm">{c.notes}</div>}
           </div>
@@ -147,8 +147,8 @@ export function CustomerDetail() {
 
         <div className="lg:col-span-2 space-y-4">
           <Card className="card-soft p-5">
-            <h3 className="font-semibold mb-3">Contacts ({cContacts.length})</h3>
-            {cContacts.length === 0 ? <EmptyState title="No contacts" /> :
+            <h3 className="font-semibold mb-3">ผู้ติดต่อ ({cContacts.length})</h3>
+            {cContacts.length === 0 ? <EmptyState title="ยังไม่มีผู้ติดต่อ" /> :
             <div className="space-y-2">
               {cContacts.map((ct) => (
                 <div key={ct.id} className="flex justify-between border-b last:border-0 py-2 text-sm">
@@ -166,8 +166,8 @@ export function CustomerDetail() {
           </Card>
 
           <Card className="card-soft p-5">
-            <h3 className="font-semibold mb-3">Deals ({cDeals.length})</h3>
-            {cDeals.length === 0 ? <EmptyState title="No deals yet" /> :
+            <h3 className="font-semibold mb-3">ดีล ({cDeals.length})</h3>
+            {cDeals.length === 0 ? <EmptyState title="ยังไม่มีดีล" /> :
             <div className="space-y-2">
               {cDeals.map((d) => (
                 <div key={d.id} className="flex justify-between border-b last:border-0 py-2 text-sm">
@@ -183,8 +183,8 @@ export function CustomerDetail() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <Card className="card-soft p-5">
-              <h3 className="font-semibold mb-3">Quotations ({cQuots.length})</h3>
-              {cQuots.length === 0 ? <div className="text-xs text-muted-foreground">None</div> : cQuots.map((q) => (
+              <h3 className="font-semibold mb-3">ใบเสนอราคา ({cQuots.length})</h3>
+              {cQuots.length === 0 ? <div className="text-xs text-muted-foreground">ไม่มี</div> : cQuots.map((q) => (
                 <div key={q.id} className="flex justify-between py-1.5 text-sm border-b last:border-0">
                   <span>{q.number}</span>
                   <StatusBadge status={q.status} />
@@ -192,8 +192,8 @@ export function CustomerDetail() {
               ))}
             </Card>
             <Card className="card-soft p-5">
-              <h3 className="font-semibold mb-3">Jobs ({cJobs.length})</h3>
-              {cJobs.length === 0 ? <div className="text-xs text-muted-foreground">None</div> : cJobs.map((j) => (
+              <h3 className="font-semibold mb-3">งาน ({cJobs.length})</h3>
+              {cJobs.length === 0 ? <div className="text-xs text-muted-foreground">ไม่มี</div> : cJobs.map((j) => (
                 <div key={j.id} className="flex justify-between py-1.5 text-sm border-b last:border-0">
                   <span>{j.number}</span>
                   <StatusBadge status={j.status} />
@@ -204,12 +204,12 @@ export function CustomerDetail() {
 
           {cSvc.length > 0 && (
             <Card className="card-soft p-5">
-              <h3 className="font-semibold mb-3">Service / Calibration ({cSvc.length})</h3>
+              <h3 className="font-semibold mb-3">บริการหลังการขาย / Calibration ({cSvc.length})</h3>
               {cSvc.map((s) => (
                 <div key={s.id} className="flex justify-between py-1.5 text-sm border-b last:border-0">
                   <div>
                     <div>{s.partName}</div>
-                    <div className="text-xs text-muted-foreground">Due {s.calibrationDueDate}</div>
+                    <div className="text-xs text-muted-foreground">ครบกำหนด {s.calibrationDueDate}</div>
                   </div>
                   <StatusBadge status={s.status} />
                 </div>
@@ -219,7 +219,7 @@ export function CustomerDetail() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <Card className="card-soft p-5">
-              <h3 className="font-semibold mb-3">Timeline</h3>
+              <h3 className="font-semibold mb-3">ไทม์ไลน์ (Timeline)</h3>
               <Timeline events={buildCustomerTimeline(c.id)} />
             </Card>
             <Card className="card-soft p-5">

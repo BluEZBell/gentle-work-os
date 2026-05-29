@@ -64,18 +64,18 @@ export default function Deals() {
   return (
     <>
       <PageHeader title="Deals" thai="โอกาสการขาย"
-        description="Your sales pipeline. When a deal is Won, create a job in one click."
+        description="ติดตามโอกาสการขายตั้งแต่เริ่มติดต่อ ส่งใบเสนอราคา จนถึงปิดงาน"
         actions={<NewDealDialog />}
       />
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search deals…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาดีล…" className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="all">ทุกสถานะ</SelectItem>
             {cols.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -119,11 +119,11 @@ export default function Deals() {
                             {d.status === "Won" && (
                               <Button size="sm" className="w-full mt-2 bg-success hover:bg-success/90 text-success-foreground"
                                 onClick={() => onWin(d.id)}>
-                                <Trophy className="w-3.5 h-3.5 mr-1" /> Create Job
+                                <Trophy className="w-3.5 h-3.5 mr-1" /> สร้างงาน
                               </Button>
                             )}
                             {d.reasonLost && (
-                              <div className="text-xs text-destructive mt-2">Lost: {d.reasonLost}</div>
+                              <div className="text-xs text-destructive mt-2">เหตุผลที่เสียดีล: {d.reasonLost}</div>
                             )}
                           </Card>
                         );
@@ -170,7 +170,7 @@ export default function Deals() {
                     <TableCell>
                       {d.status === "Won" && (
                         <Button size="sm" variant="outline" onClick={() => onWin(d.id)}>
-                          Create Job <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                          สร้างงาน <ArrowRight className="w-3.5 h-3.5 ml-1" />
                         </Button>
                       )}
                     </TableCell>
@@ -185,16 +185,16 @@ export default function Deals() {
       <AlertDialog open={!!lostFor} onOpenChange={(o) => !o && setLostFor(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Mark deal as Lost?</AlertDialogTitle>
-            <AlertDialogDescription>Please record the reason — it helps your win/loss reports.</AlertDialogDescription>
+            <AlertDialogTitle>ทำเครื่องหมายว่าเสียดีลใช่ไหม?</AlertDialogTitle>
+            <AlertDialogDescription>กรุณาบันทึกเหตุผล เพื่อใช้วิเคราะห์ในรายงาน Win/Loss</AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-1.5">
-            <Label>Reason lost</Label>
-            <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="Price, timing, lost to competitor…" />
+            <Label>เหตุผลที่เสียดีล</Label>
+            <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="เช่น ราคาสูงไป จังหวะไม่ลงตัว เสียให้คู่แข่ง…" />
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmLost}>Confirm Lost</AlertDialogAction>
+            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLost}>ยืนยันว่าเสียดีล</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

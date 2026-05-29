@@ -55,27 +55,27 @@ export default function Tasks() {
   return (
     <>
       <PageHeader title="Tasks" thai="งานที่ต้องทำ"
-        description="Personal and team to-dos linked to customers, deals, and jobs."
+        description="จัดการงานที่ต้องทำ ติดตามกำหนดเวลา และดูงานที่ค้างอยู่"
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button disabled={!can("edit")}><Plus className="w-4 h-4 mr-1" /> New task</Button>
+              <Button disabled={!can("edit")}><Plus className="w-4 h-4 mr-1" /> เพิ่มงาน</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>New task</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>เพิ่มงานใหม่</DialogTitle></DialogHeader>
               <div className="grid gap-3">
-                <div className="grid gap-1.5"><Label>Task name *</Label>
+                <div className="grid gap-1.5"><Label>ชื่องาน *</Label>
                   <Input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="grid gap-1.5"><Label>Due date</Label>
+                  <div className="grid gap-1.5"><Label>วันครบกำหนด</Label>
                     <Input type="date" value={f.dueDate} onChange={(e) => setF({ ...f, dueDate: e.target.value })} /></div>
-                  <div className="grid gap-1.5"><Label>Priority</Label>
+                  <div className="grid gap-1.5"><Label>ความสำคัญ</Label>
                     <Select value={f.priority} onValueChange={(v) => setF({ ...f, priority: v as Priority })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>{PRIORITIES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-1.5"><Label>Status</Label>
+                  <div className="grid gap-1.5"><Label>สถานะ</Label>
                     <Select value={f.status} onValueChange={(v) => setF({ ...f, status: v as TaskStatus })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>{TASK_STATUSES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
@@ -83,7 +83,7 @@ export default function Tasks() {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="grid gap-1.5"><Label>Customer</Label>
+                  <div className="grid gap-1.5"><Label>ลูกค้า</Label>
                     <Select value={f.customerId} onValueChange={(v) => setF({ ...f, customerId: v })}>
                       <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                       <SelectContent>
@@ -92,7 +92,7 @@ export default function Tasks() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-1.5"><Label>Deal</Label>
+                  <div className="grid gap-1.5"><Label>ดีล</Label>
                     <Select value={f.dealId} onValueChange={(v) => setF({ ...f, dealId: v })}>
                       <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                       <SelectContent>
@@ -101,7 +101,7 @@ export default function Tasks() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-1.5"><Label>Job</Label>
+                  <div className="grid gap-1.5"><Label>งาน</Label>
                     <Select value={f.jobId} onValueChange={(v) => setF({ ...f, jobId: v })}>
                       <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                       <SelectContent>
@@ -111,12 +111,12 @@ export default function Tasks() {
                     </Select>
                   </div>
                 </div>
-                <div className="grid gap-1.5"><Label>Note</Label>
+                <div className="grid gap-1.5"><Label>หมายเหตุ</Label>
                   <Input value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} /></div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                <Button onClick={submit}>Save</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>ยกเลิก</Button>
+                <Button onClick={submit}>บันทึก</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -126,18 +126,18 @@ export default function Tasks() {
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search tasks…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหางาน…" className="pl-9" />
         </div>
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">ทั้งหมด</SelectItem>
             {TASK_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
       </Card>
 
-      {list.length === 0 ? <Card className="card-soft"><EmptyState icon={ListTodo} title="No tasks" /></Card> :
+      {list.length === 0 ? <Card className="card-soft"><EmptyState icon={ListTodo} title="ยังไม่มีงาน" /></Card> :
       <div className="grid gap-2">
         {list.map((t) => (
           <Card key={t.id} className="card-soft p-4 flex flex-wrap items-center gap-3">

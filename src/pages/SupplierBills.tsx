@@ -18,11 +18,11 @@ import {
 import { toast } from "sonner";
 
 const flow = [
-  { icon: Mail, label: "Supplier Email" },
-  { icon: FileSearch, label: "Extract Data" },
-  { icon: ClipboardCheck, label: "Pending Review" },
-  { icon: CheckCircle2, label: "Approved" },
-  { icon: CalendarClock, label: "Calendar Reminder" },
+  { icon: Mail, label: "อีเมลจากซัพพลายเออร์" },
+  { icon: FileSearch, label: "ดึงข้อมูลอัตโนมัติ" },
+  { icon: ClipboardCheck, label: "รอตรวจสอบ" },
+  { icon: CheckCircle2, label: "อนุมัติแล้ว" },
+  { icon: CalendarClock, label: "แจ้งเตือนในปฏิทิน" },
 ];
 
 export default function SupplierBills() {
@@ -44,19 +44,19 @@ export default function SupplierBills() {
   return (
     <>
       <PageHeader title="Supplier Bills" thai="บิลซัพพลายเออร์"
-        description="Accounts payable with payment reminders and human-in-the-loop review."
+        description="ติดตามบิลจากซัพพลายเออร์ วันที่ครบกำหนด และสถานะการชำระเงิน"
       />
 
       <Alert className="mb-4 border-warning/40 bg-warning-soft">
         <AlertTriangle className="h-4 w-4 text-warning-foreground" />
-        <AlertTitle className="text-warning-foreground">AI-extracted bills require human review before approval.</AlertTitle>
+        <AlertTitle className="text-warning-foreground">บิลที่ AI ดึงข้อมูลมา ต้องให้คนตรวจสอบก่อนอนุมัติทุกครั้ง</AlertTitle>
         <AlertDescription className="text-warning-foreground/80">
-          Financial records are never auto-approved. An Owner must review the extracted data.
+          ระบบจะไม่อนุมัติเอกสารการเงินอัตโนมัติ เจ้าของกิจการต้องตรวจสอบข้อมูลที่ดึงมาก่อนทุกครั้ง
         </AlertDescription>
       </Alert>
 
       <Card className="card-soft p-5 mb-4">
-        <h3 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">Automated Workflow (Demo)</h3>
+        <h3 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">ขั้นตอนอัตโนมัติ (ตัวอย่าง)</h3>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {flow.map((step, i) => (
             <div key={step.label} className="flex items-center gap-2">
@@ -73,12 +73,12 @@ export default function SupplierBills() {
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search bills…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาบิล…" className="pl-9" />
         </div>
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">ทั้งหมด</SelectItem>
             <SelectItem value="Unpaid">Unpaid</SelectItem>
             <SelectItem value="Paid">Paid</SelectItem>
             <SelectItem value="Overdue">Overdue</SelectItem>
@@ -107,11 +107,11 @@ export default function SupplierBills() {
                 <TableCell className="font-medium">{b.number}</TableCell>
                 <TableCell>
                   <div className="text-sm">{findSupplier(b.supplierId)?.name}</div>
-                  <div className="text-xs text-muted-foreground">from {b.emailSource}</div>
+                  <div className="text-xs text-muted-foreground">จาก {b.emailSource}</div>
                 </TableCell>
                 <TableCell className="text-sm">
                   <div>{b.billDate}</div>
-                  <div className="text-xs text-muted-foreground">due {b.dueDate}</div>
+                  <div className="text-xs text-muted-foreground">ครบกำหนด {b.dueDate}</div>
                 </TableCell>
                 <TableCell className="text-right">{fmtTHB(b.amount)}</TableCell>
                 <TableCell className="text-right text-muted-foreground">{fmtTHB(b.vat)}</TableCell>

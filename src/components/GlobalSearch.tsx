@@ -23,13 +23,13 @@ export function GlobalSearch() {
         onClick={() => setOpen(true)}
         className="h-9 w-full md:w-72 justify-start gap-2 text-muted-foreground font-normal"
       >
-        <Search className="w-4 h-4" /> Search everything…
+        <Search className="w-4 h-4" /> ค้นหาทุกเมนู…
         <kbd className="ml-auto hidden md:inline text-[10px] bg-muted px-1.5 py-0.5 rounded">/</kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search customers, deals, jobs, invoices…" value={q} onValueChange={setQ} />
+        <CommandInput placeholder="ค้นหาลูกค้า ดีล งาน ใบแจ้งหนี้…" value={q} onValueChange={setQ} />
         <CommandList>
-          <CommandEmpty>No results.</CommandEmpty>
+          <CommandEmpty>ไม่พบผลลัพธ์</CommandEmpty>
           {Object.entries(grouped).map(([group, items]) => (
             <CommandGroup key={group} heading={group}>
               {items.map((h) => (

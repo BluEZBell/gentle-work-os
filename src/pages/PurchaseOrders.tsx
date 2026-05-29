@@ -28,22 +28,22 @@ export default function PurchaseOrders() {
   return (
     <>
       <PageHeader title="Purchase Orders" thai="ใบสั่งซื้อ"
-        description="POs to suppliers — issued from jobs, tracked through receiving."
+        description="จัดการใบสั่งซื้อถึงซัพพลายเออร์ ตั้งแต่ออกใบสั่ง จนถึงรับของและตรวจคุณภาพ"
       />
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search POs…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาใบสั่งซื้อ…" className="pl-9" />
         </div>
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="all">ทุกสถานะ</SelectItem>
             {PO_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
       </Card>
-      {list.length === 0 ? <Card className="card-soft"><EmptyState icon={Truck} title="No purchase orders" /></Card> :
+      {list.length === 0 ? <Card className="card-soft"><EmptyState icon={Truck} title="ยังไม่มีใบสั่งซื้อ" /></Card> :
       <div className="space-y-4">
         {list.map((p) => {
           const total = poTotal(p);
@@ -56,13 +56,13 @@ export default function PurchaseOrders() {
                     <StatusBadge status={p.status} />
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    {findSupplier(p.supplierId)?.name} • Job {findJob(p.jobId)?.number ?? "—"} • {p.date} → expected {p.expectedDelivery}
+                    {findSupplier(p.supplierId)?.name} • งาน {findJob(p.jobId)?.number ?? "—"} • {p.date} → คาดว่าจะได้รับ {p.expectedDelivery}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="text-right">
                     <div className="font-display text-xl font-semibold">{fmtTHB(total)}</div>
-                    <div className="text-xs text-muted-foreground">{p.items.length} items</div>
+                    <div className="text-xs text-muted-foreground">{p.items.length} รายการ</div>
                   </div>
                   <Select value={p.status} disabled={!can("edit")}
                     onValueChange={(v) => { setPOStatus(p.id, v as POStatus, user?.name ?? "Demo"); toast.success(`PO → ${v}`); }}>

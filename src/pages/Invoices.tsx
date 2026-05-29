@@ -30,26 +30,26 @@ export default function Invoices() {
   return (
     <>
       <PageHeader title="Customer Invoices" thai="ใบแจ้งหนี้ลูกค้า"
-        description="Accounts receivable — issued from jobs, with payment reminders."
+        description="ติดตามใบแจ้งหนี้ลูกค้า ยอดที่ต้องรับ และสถานะการชำระเงิน"
       />
 
       <Alert className="mb-4 border-info/40 bg-info-soft">
         <Info className="h-4 w-4 text-info" />
-        <AlertTitle className="text-info">Outstanding receivables: {fmtTHB(outstanding)}</AlertTitle>
+        <AlertTitle className="text-info">ยอดค้างรับรวม: {fmtTHB(outstanding)}</AlertTitle>
         <AlertDescription className="text-info/90">
-          Incoming payments appear on the Dashboard. Status updates write to the audit log.
+          เงินที่กำลังเข้าจะแสดงในแดชบอร์ด การเปลี่ยนสถานะจะถูกบันทึกในบันทึกการใช้งานทุกครั้ง
         </AlertDescription>
       </Alert>
 
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search invoices…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาใบแจ้งหนี้…" className="pl-9" />
         </div>
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">ทั้งหมด</SelectItem>
             {INVOICE_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -78,7 +78,7 @@ export default function Invoices() {
                 <TableCell className="text-sm text-muted-foreground">{findJob(i.jobId)?.number}</TableCell>
                 <TableCell className="text-sm">
                   <div>{i.date}</div>
-                  <div className="text-xs text-muted-foreground">due {i.dueDate}{i.paymentDate ? ` • paid ${i.paymentDate}` : ""}</div>
+                  <div className="text-xs text-muted-foreground">ครบกำหนด {i.dueDate}{i.paymentDate ? ` • ชำระแล้ว ${i.paymentDate}` : ""}</div>
                 </TableCell>
                 <TableCell className="text-right">{fmtTHB(i.amount)}</TableCell>
                 <TableCell className="text-right text-muted-foreground">{fmtTHB(i.vat)}</TableCell>
@@ -97,7 +97,7 @@ export default function Invoices() {
             ))}
           </TableBody>
         </Table>
-        {list.length === 0 && <div className="p-8 text-center text-sm text-muted-foreground flex items-center justify-center gap-2"><Receipt className="w-4 h-4" /> No invoices</div>}
+        {list.length === 0 && <div className="p-8 text-center text-sm text-muted-foreground flex items-center justify-center gap-2"><Receipt className="w-4 h-4" /> ยังไม่มีใบแจ้งหนี้</div>}
       </Card>
     </>
   );

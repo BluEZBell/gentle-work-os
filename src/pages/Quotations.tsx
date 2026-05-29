@@ -14,8 +14,8 @@ export default function Quotations() {
   return (
     <>
       <PageHeader title="Quotations" thai="ใบเสนอราคา"
-        description="Estimated profit auto-calculated. Mock FlowAccount document link only — no real API."
-        actions={<Button><Plus className="w-4 h-4 mr-1" /> New quotation</Button>}
+        description="สร้างและติดตามใบเสนอราคา พร้อมดูต้นทุน กำไร และสถานะการอนุมัติ"
+        actions={<Button><Plus className="w-4 h-4 mr-1" /> สร้างใบเสนอราคา</Button>}
       />
       <div className="space-y-4">
         {quotations.map((q) => {
@@ -33,12 +33,12 @@ export default function Quotations() {
                     <StatusBadge status={q.status} />
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    {findCustomer(q.customerId)?.name} • {q.date} → valid until {q.validUntil}
+                    {findCustomer(q.customerId)?.name} • {q.date} → ใช้ได้ถึง {q.validUntil}
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="font-display text-xl font-semibold">{fmtTHB(total)}</div>
-                  <div className="text-xs text-success font-medium">+{fmtTHB(profit)} profit ({margin}%)</div>
+                  <div className="text-xs text-success font-medium">+{fmtTHB(profit)} กำไร ({margin}%)</div>
                 </div>
               </div>
               <Table>
@@ -70,11 +70,11 @@ export default function Quotations() {
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
                 <Button variant="outline" size="sm" asChild>
                   <a href={q.flowAccountLink} target="_blank" rel="noreferrer">
-                    <ExternalLink className="w-3.5 h-3.5 mr-1" /> Open in FlowAccount (mock)
+                    <ExternalLink className="w-3.5 h-3.5 mr-1" /> เปิดใน FlowAccount (ตัวอย่าง)
                   </a>
                 </Button>
                 <Button variant="outline" size="sm">
-                  <Paperclip className="w-3.5 h-3.5 mr-1" /> Attachment placeholder
+                  <Paperclip className="w-3.5 h-3.5 mr-1" /> แนบไฟล์ (ตัวอย่าง)
                 </Button>
               </div>
             </Card>

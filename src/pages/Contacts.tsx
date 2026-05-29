@@ -21,17 +21,17 @@ export default function Contacts() {
   return (
     <>
       <PageHeader title="Contacts" thai="ผู้ติดต่อ"
-        description="People linked to your customer accounts."
+        description="รายชื่อผู้ติดต่อในฝั่งลูกค้า เชื่อมโยงกับบริษัทแต่ละราย"
         actions={<NewContactDialog />}
       />
       <Card className="card-soft p-4 mb-4">
         <div className="relative max-w-md">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search contacts…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาผู้ติดต่อ…" className="pl-9" />
         </div>
       </Card>
       <Card className="card-soft overflow-hidden">
-        {filtered.length === 0 ? <EmptyState title="No contacts" /> :
+        {filtered.length === 0 ? <EmptyState title="ยังไม่มีผู้ติดต่อ" /> :
         <Table>
           <TableHeader>
             <TableRow>

@@ -27,23 +27,23 @@ export default function ChangeOrders() {
   return (
     <>
       <PageHeader title="Change Orders" thai="คำขอเปลี่ยนแปลงงาน"
-        description="Track scope and cost changes against active jobs."
+        description="ติดตามการเปลี่ยนขอบเขตงานและผลกระทบต่อต้นทุนของงานที่กำลังดำเนินการ"
       />
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search change orders…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาคำขอเปลี่ยนแปลง…" className="pl-9" />
         </div>
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All approvals</SelectItem>
+            <SelectItem value="all">ทุกสถานะการอนุมัติ</SelectItem>
             {APPROVAL_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
       </Card>
       <Card className="card-soft overflow-hidden">
-        {list.length === 0 ? <EmptyState icon={GitPullRequest} title="No change orders" /> :
+        {list.length === 0 ? <EmptyState icon={GitPullRequest} title="ยังไม่มีคำขอเปลี่ยนแปลง" /> :
         <Table>
           <TableHeader>
             <TableRow>
