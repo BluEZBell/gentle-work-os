@@ -22,13 +22,17 @@ const map: Record<string, Tone> = {
   // Jobs
   "Pending": "muted", "In Progress": "info", "Waiting Supplier": "warning",
   "Waiting Customer": "warning", "Delivered": "success", "Closed": "success", "Problem": "danger",
-  // Bills
-  "Unpaid": "warning", "Paid": "success", "Overdue": "danger",
+  // Bills / invoices
+  "Unpaid": "warning", "Paid": "success", "Overdue": "danger", "Partially Paid": "info",
   "Pending Review": "warning", "Approved": "success", "Rejected ": "danger",
   // Service
   "Upcoming": "info", "Due": "warning", "Completed": "success", "Missed": "danger",
-  // Risk
-  "Low": "success", "Medium": "warning", "High": "danger",
+  // Risk / priority
+  "Low": "success", "Medium": "warning", "High": "danger", "Urgent": "danger",
+  // PO / QC / tasks
+  "Confirmed": "info", "Partially Received": "warning", "Received": "success", "Cancelled": "muted",
+  "Passed": "success", "Failed": "danger", "Need Rework": "warning",
+  "Open": "info", "Done": "success",
 };
 
 export function StatusBadge({ status, tone, className }: { status: string; tone?: Tone; className?: string }) {
