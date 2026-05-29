@@ -133,13 +133,13 @@ export function CustomerDetail() {
 
       <div className="grid lg:grid-cols-3 gap-4">
         <Card className="card-soft p-5 lg:col-span-1">
-          <h3 className="font-semibold mb-3">Profile</h3>
+          <h3 className="font-semibold mb-3">โปรไฟล์ (Profile)</h3>
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-muted-foreground" /> {c.email}</div>
             <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-muted-foreground" /> {c.phone}</div>
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-muted-foreground" /> {c.address}</div>
             <div className="pt-3 border-t mt-3 text-muted-foreground text-xs">
-              Source: {c.source} • Created {c.createdAt}
+              ที่มา: {c.source} • สร้างเมื่อ {c.createdAt}
             </div>
             {c.notes && <div className="mt-3 p-3 bg-secondary/60 rounded text-sm">{c.notes}</div>}
           </div>
