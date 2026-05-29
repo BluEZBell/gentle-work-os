@@ -204,12 +204,12 @@ export function CustomerDetail() {
 
           {cSvc.length > 0 && (
             <Card className="card-soft p-5">
-              <h3 className="font-semibold mb-3">Service / Calibration ({cSvc.length})</h3>
+              <h3 className="font-semibold mb-3">บริการหลังการขาย / Calibration ({cSvc.length})</h3>
               {cSvc.map((s) => (
                 <div key={s.id} className="flex justify-between py-1.5 text-sm border-b last:border-0">
                   <div>
                     <div>{s.partName}</div>
-                    <div className="text-xs text-muted-foreground">Due {s.calibrationDueDate}</div>
+                    <div className="text-xs text-muted-foreground">ครบกำหนด {s.calibrationDueDate}</div>
                   </div>
                   <StatusBadge status={s.status} />
                 </div>
