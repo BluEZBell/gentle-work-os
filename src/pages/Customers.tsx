@@ -219,7 +219,7 @@ export function CustomerDetail() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <Card className="card-soft p-5">
-              <h3 className="font-semibold mb-3">Timeline</h3>
+              <h3 className="font-semibold mb-3">ไทม์ไลน์ (Timeline)</h3>
               <Timeline events={buildCustomerTimeline(c.id)} />
             </Card>
             <Card className="card-soft p-5">
