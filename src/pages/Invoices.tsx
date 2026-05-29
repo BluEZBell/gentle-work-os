@@ -30,14 +30,14 @@ export default function Invoices() {
   return (
     <>
       <PageHeader title="Customer Invoices" thai="ใบแจ้งหนี้ลูกค้า"
-        description="Accounts receivable — issued from jobs, with payment reminders."
+        description="ติดตามใบแจ้งหนี้ลูกค้า ยอดที่ต้องรับ และสถานะการชำระเงิน"
       />
 
       <Alert className="mb-4 border-info/40 bg-info-soft">
         <Info className="h-4 w-4 text-info" />
-        <AlertTitle className="text-info">Outstanding receivables: {fmtTHB(outstanding)}</AlertTitle>
+        <AlertTitle className="text-info">ยอดค้างรับรวม: {fmtTHB(outstanding)}</AlertTitle>
         <AlertDescription className="text-info/90">
-          Incoming payments appear on the Dashboard. Status updates write to the audit log.
+          เงินที่กำลังเข้าจะแสดงในแดชบอร์ด การเปลี่ยนสถานะจะถูกบันทึกในบันทึกการใช้งานทุกครั้ง
         </AlertDescription>
       </Alert>
 
