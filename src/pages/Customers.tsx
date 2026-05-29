@@ -65,7 +65,7 @@ export default function Customers() {
       </Card>
       <Card className="card-soft overflow-hidden">
         {filtered.length === 0 ? (
-          <EmptyState title="No customers match" hint="Try changing the search or filter." />
+          <EmptyState title="ไม่พบลูกค้าที่ตรงกับการค้นหา" hint="ลองเปลี่ยนคำค้นหรือเปลี่ยนตัวกรองดู" />
         ) : (
         <Table>
           <TableHeader>
