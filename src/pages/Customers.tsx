@@ -127,7 +127,7 @@ export function CustomerDetail() {
         <ArrowLeft className="w-4 h-4 mr-1" /> Back to customers
       </Link>
       <PageHeader title={c.name}
-        description={c.confidential ? "Confidential account — handle with care." : undefined}
+        description={c.confidential ? "ลูกค้าลับ — กรุณาดูแลข้อมูลเป็นพิเศษ" : undefined}
         actions={<StatusBadge status={c.type} tone={c.type === "Corporate" ? "primary" : "info"} />}
       />
 
