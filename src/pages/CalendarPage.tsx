@@ -6,9 +6,9 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Bell, CalendarClock } from "lucide-react";
 
 const windows = [
-  { label: "Overdue", filter: (r: typeof reminders[number]) => r.severity === "danger", tone: "danger" as const },
-  { label: "Due soon (≤7 days)", filter: (r: typeof reminders[number]) => r.severity === "warning", tone: "warning" as const },
-  { label: "Upcoming (14–60 days)", filter: (r: typeof reminders[number]) => r.severity === "info", tone: "info" as const },
+  { label: "เกินกำหนด", filter: (r: typeof reminders[number]) => r.severity === "danger", tone: "danger" as const },
+  { label: "ใกล้ครบกำหนด (ภายใน 7 วัน)", filter: (r: typeof reminders[number]) => r.severity === "warning", tone: "warning" as const },
+  { label: "กำลังจะถึง (14–60 วัน)", filter: (r: typeof reminders[number]) => r.severity === "info", tone: "info" as const },
 ];
 
 const timings = ["60d", "30d", "14d", "7d", "1d", "Due", "Overdue"];
