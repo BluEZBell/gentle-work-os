@@ -56,13 +56,13 @@ export default function PurchaseOrders() {
                     <StatusBadge status={p.status} />
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    {findSupplier(p.supplierId)?.name} • Job {findJob(p.jobId)?.number ?? "—"} • {p.date} → expected {p.expectedDelivery}
+                    {findSupplier(p.supplierId)?.name} • งาน {findJob(p.jobId)?.number ?? "—"} • {p.date} → คาดว่าจะได้รับ {p.expectedDelivery}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="text-right">
                     <div className="font-display text-xl font-semibold">{fmtTHB(total)}</div>
-                    <div className="text-xs text-muted-foreground">{p.items.length} items</div>
+                    <div className="text-xs text-muted-foreground">{p.items.length} รายการ</div>
                   </div>
                   <Select value={p.status} disabled={!can("edit")}
                     onValueChange={(v) => { setPOStatus(p.id, v as POStatus, user?.name ?? "Demo"); toast.success(`PO → ${v}`); }}>
