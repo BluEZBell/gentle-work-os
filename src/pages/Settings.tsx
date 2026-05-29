@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { users, roleBadge } from "@/lib/auth";
+import { roleBadge } from "@/lib/auth";
 import { users as userList } from "@/lib/mockData";
 import { ShieldCheck, Building2, Lock, Download, Brain, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
