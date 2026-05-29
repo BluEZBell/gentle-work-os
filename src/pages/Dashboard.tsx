@@ -10,8 +10,12 @@ import {
   dashboardStats, deals, dealStatusThai, reminders, fmtTHB, findCustomer,
   supplierBills, findSupplier, serviceRecords, auditLogs, jobs,
 } from "@/lib/mockData";
+import {
+  tasks, customerInvoices, purchaseOrders, changeOrders, receivingRecords,
+} from "@/lib/mockBusiness";
 import { useTick } from "@/lib/store";
 import { Link } from "react-router-dom";
+
 
 const pipelineCols: Array<keyof typeof dealStatusThai> = [
   "New Lead", "Contacted", "Need Quotation", "Quotation Sent", "Negotiation", "Won",
@@ -145,6 +149,101 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        <Card className="card-soft p-5">
+          <h2 className="font-display text-lg font-semibold mb-1">Today's Tasks</h2>
+          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.dueDate === "2026-05-29" && t.status !== "Done").length} due today</p>
+          <div className="space-y-2">
+            {tasks.filter(t => t.status !== "Done").slice(0, 5).map(t => (
+              <div key={t.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div className="min-w-0"><div className="truncate font-medium">{t.name}</div>
+                  <div className="text-xs text-muted-foreground">{t.owner} • {t.dueDate}</div></div>
+                <StatusBadge status={t.priority} tone={t.priority === "Urgent" ? "danger" : t.priority === "High" ? "warning" : "info"} />
+              </div>
+            ))}
+          </div>
+          <Link to="/tasks" className="text-xs text-primary hover:underline mt-3 inline-block">All tasks →</Link>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <h2 className="font-display text-lg font-semibold mb-1">Overdue Tasks</h2>
+          <p className="text-xs text-muted-foreground mb-3">{tasks.filter(t => t.status === "Overdue").length} overdue</p>
+          <div className="space-y-2">
+            {tasks.filter(t => t.status === "Overdue").map(t => (
+              <div key={t.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div><div className="font-medium">{t.name}</div>
+                  <div className="text-xs text-muted-foreground">Due {t.dueDate}</div></div>
+                <StatusBadge status="Overdue" tone="danger" />
+              </div>
+            ))}
+            {tasks.filter(t => t.status === "Overdue").length === 0 && <div className="text-xs text-muted-foreground">No overdue tasks.</div>}
+          </div>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <h2 className="font-display text-lg font-semibold mb-1">Incoming Customer Payments</h2>
+          <p className="text-xs text-muted-foreground mb-3">Accounts receivable</p>
+          <div className="space-y-2">
+            {customerInvoices.filter(i => i.status !== "Paid").map(i => (
+              <div key={i.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div className="min-w-0"><div className="truncate font-medium">{findCustomer(i.customerId)?.name}</div>
+                  <div className="text-xs text-muted-foreground">{i.number} • due {i.dueDate}</div></div>
+                <div className="text-right"><div className="font-medium">{fmtTHB(i.total)}</div>
+                  <StatusBadge status={i.status} /></div>
+              </div>
+            ))}
+          </div>
+          <Link to="/invoices" className="text-xs text-primary hover:underline mt-3 inline-block">All invoices →</Link>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <h2 className="font-display text-lg font-semibold mb-1">Pending Purchase Orders</h2>
+          <p className="text-xs text-muted-foreground mb-3">Awaiting supplier action</p>
+          <div className="space-y-2">
+            {purchaseOrders.filter(p => p.status === "Draft" || p.status === "Sent" || p.status === "Confirmed").map(p => (
+              <div key={p.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div><div className="font-medium">{p.number}</div>
+                  <div className="text-xs text-muted-foreground">{findSupplier(p.supplierId)?.name}</div></div>
+                <StatusBadge status={p.status} />
+              </div>
+            ))}
+          </div>
+          <Link to="/purchase-orders" className="text-xs text-primary hover:underline mt-3 inline-block">All POs →</Link>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <h2 className="font-display text-lg font-semibold mb-1">QC Issues</h2>
+          <p className="text-xs text-muted-foreground mb-3">Failed or rework needed</p>
+          <div className="space-y-2">
+            {receivingRecords.filter(r => r.issueFound || r.needRework).map(r => (
+              <div key={r.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div className="min-w-0"><div className="truncate font-medium">{r.qcNote}</div>
+                  <div className="text-xs text-muted-foreground">{r.poId} • {r.receivedDate}</div></div>
+                <StatusBadge status={r.qcStatus} tone="warning" />
+              </div>
+            ))}
+            {receivingRecords.filter(r => r.issueFound || r.needRework).length === 0 && <div className="text-xs text-muted-foreground">No active QC issues.</div>}
+          </div>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <h2 className="font-display text-lg font-semibold mb-1">Change Orders Pending</h2>
+          <p className="text-xs text-muted-foreground mb-3">Awaiting approval</p>
+          <div className="space-y-2">
+            {changeOrders.filter(c => c.approvalStatus === "Pending").map(c => (
+              <div key={c.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div className="min-w-0"><div className="truncate font-medium">{c.number}</div>
+                  <div className="text-xs text-muted-foreground">{c.description}</div></div>
+                <div className="text-right"><div className="font-medium">{fmtTHB(c.costImpact)}</div>
+                  <div className="text-xs text-muted-foreground">+{c.timelineImpactDays}d</div></div>
+              </div>
+            ))}
+            {changeOrders.filter(c => c.approvalStatus === "Pending").length === 0 && <div className="text-xs text-muted-foreground">None pending.</div>}
+          </div>
+          <Link to="/change-orders" className="text-xs text-primary hover:underline mt-3 inline-block">All change orders →</Link>
+        </Card>
+      </div>
+
       <Card className="card-soft p-5 mt-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-display text-lg font-semibold">All Reminders</h2>
@@ -167,3 +266,4 @@ export default function Dashboard() {
     </>
   );
 }
+
