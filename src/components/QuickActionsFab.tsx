@@ -18,15 +18,15 @@ export function QuickActionsFab() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" side="top" className="w-56">
-          <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
+          <DropdownMenuLabel>เมนูลัด</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={go("/customers")}><UserPlus className="w-4 h-4 mr-2" />Add Customer</DropdownMenuItem>
-          <DropdownMenuItem onClick={go("/deals")}><Briefcase className="w-4 h-4 mr-2" />Add Deal</DropdownMenuItem>
-          <DropdownMenuItem onClick={go("/quotations")}><FileText className="w-4 h-4 mr-2" />Add Quotation</DropdownMenuItem>
-          <DropdownMenuItem onClick={go("/jobs")}><Wrench className="w-4 h-4 mr-2" />Add Job</DropdownMenuItem>
-          <DropdownMenuItem onClick={go("/tasks")}><ListTodo className="w-4 h-4 mr-2" />Add Task</DropdownMenuItem>
+          <DropdownMenuItem onClick={go("/customers")}><UserPlus className="w-4 h-4 mr-2" />เพิ่มลูกค้า</DropdownMenuItem>
+          <DropdownMenuItem onClick={go("/deals")}><Briefcase className="w-4 h-4 mr-2" />เพิ่มดีล</DropdownMenuItem>
+          <DropdownMenuItem onClick={go("/quotations")}><FileText className="w-4 h-4 mr-2" />เพิ่มใบเสนอราคา</DropdownMenuItem>
+          <DropdownMenuItem onClick={go("/jobs")}><Wrench className="w-4 h-4 mr-2" />เพิ่มงาน</DropdownMenuItem>
+          <DropdownMenuItem onClick={go("/tasks")}><ListTodo className="w-4 h-4 mr-2" />เพิ่มงานที่ต้องทำ</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={go("/calendar")}><Bell className="w-4 h-4 mr-2" />View Notifications</DropdownMenuItem>
+          <DropdownMenuItem onClick={go("/calendar")}><Bell className="w-4 h-4 mr-2" />ดูการแจ้งเตือน</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
