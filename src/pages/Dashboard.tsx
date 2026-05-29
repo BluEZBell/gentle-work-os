@@ -53,10 +53,10 @@ export default function Dashboard() {
         <Card className="card-soft p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-display text-lg font-semibold">Sales Pipeline Overview</h2>
-              <p className="text-xs text-muted-foreground">{deals.length} deals across {pipelineCols.length} stages</p>
+              <h2 className="font-display text-lg font-semibold">Sales Pipeline Overview (ภาพรวมไปป์ไลน์การขาย)</h2>
+              <p className="text-xs text-muted-foreground">{deals.length} ดีลใน {pipelineCols.length} ขั้น</p>
             </div>
-            <Link to="/deals" className="text-sm text-primary hover:underline">Open pipeline →</Link>
+            <Link to="/deals" className="text-sm text-primary hover:underline">ดูไปป์ไลน์ทั้งหมด →</Link>
           </div>
           <div className="grid grid-cols-3 lg:grid-cols-6 gap-2">
             {pipeline.map(({ col, deals: ds }) => (
