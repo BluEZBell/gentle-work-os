@@ -18,11 +18,11 @@ import {
 import { toast } from "sonner";
 
 const flow = [
-  { icon: Mail, label: "Supplier Email" },
-  { icon: FileSearch, label: "Extract Data" },
-  { icon: ClipboardCheck, label: "Pending Review" },
-  { icon: CheckCircle2, label: "Approved" },
-  { icon: CalendarClock, label: "Calendar Reminder" },
+  { icon: Mail, label: "อีเมลจากซัพพลายเออร์" },
+  { icon: FileSearch, label: "ดึงข้อมูลอัตโนมัติ" },
+  { icon: ClipboardCheck, label: "รอตรวจสอบ" },
+  { icon: CheckCircle2, label: "อนุมัติแล้ว" },
+  { icon: CalendarClock, label: "แจ้งเตือนในปฏิทิน" },
 ];
 
 export default function SupplierBills() {
