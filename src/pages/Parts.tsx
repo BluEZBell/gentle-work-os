@@ -8,7 +8,7 @@ export default function Parts() {
   return (
     <>
       <PageHeader title="Parts" thai="ชิ้นงาน"
-        description="Part master with warranty and calibration cycles." />
+        description="ข้อมูลชิ้นงาน พร้อมรอบการรับประกันและรอบ Calibration" />
       <Card className="card-soft overflow-hidden">
         <Table>
           <TableHeader>
