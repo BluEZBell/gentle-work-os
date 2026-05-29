@@ -170,7 +170,7 @@ export default function Deals() {
                     <TableCell>
                       {d.status === "Won" && (
                         <Button size="sm" variant="outline" onClick={() => onWin(d.id)}>
-                          Create Job <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                          สร้างงาน <ArrowRight className="w-3.5 h-3.5 ml-1" />
                         </Button>
                       )}
                     </TableCell>
