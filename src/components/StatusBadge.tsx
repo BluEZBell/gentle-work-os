@@ -25,6 +25,8 @@ const map: Record<string, Tone> = {
   // Bills / invoices
   "Unpaid": "warning", "Paid": "success", "Overdue": "danger", "Partially Paid": "info",
   "Pending Review": "warning", "Approved": "success", "Rejected ": "danger",
+  "Pending Approval": "warning", "Due Soon": "warning",
+
   // Service
   "Upcoming": "info", "Due": "warning", "Completed": "success", "Missed": "danger",
   // Risk / priority
