@@ -208,19 +208,20 @@ export const reminders: Reminder[] = [
 ];
 
 export interface AuditLog {
-  id: string; user: string; action: string; entity: string; timestamp: string;
+  id: string; user: string; action: string; entity: string; module: string;
+  status: "OK" | "DENIED" | "WARN"; ip: string; timestamp: string;
 }
 
 export const auditLogs: AuditLog[] = [
-  { id: "a1", user: "Khun Somchai", action: "Login", entity: "Session", timestamp: "2026-05-29 09:02" },
-  { id: "a2", user: "Khun Ploy", action: "Create Customer", entity: "BluePeak Electronics", timestamp: "2026-05-28 14:55" },
-  { id: "a3", user: "Khun Ploy", action: "Edit Quotation", entity: "QT-2026-0051", timestamp: "2026-05-28 15:21" },
-  { id: "a4", user: "Khun Somchai", action: "Change Deal Status", entity: "Deal d1 → Won", timestamp: "2026-05-27 10:10" },
-  { id: "a5", user: "Khun Ploy", action: "Create Job", entity: "JOB-2026-018", timestamp: "2026-05-27 10:12" },
-  { id: "a6", user: "Khun Somchai", action: "Approve Supplier Bill", entity: "INV-TH-9921", timestamp: "2026-05-26 16:40" },
-  { id: "a7", user: "Khun Aim", action: "Export Attempt", entity: "Customers CSV — DENIED", timestamp: "2026-05-25 11:02" },
-  { id: "a8", user: "Khun Somchai", action: "Download Attachment", entity: "QT-2026-0042.pdf", timestamp: "2026-05-25 09:15" },
-  { id: "a9", user: "Khun Somchai", action: "Change Settings", entity: "AI Automation Rules", timestamp: "2026-05-24 17:35" },
+  { id: "a1", user: "Khun Somchai", action: "Login", entity: "Session", module: "Auth", status: "OK", ip: "10.0.1.21", timestamp: "2026-05-29 09:02" },
+  { id: "a2", user: "Khun Ploy", action: "Create Customer", entity: "BluePeak Electronics", module: "Customers", status: "OK", ip: "10.0.1.32", timestamp: "2026-05-28 14:55" },
+  { id: "a3", user: "Khun Ploy", action: "Edit Quotation", entity: "QT-2026-0051", module: "Quotations", status: "OK", ip: "10.0.1.32", timestamp: "2026-05-28 15:21" },
+  { id: "a4", user: "Khun Somchai", action: "Change Deal Status", entity: "Deal d1 → Won", module: "Deals", status: "OK", ip: "10.0.1.21", timestamp: "2026-05-27 10:10" },
+  { id: "a5", user: "Khun Ploy", action: "Create Job", entity: "JOB-2026-018", module: "Jobs", status: "OK", ip: "10.0.1.32", timestamp: "2026-05-27 10:12" },
+  { id: "a6", user: "Khun Somchai", action: "Approve Supplier Bill", entity: "INV-TH-9921", module: "Supplier Bills", status: "OK", ip: "10.0.1.21", timestamp: "2026-05-26 16:40" },
+  { id: "a7", user: "Khun Aim", action: "Export Attempt", entity: "Customers CSV", module: "Customers", status: "DENIED", ip: "10.0.1.44", timestamp: "2026-05-25 11:02" },
+  { id: "a8", user: "Khun Somchai", action: "Download Attachment", entity: "QT-2026-0042.pdf", module: "Quotations", status: "OK", ip: "10.0.1.21", timestamp: "2026-05-25 09:15" },
+  { id: "a9", user: "Khun Somchai", action: "Change Settings", entity: "AI Automation Rules", module: "Settings", status: "OK", ip: "10.0.1.21", timestamp: "2026-05-24 17:35" },
 ];
 
 // Helpers
