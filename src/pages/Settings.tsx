@@ -64,7 +64,7 @@ export default function Settings() {
         <Card className="card-soft p-5">
           <div className="flex items-center gap-2 mb-3">
             <Building2 className="w-4 h-4 text-primary" />
-            <h3 className="font-semibold">Company Profile</h3>
+            <h3 className="font-semibold">ข้อมูลบริษัท (Company Profile)</h3>
           </div>
           <div className="space-y-3">
             <div className="space-y-1.5"><Label>Company Name</Label><Input defaultValue="Private MTO Co., Ltd." /></div>
