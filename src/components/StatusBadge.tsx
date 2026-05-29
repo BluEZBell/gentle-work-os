@@ -31,7 +31,7 @@ const map: Record<string, Tone> = {
   "Low": "success", "Medium": "warning", "High": "danger", "Urgent": "danger",
   // PO / QC / tasks
   "Confirmed": "info", "Partially Received": "warning", "Received": "success", "Cancelled": "muted",
-  "Passed": "success", "Failed": "danger", "Need Rework": "warning",
+  "Passed": "success", "Need Rework": "warning",
   "Open": "info", "Done": "success",
 };
 
