@@ -148,7 +148,7 @@ export function CustomerDetail() {
         <div className="lg:col-span-2 space-y-4">
           <Card className="card-soft p-5">
             <h3 className="font-semibold mb-3">Contacts ({cContacts.length})</h3>
-            {cContacts.length === 0 ? <EmptyState title="No contacts" /> :
+            {cContacts.length === 0 ? <EmptyState title="ยังไม่มีผู้ติดต่อ" /> :
             <div className="space-y-2">
               {cContacts.map((ct) => (
                 <div key={ct.id} className="flex justify-between border-b last:border-0 py-2 text-sm">
