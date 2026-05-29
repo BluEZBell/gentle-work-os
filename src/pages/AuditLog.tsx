@@ -22,17 +22,17 @@ export default function AuditLogPage() {
   return (
     <>
       <PageHeader title="Audit Log" thai="บันทึกการใช้งาน"
-        description="Every meaningful action is recorded for security review."
+        description="ตรวจสอบประวัติการใช้งาน การแก้ไขข้อมูล และการเปลี่ยนสถานะสำคัญ"
       />
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search audit log…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาบันทึกการใช้งาน…" className="pl-9" />
         </div>
         <Select value={mod} onValueChange={setMod}>
           <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All modules</SelectItem>
+            <SelectItem value="all">ทุกโมดูล</SelectItem>
             {modules.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
           </SelectContent>
         </Select>
