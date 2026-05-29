@@ -2,37 +2,56 @@ import { useState } from "react";
 import { PageHeader } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Link, useParams } from "react-router-dom";
 import {
   customers, contacts, deals, quotations, jobs, serviceRecords,
   findCustomer, fmtTHB,
 } from "@/lib/mockData";
-import { Lock, Search, Plus, ArrowLeft, Mail, Phone, MapPin } from "lucide-react";
+import { useTick } from "@/lib/store";
+import { Lock, Search, ArrowLeft, Mail, Phone, MapPin } from "lucide-react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NewCustomerDialog } from "@/components/dialogs/NewCustomerDialog";
+import { EmptyState } from "@/components/EmptyState";
 
 export default function Customers() {
+  useTick();
   const [q, setQ] = useState("");
-  const filtered = customers.filter((c) =>
-    c.name.toLowerCase().includes(q.toLowerCase()) ||
-    c.contactPerson.toLowerCase().includes(q.toLowerCase())
-  );
+  const [type, setType] = useState<string>("all");
+  const filtered = customers.filter((c) => {
+    const matches = c.name.toLowerCase().includes(q.toLowerCase()) ||
+      c.contactPerson.toLowerCase().includes(q.toLowerCase());
+    const tOk = type === "all" || c.type === type;
+    return matches && tOk;
+  });
   return (
     <>
       <PageHeader title="Customers" thai="ลูกค้า"
         description="Your CRM. Confidential customers are flagged and protected."
-        actions={<Button><Plus className="w-4 h-4 mr-1" /> Add customer</Button>}
+        actions={<NewCustomerDialog />}
       />
-      <Card className="card-soft p-4 mb-4">
-        <div className="relative max-w-md">
+      <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
+        <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search customers…" className="pl-9" />
         </div>
+        <Select value={type} onValueChange={setType}>
+          <SelectTrigger className="w-44"><SelectValue placeholder="Type" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All types</SelectItem>
+            <SelectItem value="New">New</SelectItem>
+            <SelectItem value="Existing">Existing</SelectItem>
+            <SelectItem value="Corporate">Corporate</SelectItem>
+          </SelectContent>
+        </Select>
       </Card>
       <Card className="card-soft overflow-hidden">
+        {filtered.length === 0 ? (
+          <EmptyState title="No customers match" hint="Try changing the search or filter." />
+        ) : (
         <Table>
           <TableHeader>
             <TableRow>
@@ -69,12 +88,14 @@ export default function Customers() {
             })}
           </TableBody>
         </Table>
+        )}
       </Card>
     </>
   );
 }
 
 export function CustomerDetail() {
+  useTick();
   const { id } = useParams();
   const c = findCustomer(id!);
   if (!c) return <div>Customer not found. <Link to="/customers" className="text-primary">Back</Link></div>;
@@ -112,6 +133,7 @@ export function CustomerDetail() {
         <div className="lg:col-span-2 space-y-4">
           <Card className="card-soft p-5">
             <h3 className="font-semibold mb-3">Contacts ({cContacts.length})</h3>
+            {cContacts.length === 0 ? <EmptyState title="No contacts" /> :
             <div className="space-y-2">
               {cContacts.map((ct) => (
                 <div key={ct.id} className="flex justify-between border-b last:border-0 py-2 text-sm">
@@ -125,11 +147,12 @@ export function CustomerDetail() {
                   </div>
                 </div>
               ))}
-            </div>
+            </div>}
           </Card>
 
           <Card className="card-soft p-5">
             <h3 className="font-semibold mb-3">Deals ({cDeals.length})</h3>
+            {cDeals.length === 0 ? <EmptyState title="No deals yet" /> :
             <div className="space-y-2">
               {cDeals.map((d) => (
                 <div key={d.id} className="flex justify-between border-b last:border-0 py-2 text-sm">
@@ -140,13 +163,13 @@ export function CustomerDetail() {
                   </div>
                 </div>
               ))}
-            </div>
+            </div>}
           </Card>
 
           <div className="grid md:grid-cols-2 gap-4">
             <Card className="card-soft p-5">
               <h3 className="font-semibold mb-3">Quotations ({cQuots.length})</h3>
-              {cQuots.map((q) => (
+              {cQuots.length === 0 ? <div className="text-xs text-muted-foreground">None</div> : cQuots.map((q) => (
                 <div key={q.id} className="flex justify-between py-1.5 text-sm border-b last:border-0">
                   <span>{q.number}</span>
                   <StatusBadge status={q.status} />
@@ -155,7 +178,7 @@ export function CustomerDetail() {
             </Card>
             <Card className="card-soft p-5">
               <h3 className="font-semibold mb-3">Jobs ({cJobs.length})</h3>
-              {cJobs.map((j) => (
+              {cJobs.length === 0 ? <div className="text-xs text-muted-foreground">None</div> : cJobs.map((j) => (
                 <div key={j.id} className="flex justify-between py-1.5 text-sm border-b last:border-0">
                   <span>{j.number}</span>
                   <StatusBadge status={j.status} />

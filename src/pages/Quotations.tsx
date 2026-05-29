@@ -5,10 +5,12 @@ import { StatusBadge } from "@/components/StatusBadge";
 import {
   quotations, findCustomer, fmtTHB, quotationTotal, quotationCost, quotationProfit,
 } from "@/lib/mockData";
+import { useTick } from "@/lib/store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ExternalLink, FileText, Paperclip, Plus } from "lucide-react";
 
 export default function Quotations() {
+  useTick();
   return (
     <>
       <PageHeader title="Quotations" thai="ใบเสนอราคา"
