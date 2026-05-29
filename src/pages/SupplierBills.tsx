@@ -44,14 +44,14 @@ export default function SupplierBills() {
   return (
     <>
       <PageHeader title="Supplier Bills" thai="บิลซัพพลายเออร์"
-        description="Accounts payable with payment reminders and human-in-the-loop review."
+        description="ติดตามบิลจากซัพพลายเออร์ วันที่ครบกำหนด และสถานะการชำระเงิน"
       />
 
       <Alert className="mb-4 border-warning/40 bg-warning-soft">
         <AlertTriangle className="h-4 w-4 text-warning-foreground" />
-        <AlertTitle className="text-warning-foreground">AI-extracted bills require human review before approval.</AlertTitle>
+        <AlertTitle className="text-warning-foreground">บิลที่ AI ดึงข้อมูลมา ต้องให้คนตรวจสอบก่อนอนุมัติทุกครั้ง</AlertTitle>
         <AlertDescription className="text-warning-foreground/80">
-          Financial records are never auto-approved. An Owner must review the extracted data.
+          ระบบจะไม่อนุมัติเอกสารการเงินอัตโนมัติ เจ้าของกิจการต้องตรวจสอบข้อมูลที่ดึงมาก่อนทุกครั้ง
         </AlertDescription>
       </Alert>
 
