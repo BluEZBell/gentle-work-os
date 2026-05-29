@@ -28,7 +28,7 @@ export default function PurchaseOrders() {
   return (
     <>
       <PageHeader title="Purchase Orders" thai="ใบสั่งซื้อ"
-        description="POs to suppliers — issued from jobs, tracked through receiving."
+        description="จัดการใบสั่งซื้อถึงซัพพลายเออร์ ตั้งแต่ออกใบสั่ง จนถึงรับของและตรวจคุณภาพ"
       />
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
