@@ -185,16 +185,16 @@ export default function Deals() {
       <AlertDialog open={!!lostFor} onOpenChange={(o) => !o && setLostFor(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Mark deal as Lost?</AlertDialogTitle>
-            <AlertDialogDescription>Please record the reason — it helps your win/loss reports.</AlertDialogDescription>
+            <AlertDialogTitle>ทำเครื่องหมายว่าเสียดีลใช่ไหม?</AlertDialogTitle>
+            <AlertDialogDescription>กรุณาบันทึกเหตุผล เพื่อใช้วิเคราะห์ในรายงาน Win/Loss</AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-1.5">
-            <Label>Reason lost</Label>
-            <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="Price, timing, lost to competitor…" />
+            <Label>เหตุผลที่เสียดีล</Label>
+            <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="เช่น ราคาสูงไป จังหวะไม่ลงตัว เสียให้คู่แข่ง…" />
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmLost}>Confirm Lost</AlertDialogAction>
+            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLost}>ยืนยันว่าเสียดีล</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
