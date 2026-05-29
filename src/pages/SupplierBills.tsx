@@ -107,11 +107,11 @@ export default function SupplierBills() {
                 <TableCell className="font-medium">{b.number}</TableCell>
                 <TableCell>
                   <div className="text-sm">{findSupplier(b.supplierId)?.name}</div>
-                  <div className="text-xs text-muted-foreground">from {b.emailSource}</div>
+                  <div className="text-xs text-muted-foreground">จาก {b.emailSource}</div>
                 </TableCell>
                 <TableCell className="text-sm">
                   <div>{b.billDate}</div>
-                  <div className="text-xs text-muted-foreground">due {b.dueDate}</div>
+                  <div className="text-xs text-muted-foreground">ครบกำหนด {b.dueDate}</div>
                 </TableCell>
                 <TableCell className="text-right">{fmtTHB(b.amount)}</TableCell>
                 <TableCell className="text-right text-muted-foreground">{fmtTHB(b.vat)}</TableCell>
