@@ -32,7 +32,7 @@ export default function Dashboard() {
     <>
       <PageHeader
         title="Dashboard" thai="แดชบอร์ด"
-        description="A calm overview of your business — sales, jobs, payments, and after-sales reminders."
+        description="ภาพรวมธุรกิจของคุณ ทั้งงานขาย งานที่กำลังดำเนินการ การชำระเงิน และการแจ้งเตือนหลังการขาย"
       />
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
