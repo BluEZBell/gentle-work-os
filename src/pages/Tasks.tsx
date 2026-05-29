@@ -137,7 +137,7 @@ export default function Tasks() {
         </Select>
       </Card>
 
-      {list.length === 0 ? <Card className="card-soft"><EmptyState icon={ListTodo} title="No tasks" /></Card> :
+      {list.length === 0 ? <Card className="card-soft"><EmptyState icon={ListTodo} title="ยังไม่มีงาน" /></Card> :
       <div className="grid gap-2">
         {list.map((t) => (
           <Card key={t.id} className="card-soft p-4 flex flex-wrap items-center gap-3">
