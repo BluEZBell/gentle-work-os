@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { roleBadge } from "@/lib/auth";
+import { roleBadge, useAuth } from "@/lib/auth";
 import { users as userList } from "@/lib/mockData";
-import { ShieldCheck, Building2, Lock, Download, Brain, ShieldAlert } from "lucide-react";
+import { audit } from "@/lib/store";
+import { toast } from "sonner";
+import { ShieldCheck, Building2, Lock, Download, Brain, ShieldAlert, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const security = [
@@ -34,11 +36,29 @@ const rolePerms = [
 ];
 
 export default function Settings() {
+  const { user, can } = useAuth();
+  const tryExport = () => {
+    if (!can("export")) {
+      audit(user?.name ?? "Demo", "Export Attempt", "Customers CSV", "Settings", "DENIED");
+      toast.error("Export restricted to Owner role");
+      return;
+    }
+    audit(user?.name ?? "Demo", "Export Data", "Customers CSV", "Settings");
+    toast.success("Export queued (demo)");
+  };
   return (
     <>
       <PageHeader title="Settings" thai="ตั้งค่า"
         description="Company, security, backup, and AI automation policies for your Business OS."
       />
+
+      <Alert className="mb-4 border-info/40 bg-info-soft">
+        <Info className="h-4 w-4 text-info" />
+        <AlertTitle className="text-info">Demo Mode</AlertTitle>
+        <AlertDescription className="text-info/90">
+          This is a private demo using mock data only. No real customer, financial, calendar, or email systems are connected.
+        </AlertDescription>
+      </Alert>
 
       <div className="grid lg:grid-cols-2 gap-4">
         <Card className="card-soft p-5">
@@ -101,8 +121,9 @@ export default function Settings() {
             <div className="flex justify-between"><span>Last backup</span><StatusBadge status="2026-05-29 03:00" tone="success" /></div>
             <div className="flex justify-between"><span>Backup encryption</span><StatusBadge status="AES-256" tone="success" /></div>
             <div className="flex justify-between"><span>Data export</span><StatusBadge status="Owner only" tone="warning" /></div>
-            <Button variant="outline" className="w-full mt-2">Request export (Owner)</Button>
-          </div>
+            <Button variant="outline" className="w-full mt-2" onClick={tryExport}>
+              {can("export") ? "Request export (Owner)" : "Export blocked — Owner only"}
+            </Button>
         </Card>
 
         <Card className="card-soft p-5 lg:col-span-2">
