@@ -167,7 +167,7 @@ export function CustomerDetail() {
 
           <Card className="card-soft p-5">
             <h3 className="font-semibold mb-3">Deals ({cDeals.length})</h3>
-            {cDeals.length === 0 ? <EmptyState title="No deals yet" /> :
+            {cDeals.length === 0 ? <EmptyState title="ยังไม่มีดีล" /> :
             <div className="space-y-2">
               {cDeals.map((d) => (
                 <div key={d.id} className="flex justify-between border-b last:border-0 py-2 text-sm">
