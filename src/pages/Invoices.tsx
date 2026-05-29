@@ -97,7 +97,7 @@ export default function Invoices() {
             ))}
           </TableBody>
         </Table>
-        {list.length === 0 && <div className="p-8 text-center text-sm text-muted-foreground flex items-center justify-center gap-2"><Receipt className="w-4 h-4" /> No invoices</div>}
+        {list.length === 0 && <div className="p-8 text-center text-sm text-muted-foreground flex items-center justify-center gap-2"><Receipt className="w-4 h-4" /> ยังไม่มีใบแจ้งหนี้</div>}
       </Card>
     </>
   );
