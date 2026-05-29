@@ -49,14 +49,14 @@ export default function Settings() {
   return (
     <>
       <PageHeader title="Settings" thai="ตั้งค่า"
-        description="Company, security, backup, and AI automation policies for your Business OS."
+        description="ตั้งค่าข้อมูลบริษัท ผู้ใช้งาน สิทธิ์การเข้าถึง และกฎการทำงานของระบบ"
       />
 
       <Alert className="mb-4 border-info/40 bg-info-soft">
         <Info className="h-4 w-4 text-info" />
-        <AlertTitle className="text-info">Demo Mode</AlertTitle>
+        <AlertTitle className="text-info">โหมดเดโม</AlertTitle>
         <AlertDescription className="text-info/90">
-          This is a private demo using mock data only. No real customer, financial, calendar, or email systems are connected.
+          นี่เป็นเดโมส่วนตัวที่ใช้ข้อมูลตัวอย่างเท่านั้น ยังไม่ได้เชื่อมต่อกับระบบลูกค้า การเงิน ปฏิทิน หรืออีเมลจริง
         </AlertDescription>
       </Alert>
 
