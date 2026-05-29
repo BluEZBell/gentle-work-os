@@ -16,16 +16,21 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NewCustomerDialog } from "@/components/dialogs/NewCustomerDialog";
 import { EmptyState } from "@/components/EmptyState";
+import { ActivityLog } from "@/components/ActivityLog";
+import { customerLeadSource, LEAD_SOURCES, customerInvoices } from "@/lib/mockBusiness";
 
 export default function Customers() {
   useTick();
+  useTick();
   const [q, setQ] = useState("");
   const [type, setType] = useState<string>("all");
+  const [lead, setLead] = useState<string>("all");
   const filtered = customers.filter((c) => {
     const matches = c.name.toLowerCase().includes(q.toLowerCase()) ||
       c.contactPerson.toLowerCase().includes(q.toLowerCase());
     const tOk = type === "all" || c.type === type;
-    return matches && tOk;
+    const lOk = lead === "all" || customerLeadSource[c.id] === lead;
+    return matches && tOk && lOk;
   });
   return (
     <>
@@ -47,6 +52,13 @@ export default function Customers() {
             <SelectItem value="Corporate">Corporate</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={lead} onValueChange={setLead}>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Lead source" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All lead sources</SelectItem>
+            {LEAD_SOURCES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </Card>
       <Card className="card-soft overflow-hidden">
         {filtered.length === 0 ? (
@@ -58,7 +70,7 @@ export default function Customers() {
               <TableHead>Customer</TableHead>
               <TableHead>Contact</TableHead>
               <TableHead>Type</TableHead>
-              <TableHead>Source</TableHead>
+              <TableHead>Lead Source</TableHead>
               <TableHead>Updated</TableHead>
               <TableHead className="text-right">Deals</TableHead>
             </TableRow>
@@ -80,7 +92,7 @@ export default function Customers() {
                     <div className="text-xs text-muted-foreground">{c.email}</div>
                   </TableCell>
                   <TableCell><StatusBadge status={c.type} tone={c.type === "Corporate" ? "primary" : c.type === "Existing" ? "info" : "muted"} /></TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{c.source}</TableCell>
+                  <TableCell className="text-sm"><StatusBadge status={customerLeadSource[c.id] ?? "Other"} tone="info" /></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{c.updatedAt}</TableCell>
                   <TableCell className="text-right font-medium">{dealCount}</TableCell>
                 </TableRow>

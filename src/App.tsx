@@ -20,6 +20,10 @@ import Service from "@/pages/Service";
 import Reports from "@/pages/Reports";
 import Settings from "@/pages/Settings";
 import AuditLogPage from "@/pages/AuditLog";
+import PurchaseOrders from "@/pages/PurchaseOrders";
+import Invoices from "@/pages/Invoices";
+import ChangeOrders from "@/pages/ChangeOrders";
+import Tasks from "@/pages/Tasks";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +48,10 @@ const App = () => (
               <Route path="/parts" element={<Parts />} />
               <Route path="/suppliers" element={<Suppliers />} />
               <Route path="/supplier-bills" element={<SupplierBills />} />
+              <Route path="/purchase-orders" element={<PurchaseOrders />} />
+              <Route path="/invoices" element={<Invoices />} />
+              <Route path="/change-orders" element={<ChangeOrders />} />
+              <Route path="/tasks" element={<Tasks />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/service" element={<Service />} />
               <Route path="/reports" element={<Reports />} />
