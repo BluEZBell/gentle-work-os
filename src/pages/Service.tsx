@@ -3,11 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import { serviceRecords, findCustomer, fmtTHB } from "@/lib/mockData";
+import { useTick } from "@/lib/store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sparkles, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Service() {
+  useTick();
   return (
     <>
       <PageHeader title="Service" thai="บริการหลังขาย"

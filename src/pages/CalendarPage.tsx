@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { reminders } from "@/lib/mockData";
+import { useTick } from "@/lib/store";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Bell, CalendarClock } from "lucide-react";
 
@@ -13,6 +14,7 @@ const windows = [
 const timings = ["60d", "30d", "14d", "7d", "1d", "Due", "Overdue"];
 
 export default function CalendarPage() {
+  useTick();
   return (
     <>
       <PageHeader title="Calendar" thai="ปฏิทิน"

@@ -10,6 +10,7 @@ import {
   dashboardStats, deals, dealStatusThai, reminders, fmtTHB, findCustomer,
   supplierBills, findSupplier, serviceRecords, auditLogs, jobs,
 } from "@/lib/mockData";
+import { useTick } from "@/lib/store";
 import { Link } from "react-router-dom";
 
 const pipelineCols: Array<keyof typeof dealStatusThai> = [
@@ -17,6 +18,7 @@ const pipelineCols: Array<keyof typeof dealStatusThai> = [
 ];
 
 export default function Dashboard() {
+  useTick();
   const s = dashboardStats();
   const pipeline = pipelineCols.map((col) => ({
     col, deals: deals.filter((d) => d.status === col),
