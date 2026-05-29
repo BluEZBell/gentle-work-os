@@ -33,12 +33,12 @@ export default function Quotations() {
                     <StatusBadge status={q.status} />
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    {findCustomer(q.customerId)?.name} • {q.date} → valid until {q.validUntil}
+                    {findCustomer(q.customerId)?.name} • {q.date} → ใช้ได้ถึง {q.validUntil}
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="font-display text-xl font-semibold">{fmtTHB(total)}</div>
-                  <div className="text-xs text-success font-medium">+{fmtTHB(profit)} profit ({margin}%)</div>
+                  <div className="text-xs text-success font-medium">+{fmtTHB(profit)} กำไร ({margin}%)</div>
                 </div>
               </div>
               <Table>
