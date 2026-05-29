@@ -13,7 +13,7 @@ export default function Service() {
   return (
     <>
       <PageHeader title="Service" thai="บริการหลังขาย"
-        description="Warranty & calibration reminders. First year free; renewal price = 20% of original job value."
+        description="จัดการงานบริการหลังการขาย การรับประกัน และรอบ Calibration (ปีแรกฟรี ค่าต่ออายุ 20% ของมูลค่างาน)"
       />
       <Card className="card-soft overflow-hidden">
         <Table>
