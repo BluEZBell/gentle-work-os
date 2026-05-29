@@ -88,7 +88,7 @@ export default function Dashboard() {
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-success">{fmtTHB(profit)}</div>
-                    <div className="text-xs text-muted-foreground">{margin}% margin</div>
+                    <div className="text-xs text-muted-foreground">มาร์จิ้น {margin}%</div>
                   </div>
                 </div>
               );
