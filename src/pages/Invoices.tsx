@@ -44,12 +44,12 @@ export default function Invoices() {
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search invoices…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาใบแจ้งหนี้…" className="pl-9" />
         </div>
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">ทั้งหมด</SelectItem>
             {INVOICE_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
