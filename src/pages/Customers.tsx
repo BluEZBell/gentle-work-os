@@ -44,21 +44,21 @@ export default function Customers() {
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search customers…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาลูกค้า…" className="pl-9" />
         </div>
         <Select value={type} onValueChange={setType}>
-          <SelectTrigger className="w-44"><SelectValue placeholder="Type" /></SelectTrigger>
+          <SelectTrigger className="w-44"><SelectValue placeholder="ประเภท" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All types</SelectItem>
+            <SelectItem value="all">ทุกประเภท</SelectItem>
             <SelectItem value="New">New</SelectItem>
             <SelectItem value="Existing">Existing</SelectItem>
             <SelectItem value="Corporate">Corporate</SelectItem>
           </SelectContent>
         </Select>
         <Select value={lead} onValueChange={setLead}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="Lead source" /></SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="ที่มา" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All lead sources</SelectItem>
+            <SelectItem value="all">ทุกที่มาของลูกค้า</SelectItem>
             {LEAD_SOURCES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
