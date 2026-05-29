@@ -75,7 +75,7 @@ export default function Jobs() {
                         const sv = createServiceFromJob(j.id, user?.name ?? "Demo");
                         if (sv) toast.success("Service / Calibration reminder created");
                       }}>
-                      <Headphones className="w-3.5 h-3.5 mr-1" /> Create Service Reminder
+                      <Headphones className="w-3.5 h-3.5 mr-1" /> สร้างแจ้งเตือนบริการ
                     </Button>
                   )}
                 </div>
