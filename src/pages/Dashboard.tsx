@@ -10,8 +10,12 @@ import {
   dashboardStats, deals, dealStatusThai, reminders, fmtTHB, findCustomer,
   supplierBills, findSupplier, serviceRecords, auditLogs, jobs,
 } from "@/lib/mockData";
+import {
+  tasks, customerInvoices, purchaseOrders, changeOrders, receivingRecords,
+} from "@/lib/mockBusiness";
 import { useTick } from "@/lib/store";
 import { Link } from "react-router-dom";
+
 
 const pipelineCols: Array<keyof typeof dealStatusThai> = [
   "New Lead", "Contacted", "Need Quotation", "Quotation Sent", "Negotiation", "Won",
