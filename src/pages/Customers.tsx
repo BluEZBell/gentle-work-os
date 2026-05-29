@@ -192,8 +192,8 @@ export function CustomerDetail() {
               ))}
             </Card>
             <Card className="card-soft p-5">
-              <h3 className="font-semibold mb-3">Jobs ({cJobs.length})</h3>
-              {cJobs.length === 0 ? <div className="text-xs text-muted-foreground">None</div> : cJobs.map((j) => (
+              <h3 className="font-semibold mb-3">งาน ({cJobs.length})</h3>
+              {cJobs.length === 0 ? <div className="text-xs text-muted-foreground">ไม่มี</div> : cJobs.map((j) => (
                 <div key={j.id} className="flex justify-between py-1.5 text-sm border-b last:border-0">
                   <span>{j.number}</span>
                   <StatusBadge status={j.status} />
