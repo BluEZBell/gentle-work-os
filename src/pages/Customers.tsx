@@ -113,7 +113,7 @@ export function CustomerDetail() {
   useTick();
   const { id } = useParams();
   const c = findCustomer(id!);
-  if (!c) return <div>Customer not found. <Link to="/customers" className="text-primary">Back</Link></div>;
+  if (!c) return <div>ไม่พบข้อมูลลูกค้า <Link to="/customers" className="text-primary">กลับ</Link></div>;
 
   const cContacts = contacts.filter((x) => x.customerId === c.id);
   const cDeals = deals.filter((d) => d.customerId === c.id);
