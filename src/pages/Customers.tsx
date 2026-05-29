@@ -21,13 +21,16 @@ import { customerLeadSource, LEAD_SOURCES, customerInvoices } from "@/lib/mockBu
 
 export default function Customers() {
   useTick();
+  useTick();
   const [q, setQ] = useState("");
   const [type, setType] = useState<string>("all");
+  const [lead, setLead] = useState<string>("all");
   const filtered = customers.filter((c) => {
     const matches = c.name.toLowerCase().includes(q.toLowerCase()) ||
       c.contactPerson.toLowerCase().includes(q.toLowerCase());
     const tOk = type === "all" || c.type === type;
-    return matches && tOk;
+    const lOk = lead === "all" || customerLeadSource[c.id] === lead;
+    return matches && tOk && lOk;
   });
   return (
     <>
