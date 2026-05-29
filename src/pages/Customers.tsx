@@ -17,7 +17,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { NewCustomerDialog } from "@/components/dialogs/NewCustomerDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { ActivityLog } from "@/components/ActivityLog";
+import { Attachments } from "@/components/Attachments";
+import { Timeline, type TimelineEvent } from "@/components/Timeline";
 import { customerLeadSource, LEAD_SOURCES, customerInvoices } from "@/lib/mockBusiness";
+
 
 export default function Customers() {
   useTick();
