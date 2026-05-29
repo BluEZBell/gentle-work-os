@@ -14,8 +14,8 @@ export default function Quotations() {
   return (
     <>
       <PageHeader title="Quotations" thai="ใบเสนอราคา"
-        description="Estimated profit auto-calculated. Mock FlowAccount document link only — no real API."
-        actions={<Button><Plus className="w-4 h-4 mr-1" /> New quotation</Button>}
+        description="สร้างและติดตามใบเสนอราคา พร้อมดูต้นทุน กำไร และสถานะการอนุมัติ"
+        actions={<Button><Plus className="w-4 h-4 mr-1" /> สร้างใบเสนอราคา</Button>}
       />
       <div className="space-y-4">
         {quotations.map((q) => {
