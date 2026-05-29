@@ -22,17 +22,17 @@ export default function Suppliers() {
   return (
     <>
       <PageHeader title="Suppliers" thai="ซัพพลายเออร์"
-        description="Bank information is masked by default. Confidential suppliers are flagged."
+        description="จัดการข้อมูลซัพพลายเออร์ เงื่อนไขการชำระเงิน และงานที่เกี่ยวข้อง"
         actions={<NewSupplierDialog />}
       />
       <Card className="card-soft p-4 mb-4">
         <div className="relative max-w-md">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search suppliers…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาซัพพลายเออร์…" className="pl-9" />
         </div>
       </Card>
       <Card className="card-soft overflow-hidden">
-        {filtered.length === 0 ? <EmptyState title="No suppliers" /> :
+        {filtered.length === 0 ? <EmptyState title="ยังไม่มีซัพพลายเออร์" /> :
         <Table>
           <TableHeader>
             <TableRow>
