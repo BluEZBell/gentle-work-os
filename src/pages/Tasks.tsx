@@ -115,8 +115,8 @@ export default function Tasks() {
                   <Input value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} /></div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                <Button onClick={submit}>Save</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>ยกเลิก</Button>
+                <Button onClick={submit}>บันทึก</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
