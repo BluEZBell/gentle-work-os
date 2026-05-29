@@ -55,16 +55,16 @@ export default function Tasks() {
   return (
     <>
       <PageHeader title="Tasks" thai="งานที่ต้องทำ"
-        description="Personal and team to-dos linked to customers, deals, and jobs."
+        description="จัดการงานที่ต้องทำ ติดตามกำหนดเวลา และดูงานที่ค้างอยู่"
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button disabled={!can("edit")}><Plus className="w-4 h-4 mr-1" /> New task</Button>
+              <Button disabled={!can("edit")}><Plus className="w-4 h-4 mr-1" /> เพิ่มงาน</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>New task</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>เพิ่มงานใหม่</DialogTitle></DialogHeader>
               <div className="grid gap-3">
-                <div className="grid gap-1.5"><Label>Task name *</Label>
+                <div className="grid gap-1.5"><Label>ชื่องาน *</Label>
                   <Input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="grid gap-1.5"><Label>Due date</Label>
