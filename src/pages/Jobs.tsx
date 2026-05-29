@@ -84,28 +84,28 @@ export default function Jobs() {
               <div className="grid md:grid-cols-3 gap-3">
                 <Card className="p-4 bg-success-soft border-success/20">
                   <div className="flex items-center gap-2 text-xs text-success font-medium">
-                    <TrendingUp className="w-4 h-4" /> GROSS PROFIT
+                    <TrendingUp className="w-4 h-4" /> กำไรขั้นต้น
                   </div>
                   <div className="font-display text-2xl font-semibold mt-1">{fmtTHB(profit)}</div>
                   <div className="text-xs text-muted-foreground">
-                    {fmtTHB(j.sellPrice)} sell − {fmtTHB(j.actualCost)} cost • {margin}% margin
+                    ขาย {fmtTHB(j.sellPrice)} − ต้นทุน {fmtTHB(j.actualCost)} • มาร์จิ้น {margin}%
                   </div>
                 </Card>
 
                 <Card className="p-4 bg-secondary/60">
                   <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                    <CalendarDays className="w-4 h-4" /> TIMELINE
+                    <CalendarDays className="w-4 h-4" /> ไทม์ไลน์
                   </div>
                   <div className="mt-2 space-y-1 text-sm">
-                    <div className="flex justify-between"><span>Start</span><span>{j.startDate}</span></div>
-                    <div className="flex justify-between"><span>Due</span><span>{j.dueDate}</span></div>
-                    {j.deliveryDate && <div className="flex justify-between text-success"><span>Delivered</span><span>{j.deliveryDate}</span></div>}
+                    <div className="flex justify-between"><span>เริ่ม</span><span>{j.startDate}</span></div>
+                    <div className="flex justify-between"><span>ครบกำหนด</span><span>{j.dueDate}</span></div>
+                    {j.deliveryDate && <div className="flex justify-between text-success"><span>ส่งมอบแล้ว</span><span>{j.deliveryDate}</span></div>}
                   </div>
                 </Card>
 
                 <Card className="p-4 bg-secondary/60">
                   <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                    <Truck className="w-4 h-4" /> SUPPLIER
+                    <Truck className="w-4 h-4" /> ซัพพลายเออร์
                   </div>
                   <div className="mt-2 text-sm font-medium">{findSupplier(j.supplierId)?.name}</div>
                   <div className="text-xs text-muted-foreground">{findSupplier(j.supplierId)?.contactPerson}</div>
