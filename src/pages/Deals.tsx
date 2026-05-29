@@ -64,18 +64,18 @@ export default function Deals() {
   return (
     <>
       <PageHeader title="Deals" thai="โอกาสการขาย"
-        description="Your sales pipeline. When a deal is Won, create a job in one click."
+        description="ติดตามโอกาสการขายตั้งแต่เริ่มติดต่อ ส่งใบเสนอราคา จนถึงปิดงาน"
         actions={<NewDealDialog />}
       />
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search deals…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาดีล…" className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="all">ทุกสถานะ</SelectItem>
             {cols.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
