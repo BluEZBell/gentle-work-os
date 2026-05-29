@@ -74,8 +74,8 @@ export default function Dashboard() {
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-1">Profit Snapshot</h2>
-          <p className="text-xs text-muted-foreground mb-4">Active & completed jobs</p>
+          <h2 className="font-display text-lg font-semibold mb-1">Profit Snapshot (สรุปกำไร)</h2>
+          <p className="text-xs text-muted-foreground mb-4">งานที่กำลังทำและงานที่เสร็จแล้ว</p>
           <div className="space-y-3">
             {jobs.map((j) => {
               const profit = j.sellPrice - j.actualCost;
