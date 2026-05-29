@@ -46,7 +46,7 @@ export default function Reports() {
   return (
     <>
       <PageHeader title="Reports" thai="รายงาน"
-        description="Sales, jobs, payments, and after-sales — all on mock data."
+        description="ดูรายงานภาพรวมยอดขาย ต้นทุน กำไร งานค้าง และการชำระเงิน"
       />
 
       <div className="grid lg:grid-cols-2 gap-4">
