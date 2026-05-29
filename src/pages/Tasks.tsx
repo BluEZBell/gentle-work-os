@@ -67,15 +67,15 @@ export default function Tasks() {
                 <div className="grid gap-1.5"><Label>ชื่องาน *</Label>
                   <Input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="grid gap-1.5"><Label>Due date</Label>
+                  <div className="grid gap-1.5"><Label>วันครบกำหนด</Label>
                     <Input type="date" value={f.dueDate} onChange={(e) => setF({ ...f, dueDate: e.target.value })} /></div>
-                  <div className="grid gap-1.5"><Label>Priority</Label>
+                  <div className="grid gap-1.5"><Label>ความสำคัญ</Label>
                     <Select value={f.priority} onValueChange={(v) => setF({ ...f, priority: v as Priority })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>{PRIORITIES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-1.5"><Label>Status</Label>
+                  <div className="grid gap-1.5"><Label>สถานะ</Label>
                     <Select value={f.status} onValueChange={(v) => setF({ ...f, status: v as TaskStatus })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>{TASK_STATUSES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
@@ -83,7 +83,7 @@ export default function Tasks() {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="grid gap-1.5"><Label>Customer</Label>
+                  <div className="grid gap-1.5"><Label>ลูกค้า</Label>
                     <Select value={f.customerId} onValueChange={(v) => setF({ ...f, customerId: v })}>
                       <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                       <SelectContent>
@@ -92,7 +92,7 @@ export default function Tasks() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-1.5"><Label>Deal</Label>
+                  <div className="grid gap-1.5"><Label>ดีล</Label>
                     <Select value={f.dealId} onValueChange={(v) => setF({ ...f, dealId: v })}>
                       <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                       <SelectContent>
@@ -101,7 +101,7 @@ export default function Tasks() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-1.5"><Label>Job</Label>
+                  <div className="grid gap-1.5"><Label>งาน</Label>
                     <Select value={f.jobId} onValueChange={(v) => setF({ ...f, jobId: v })}>
                       <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                       <SelectContent>
@@ -111,7 +111,7 @@ export default function Tasks() {
                     </Select>
                   </div>
                 </div>
-                <div className="grid gap-1.5"><Label>Note</Label>
+                <div className="grid gap-1.5"><Label>หมายเหตุ</Label>
                   <Input value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} /></div>
               </div>
               <DialogFooter>
