@@ -70,11 +70,11 @@ export default function Quotations() {
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
                 <Button variant="outline" size="sm" asChild>
                   <a href={q.flowAccountLink} target="_blank" rel="noreferrer">
-                    <ExternalLink className="w-3.5 h-3.5 mr-1" /> Open in FlowAccount (mock)
+                    <ExternalLink className="w-3.5 h-3.5 mr-1" /> เปิดใน FlowAccount (ตัวอย่าง)
                   </a>
                 </Button>
                 <Button variant="outline" size="sm">
-                  <Paperclip className="w-3.5 h-3.5 mr-1" /> Attachment placeholder
+                  <Paperclip className="w-3.5 h-3.5 mr-1" /> แนบไฟล์ (ตัวอย่าง)
                 </Button>
               </div>
             </Card>
