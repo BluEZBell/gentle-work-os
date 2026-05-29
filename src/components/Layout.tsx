@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Contact, Briefcase, FileText, Wrench, Package,
   Truck, Receipt, CalendarDays, Headphones, BarChart3, Settings, ShieldCheck,
-  LogOut, Lock,
+  LogOut, Lock, ShoppingCart, FileSpreadsheet, GitPullRequest, ListTodo,
 } from "lucide-react";
 import { useAuth, roleBadge } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -11,14 +11,18 @@ import { useEffect } from "react";
 
 const nav = [
   { to: "/", icon: LayoutDashboard, en: "Dashboard", th: "แดชบอร์ด", end: true },
+  { to: "/tasks", icon: ListTodo, en: "Tasks", th: "งานที่ต้องทำ" },
   { to: "/customers", icon: Users, en: "Customers", th: "ลูกค้า" },
   { to: "/contacts", icon: Contact, en: "Contacts", th: "ผู้ติดต่อ" },
   { to: "/deals", icon: Briefcase, en: "Deals", th: "โอกาสการขาย" },
   { to: "/quotations", icon: FileText, en: "Quotations", th: "ใบเสนอราคา" },
   { to: "/jobs", icon: Wrench, en: "Jobs", th: "งานผลิต/บริการ" },
+  { to: "/change-orders", icon: GitPullRequest, en: "Change Orders", th: "คำขอเปลี่ยนแปลง" },
   { to: "/parts", icon: Package, en: "Parts", th: "ชิ้นงาน" },
   { to: "/suppliers", icon: Truck, en: "Suppliers", th: "ซัพพลายเออร์" },
+  { to: "/purchase-orders", icon: ShoppingCart, en: "Purchase Orders", th: "ใบสั่งซื้อ" },
   { to: "/supplier-bills", icon: Receipt, en: "Supplier Bills", th: "บิลซัพพลายเออร์" },
+  { to: "/invoices", icon: FileSpreadsheet, en: "Invoices", th: "ใบแจ้งหนี้" },
   { to: "/calendar", icon: CalendarDays, en: "Calendar", th: "ปฏิทิน" },
   { to: "/service", icon: Headphones, en: "Service", th: "บริการหลังขาย" },
   { to: "/reports", icon: BarChart3, en: "Reports", th: "รายงาน" },
