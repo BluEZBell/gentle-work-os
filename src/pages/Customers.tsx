@@ -124,7 +124,7 @@ export function CustomerDetail() {
   return (
     <>
       <Link to="/customers" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-3">
-        <ArrowLeft className="w-4 h-4 mr-1" /> Back to customers
+        <ArrowLeft className="w-4 h-4 mr-1" /> กลับไปหน้าลูกค้า
       </Link>
       <PageHeader title={c.name}
         description={c.confidential ? "ลูกค้าลับ — กรุณาดูแลข้อมูลเป็นพิเศษ" : undefined}
