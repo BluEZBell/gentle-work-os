@@ -18,11 +18,11 @@ export default function CalendarPage() {
   return (
     <>
       <PageHeader title="Calendar" thai="ปฏิทิน"
-        description="Reminders sent at 60, 30, 14, 7, 1 days before, on the due date, and when overdue."
+        description="ระบบจะแจ้งเตือนล่วงหน้า 60, 30, 14, 7, 1 วัน ก่อนถึงกำหนด และเมื่อเกินกำหนด"
       />
 
       <Card className="card-soft p-5 mb-4">
-        <div className="text-xs uppercase tracking-wide font-medium text-muted-foreground mb-3">Reminder Schedule</div>
+        <div className="text-xs uppercase tracking-wide font-medium text-muted-foreground mb-3">ตารางการแจ้งเตือน</div>
         <div className="flex items-center gap-2 flex-wrap">
           {timings.map((t, i) => (
             <span key={t} className={
