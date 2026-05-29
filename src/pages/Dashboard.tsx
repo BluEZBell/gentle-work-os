@@ -99,13 +99,13 @@ export default function Dashboard() {
 
       <div className="grid lg:grid-cols-3 gap-4 mt-4">
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-3">Upcoming Payments</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">Upcoming Payments (รายการที่ต้องจ่าย)</h2>
           <div className="space-y-2">
             {supplierBills.filter((b) => b.status !== "Paid").map((b) => (
               <div key={b.id} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
                 <div>
                   <div className="font-medium">{findSupplier(b.supplierId)?.name}</div>
-                  <div className="text-xs text-muted-foreground">{b.number} • due {b.dueDate}</div>
+                  <div className="text-xs text-muted-foreground">{b.number} • ครบกำหนด {b.dueDate}</div>
                 </div>
                 <div className="text-right">
                   <div className="font-medium">{fmtTHB(b.total)}</div>
@@ -117,14 +117,14 @@ export default function Dashboard() {
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-3">Upcoming Service / Calibration</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">Upcoming Service / Calibration (บริการที่ใกล้ครบ)</h2>
           <div className="space-y-2">
             {serviceRecords.filter((s) => s.status !== "Completed").map((s) => (
               <div key={s.id} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
                 <div className="min-w-0">
                   <div className="font-medium truncate">{findCustomer(s.customerId)?.name}</div>
                   <div className="text-xs text-muted-foreground truncate">
-                    {s.partName} • due {s.calibrationDueDate}
+                    {s.partName} • ครบกำหนด {s.calibrationDueDate}
                   </div>
                 </div>
                 <StatusBadge status={s.status} />
@@ -134,7 +134,7 @@ export default function Dashboard() {
         </Card>
 
         <Card className="card-soft p-5">
-          <h2 className="font-display text-lg font-semibold mb-3">Recent Activity</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">Recent Activity (กิจกรรมล่าสุด)</h2>
           <div className="space-y-2">
             {auditLogs.slice(0, 6).map((a) => (
               <div key={a.id} className="text-sm py-2 border-b last:border-0">
