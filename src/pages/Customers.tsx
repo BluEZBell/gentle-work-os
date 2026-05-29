@@ -166,7 +166,7 @@ export function CustomerDetail() {
           </Card>
 
           <Card className="card-soft p-5">
-            <h3 className="font-semibold mb-3">Deals ({cDeals.length})</h3>
+            <h3 className="font-semibold mb-3">ดีล ({cDeals.length})</h3>
             {cDeals.length === 0 ? <EmptyState title="ยังไม่มีดีล" /> :
             <div className="space-y-2">
               {cDeals.map((d) => (
