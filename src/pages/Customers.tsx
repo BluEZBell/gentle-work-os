@@ -38,7 +38,7 @@ export default function Customers() {
   return (
     <>
       <PageHeader title="Customers" thai="ลูกค้า"
-        description="Your CRM. Confidential customers are flagged and protected."
+        description="จัดการข้อมูลลูกค้า ผู้ติดต่อ ประวัติการคุย และงานที่เกี่ยวข้องในที่เดียว"
         actions={<NewCustomerDialog />}
       />
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
