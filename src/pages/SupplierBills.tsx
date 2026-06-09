@@ -16,6 +16,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { useSearchParams } from "react-router-dom";
 
 const flow = [
   { icon: Mail, label: "อีเมลจากซัพพลายเออร์" },
@@ -28,8 +29,11 @@ const flow = [
 export default function SupplierBills() {
   useTick();
   const { user, can } = useAuth();
+  const [params] = useSearchParams();
+  const initial = params.get("filter") ?? "all";
+  const dueSoon = initial === "due-soon";
   const [q, setQ] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(dueSoon ? "all" : initial);
   const [approveId, setApproveId] = useState<string | null>(null);
 
   const list = supplierBills.filter((b) => {
@@ -37,7 +41,8 @@ export default function SupplierBills() {
     const m = b.number.toLowerCase().includes(q.toLowerCase()) ||
       (sup?.name ?? "").toLowerCase().includes(q.toLowerCase());
     const s = filter === "all" || b.status === filter;
-    return m && s;
+    const d = !dueSoon || b.status !== "Paid";
+    return m && s && d;
   });
   const approvingBill = supplierBills.find((b) => b.id === approveId);
 

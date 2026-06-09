@@ -3,8 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
-  quotations, findCustomer, fmtTHB, quotationTotal, quotationCost, quotationProfit,
+  quotations, fmtTHB, quotationTotal, quotationCost, quotationProfit,
 } from "@/lib/mockData";
+import { CustomerLink } from "@/components/CustomerLink";
 import { useTick } from "@/lib/store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FileText, Paperclip, Plus } from "lucide-react";
@@ -32,8 +33,8 @@ export default function Quotations() {
                     <span className="font-display font-semibold">{q.number}</span>
                     <StatusBadge status={q.status} />
                   </div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {findCustomer(q.customerId)?.name} • {q.date} → ใช้ได้ถึง {q.validUntil}
+                  <div className="text-sm text-muted-foreground mt-1 flex items-center gap-1 flex-wrap">
+                    <CustomerLink customerId={q.customerId} /> <span>• {q.date} → ใช้ได้ถึง {q.validUntil}</span>
                   </div>
                 </div>
                 <div className="text-right">

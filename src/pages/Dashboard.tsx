@@ -49,9 +49,9 @@ export default function Dashboard() {
         <StatCard label="Est. Monthly Revenue" value={fmtTHB(s.monthlyRevenue)} icon={TrendingUp} tone="success" />
         <StatCard label="Est. Gross Profit" value={fmtTHB(s.monthlyProfit)} icon={Coins} tone="success"
           hint={`${Math.round((s.monthlyProfit / s.monthlyRevenue) * 100)}% margin`} />
-        <StatCard label="Bills Due Soon" thai="บิลใกล้ครบ" value={s.billsDueSoon} icon={Receipt} tone="warning" />
-        <StatCard label="Service Due Soon" thai="บริการใกล้ครบ" value={s.svcDueSoon} icon={Wrench} tone="warning" />
-        <StatCard label="Overdue Alerts" thai="เกินกำหนด" value={s.overdue} icon={AlertTriangle} tone="danger" />
+        <Link to="/supplier-bills?filter=due-soon"><StatCard label="Bills Due Soon" thai="บิลใกล้ครบ" value={s.billsDueSoon} icon={Receipt} tone="warning" /></Link>
+        <Link to="/service?filter=due-soon"><StatCard label="Service Due Soon" thai="บริการใกล้ครบ" value={s.svcDueSoon} icon={Wrench} tone="warning" /></Link>
+        <Link to="/invoices?filter=Overdue"><StatCard label="Overdue Alerts" thai="เกินกำหนด" value={s.overdue} icon={AlertTriangle} tone="danger" /></Link>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4 mt-6">
@@ -185,9 +185,10 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        <Card className="card-soft p-5">
+        <Link to="/invoices?filter=due-soon" className="block">
+        <Card className="card-soft p-5 hover:shadow-md transition-shadow h-full">
           <h2 className="font-display text-lg font-semibold mb-1">Incoming Customer Payments (เงินที่จะเข้าจากลูกค้า)</h2>
-          <p className="text-xs text-muted-foreground mb-3">ยอดที่ต้องรับจากลูกค้า</p>
+          <p className="text-xs text-muted-foreground mb-3">คลิกเพื่อดูใบแจ้งหนี้ที่ยังไม่ชำระ</p>
           <div className="space-y-2">
             {customerInvoices.filter(i => i.status !== "Paid").map(i => (
               <div key={i.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -198,12 +199,13 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          <Link to="/invoices" className="text-xs text-primary hover:underline mt-3 inline-block">ดูใบแจ้งหนี้ทั้งหมด →</Link>
         </Card>
+        </Link>
 
-        <Card className="card-soft p-5">
+        <Link to="/purchase-orders?filter=pending" className="block">
+        <Card className="card-soft p-5 hover:shadow-md transition-shadow h-full">
           <h2 className="font-display text-lg font-semibold mb-1">Pending Purchase Orders (ใบสั่งซื้อรอดำเนินการ)</h2>
-          <p className="text-xs text-muted-foreground mb-3">รอซัพพลายเออร์ตอบรับ</p>
+          <p className="text-xs text-muted-foreground mb-3">รอซัพพลายเออร์ตอบรับ — คลิกเพื่อดูทั้งหมด</p>
           <div className="space-y-2">
             {purchaseOrders.filter(p => p.status === "Draft" || p.status === "Sent" || p.status === "Confirmed").map(p => (
               <div key={p.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -213,12 +215,13 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-          <Link to="/purchase-orders" className="text-xs text-primary hover:underline mt-3 inline-block">ดูใบสั่งซื้อทั้งหมด →</Link>
         </Card>
+        </Link>
 
-        <Card className="card-soft p-5">
+        <Link to="/barcode-issue?filter=qc-issue" className="block">
+        <Card className="card-soft p-5 hover:shadow-md transition-shadow h-full">
           <h2 className="font-display text-lg font-semibold mb-1">QC Issues (ปัญหาคุณภาพงาน)</h2>
-          <p className="text-xs text-muted-foreground mb-3">รายการที่ไม่ผ่าน QC หรือต้องแก้ไข</p>
+          <p className="text-xs text-muted-foreground mb-3">รายการที่ไม่ผ่าน QC หรือต้องแก้ไข — คลิกเพื่อดูรายละเอียด</p>
           <div className="space-y-2">
             {receivingRecords.filter(r => r.issueFound || r.needRework).map(r => (
               <div key={r.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -230,10 +233,12 @@ export default function Dashboard() {
             {receivingRecords.filter(r => r.issueFound || r.needRework).length === 0 && <div className="text-xs text-muted-foreground">ยังไม่มีปัญหา QC</div>}
           </div>
         </Card>
+        </Link>
 
-        <Card className="card-soft p-5">
+        <Link to="/change-orders?filter=Pending" className="block">
+        <Card className="card-soft p-5 hover:shadow-md transition-shadow h-full">
           <h2 className="font-display text-lg font-semibold mb-1">Change Orders Pending (คำขอเปลี่ยนแปลงรออนุมัติ)</h2>
-          <p className="text-xs text-muted-foreground mb-3">รอการอนุมัติจากผู้รับผิดชอบ</p>
+          <p className="text-xs text-muted-foreground mb-3">คลิกเพื่อดูคำขอที่รออนุมัติ</p>
           <div className="space-y-2">
             {changeOrders.filter(c => c.approvalStatus === "Pending").map(c => (
               <div key={c.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
@@ -245,8 +250,8 @@ export default function Dashboard() {
             ))}
             {changeOrders.filter(c => c.approvalStatus === "Pending").length === 0 && <div className="text-xs text-muted-foreground">ไม่มีคำขอที่รออนุมัติ</div>}
           </div>
-          <Link to="/change-orders" className="text-xs text-primary hover:underline mt-3 inline-block">ดูคำขอเปลี่ยนแปลงทั้งหมด →</Link>
         </Card>
+        </Link>
       </div>
 
       {/* New: Peony Business OS module widgets */}
@@ -254,8 +259,8 @@ export default function Dashboard() {
         <StatCard label="Asset Book Value" thai="มูลค่าสินทรัพย์" value={fmtTHB(assets.reduce((s, a) => s + assetBookValue(a), 0))} icon={Boxes} tone="success" />
         <StatCard label="Monthly Depreciation" thai="ค่าเสื่อม/เดือน" value={fmtTHB(assets.filter(a => a.status === "Active").reduce((s, a) => s + assetMonthlyDep(a), 0))} icon={TrendingUp} tone="warning" />
         <StatCard label="Payroll This Month" thai="เงินเดือนเดือนนี้" value={fmtTHB(payrollLines.reduce((s, p) => s + payrollNetPay(p), 0))} icon={Wallet} />
-        <StatCard label="Pending Approvals" thai="รออนุมัติ" value={docApprovals.filter(a => a.status === "Pending Review" || a.status === "Submitted").length} icon={CheckSquare} tone="warning" />
-        <StatCard label="Low Stock Items" thai="สต๊อกต่ำ" value={stockItems.filter(s => stockTotal(s) < s.reorderPoint).length} icon={Warehouse} tone="danger" />
+        <Link to="/approvals?filter=Pending Review"><StatCard label="Pending Approvals" thai="รออนุมัติ" value={docApprovals.filter(a => a.status === "Pending Review" || a.status === "Submitted").length} icon={CheckSquare} tone="warning" /></Link>
+        <Link to="/warehouses?filter=low"><StatCard label="Low Stock Items" thai="สต๊อกต่ำ" value={stockItems.filter(s => stockTotal(s) < s.reorderPoint).length} icon={Warehouse} tone="danger" /></Link>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">

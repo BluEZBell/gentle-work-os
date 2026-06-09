@@ -4,68 +4,166 @@ import {
   Truck, Receipt, CalendarDays, Headphones, BarChart3, Settings, ShieldCheck,
   LogOut, Lock, ShoppingCart, FileSpreadsheet, GitPullRequest, ListTodo, Menu,
   Boxes, Wallet, ScanBarcode, FileScan, Globe, CalendarCheck, Mail, CheckSquare,
-  Warehouse, FileSignature,
+  Warehouse, FileSignature, ChevronDown, Bell, ClipboardCheck, ClipboardList,
+  BadgeDollarSign,
 } from "lucide-react";
 import { useAuth, roleBadge } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { QuickActionsFab } from "@/components/QuickActionsFab";
 
-const nav = [
-  { to: "/", icon: LayoutDashboard, en: "Dashboard", th: "แดชบอร์ด", end: true },
-  { to: "/tasks", icon: ListTodo, en: "Tasks", th: "งานที่ต้องทำ" },
-  { to: "/approvals", icon: CheckSquare, en: "Approvals", th: "อนุมัติเอกสาร" },
-  { to: "/customers", icon: Users, en: "Customers", th: "ลูกค้า" },
-  { to: "/contacts", icon: Contact, en: "Contacts", th: "ผู้ติดต่อ" },
-  { to: "/customer-portal", icon: Globe, en: "Customer Portal", th: "พอร์ทัลลูกค้า" },
-  { to: "/deals", icon: Briefcase, en: "Deals", th: "โอกาสการขาย" },
-  { to: "/quotations", icon: FileText, en: "Quotations", th: "ใบเสนอราคา" },
-  { to: "/jobs", icon: Wrench, en: "Jobs", th: "งานผลิต/บริการ" },
-  { to: "/change-orders", icon: GitPullRequest, en: "Change Orders", th: "คำขอเปลี่ยนแปลง" },
-  { to: "/parts", icon: Package, en: "Parts", th: "ชิ้นงาน" },
-  { to: "/warehouses", icon: Warehouse, en: "Warehouses", th: "คลังสินค้า" },
-  { to: "/barcode-issue", icon: ScanBarcode, en: "Barcode Issue", th: "เบิกของ" },
-  { to: "/suppliers", icon: Truck, en: "Suppliers", th: "ซัพพลายเออร์" },
-  { to: "/purchase-orders", icon: ShoppingCart, en: "Purchase Orders", th: "ใบสั่งซื้อ" },
-  { to: "/supplier-bills", icon: Receipt, en: "Supplier Bills", th: "บิลซัพพลายเออร์" },
-  { to: "/invoices", icon: FileSpreadsheet, en: "Invoices", th: "ใบแจ้งหนี้" },
-  { to: "/thai-documents", icon: FileSignature, en: "Thai Documents", th: "เอกสารภาษาไทย" },
-  { to: "/ocr-documents", icon: FileScan, en: "OCR Documents", th: "สแกนเอกสาร" },
-  { to: "/ai-email", icon: Mail, en: "AI Email Intake", th: "อ่านอีเมล" },
-  { to: "/payroll", icon: Wallet, en: "Payroll", th: "เงินเดือน" },
-  { to: "/assets", icon: Boxes, en: "Assets", th: "สินทรัพย์" },
-  { to: "/calendar", icon: CalendarDays, en: "Calendar", th: "ปฏิทิน" },
-  { to: "/calendar-sync", icon: CalendarCheck, en: "Calendar Sync", th: "เชื่อมต่อปฏิทิน" },
-  { to: "/service", icon: Headphones, en: "Service", th: "บริการหลังขาย" },
-  { to: "/reports", icon: BarChart3, en: "Reports", th: "รายงาน" },
-  { to: "/audit", icon: ShieldCheck, en: "Audit Log", th: "บันทึกการใช้งาน" },
-  { to: "/settings", icon: Settings, en: "Settings", th: "ตั้งค่า" },
+type NavItem = { to: string; icon: ComponentType<{ className?: string }>; en: string; th: string; end?: boolean };
+type Zone = { id: string; label: string; thai: string; items: NavItem[] };
+
+const zones: Zone[] = [
+  {
+    id: "overview", label: "Overview", thai: "ภาพรวม",
+    items: [
+      { to: "/", icon: LayoutDashboard, en: "Dashboard", th: "แดชบอร์ด", end: true },
+      { to: "/tasks", icon: ListTodo, en: "Tasks", th: "งานที่ต้องทำ" },
+      { to: "/audit", icon: Bell, en: "Notifications", th: "แจ้งเตือน" },
+    ],
+  },
+  {
+    id: "sales", label: "Customer & Sales", thai: "ลูกค้าและการขาย",
+    items: [
+      { to: "/customers", icon: Users, en: "Customers", th: "ลูกค้า" },
+      { to: "/contacts", icon: Contact, en: "Contacts", th: "ผู้ติดต่อ" },
+      { to: "/deals", icon: Briefcase, en: "Deals", th: "โอกาสการขาย" },
+      { to: "/purchase-orders?type=customer", icon: ClipboardList, en: "Customer PO", th: "PO ลูกค้า" },
+      { to: "/quotations", icon: FileText, en: "Quotations", th: "ใบเสนอราคา" },
+    ],
+  },
+  {
+    id: "ops", label: "Operations", thai: "งานปฏิบัติการ",
+    items: [
+      { to: "/jobs", icon: Wrench, en: "Jobs", th: "งานผลิต/งานบริการ" },
+      { to: "/parts", icon: Package, en: "Work Specification", th: "สเปกงาน" },
+      { to: "/change-orders", icon: GitPullRequest, en: "Change Orders", th: "เปลี่ยนแปลงงาน" },
+      { to: "/barcode-issue", icon: ClipboardCheck, en: "Receiving / QC", th: "รับของและตรวจงาน" },
+      { to: "/service", icon: Headphones, en: "Service / Calibration", th: "บริการหลังการขาย" },
+    ],
+  },
+  {
+    id: "docs", label: "Documents & Finance", thai: "เอกสารและการเงิน",
+    items: [
+      { to: "/thai-documents", icon: FileSignature, en: "Thai Documents", th: "เอกสารไทย" },
+      { to: "/invoices", icon: FileSpreadsheet, en: "Customer Invoices", th: "ใบแจ้งหนี้ลูกค้า" },
+      { to: "/supplier-bills", icon: Receipt, en: "Supplier Bills", th: "บิลซัพพลายเออร์" },
+      { to: "/supplier-bills?type=voucher", icon: BadgeDollarSign, en: "Payment Vouchers", th: "ใบสำคัญจ่าย" },
+      { to: "/approvals", icon: CheckSquare, en: "Approvals", th: "อนุมัติเอกสาร" },
+    ],
+  },
+  {
+    id: "inv", label: "Inventory & Assets", thai: "สต๊อกและสินทรัพย์",
+    items: [
+      { to: "/parts", icon: Package, en: "Inventory", th: "วัตถุดิบและพัสดุ" },
+      { to: "/warehouses", icon: Warehouse, en: "Warehouses", th: "คลังสินค้า" },
+      { to: "/barcode-issue", icon: ScanBarcode, en: "Barcode Issue", th: "เบิกของ" },
+      { to: "/assets", icon: Boxes, en: "Assets / Depreciation", th: "สินทรัพย์และค่าเสื่อม" },
+    ],
+  },
+  {
+    id: "people", label: "People", thai: "พนักงาน",
+    items: [
+      { to: "/payroll", icon: Wallet, en: "Payroll", th: "เงินเดือน" },
+      { to: "/payroll?view=employees", icon: Users, en: "Employees", th: "พนักงาน" },
+    ],
+  },
+  {
+    id: "auto", label: "Automation", thai: "ระบบอัตโนมัติ",
+    items: [
+      { to: "/ocr-documents", icon: FileScan, en: "OCR Documents", th: "สแกนเอกสาร" },
+      { to: "/ai-email", icon: Mail, en: "AI Email Intake", th: "อ่านอีเมล" },
+      { to: "/calendar", icon: CalendarDays, en: "Calendar", th: "ปฏิทิน" },
+      { to: "/calendar-sync", icon: CalendarCheck, en: "Calendar Sync", th: "เชื่อมต่อปฏิทิน" },
+      { to: "/customer-portal", icon: Globe, en: "Customer Portal", th: "พอร์ทัลลูกค้า" },
+    ],
+  },
+  {
+    id: "admin", label: "Reports & Settings", thai: "รายงานและตั้งค่า",
+    items: [
+      { to: "/reports", icon: BarChart3, en: "Reports", th: "รายงาน" },
+      { to: "/audit", icon: ShieldCheck, en: "Audit Log", th: "ประวัติการใช้งาน" },
+      { to: "/suppliers", icon: Truck, en: "Suppliers", th: "ซัพพลายเออร์" },
+      { to: "/settings", icon: Settings, en: "Settings", th: "ตั้งค่า" },
+    ],
+  },
 ];
 
-function SidebarNav({ onNav }: { onNav?: () => void }) {
+const STORAGE_KEY = "mto-sidebar-zones";
+const defaultOpen: Record<string, boolean> = {
+  overview: true, sales: true, ops: true, docs: true,
+  inv: false, people: false, auto: false, admin: false,
+};
+
+function ZoneGroup({ zone, openMap, toggle, onNav }: {
+  zone: Zone;
+  openMap: Record<string, boolean>;
+  toggle: (id: string) => void;
+  onNav?: () => void;
+}) {
+  const open = openMap[zone.id] ?? false;
   return (
-    <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
-      {nav.map((n) => (
-        <NavLink
-          key={n.to} to={n.to} end={n.end} onClick={onNav}
-          className={({ isActive }) =>
-            cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
-              isActive
-                ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium"
-                : "text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            )
-          }
-        >
-          <n.icon className="w-4 h-4 shrink-0" />
-          <span className="flex-1 truncate">
-            {n.en} <span className="opacity-60">({n.th})</span>
-          </span>
-        </NavLink>
+    <div className="mb-1">
+      <button
+        onClick={() => toggle(zone.id)}
+        className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/55 hover:text-sidebar-foreground transition-colors"
+      >
+        <span className="truncate">{zone.label} <span className="opacity-60 normal-case font-normal">({zone.thai})</span></span>
+        <ChevronDown className={cn("w-3 h-3 shrink-0 transition-transform", open ? "" : "-rotate-90")} />
+      </button>
+      {open && (
+        <div className="space-y-0.5">
+          {zone.items.map((n) => (
+            <NavLink
+              key={`${zone.id}-${n.to}-${n.en}`}
+              to={n.to}
+              end={n.end}
+              onClick={onNav}
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                  isActive
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium"
+                    : "text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                )
+              }
+            >
+              <n.icon className="w-4 h-4 shrink-0" />
+              <span className="flex-1 truncate">
+                {n.en} <span className="opacity-60">({n.th})</span>
+              </span>
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SidebarNav({ onNav }: { onNav?: () => void }) {
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+      return raw ? { ...defaultOpen, ...JSON.parse(raw) } : defaultOpen;
+    } catch { return defaultOpen; }
+  });
+  const toggle = (id: string) => {
+    setOpenMap((prev) => {
+      const next = { ...prev, [id]: !prev[id] };
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { /* noop */ }
+      return next;
+    });
+  };
+  return (
+    <nav className="flex-1 overflow-y-auto py-3 px-2">
+      {zones.map((z) => (
+        <ZoneGroup key={z.id} zone={z} openMap={openMap} toggle={toggle} onNav={onNav} />
       ))}
     </nav>
   );
@@ -170,18 +268,22 @@ export default function Layout() {
   );
 }
 
-export function PageHeader({ title, thai, description, actions }: {
+export function PageHeader({ title, thai, description, actions, breadcrumbs }: {
   title: string; thai?: string; description?: string; actions?: React.ReactNode;
+  breadcrumbs?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6">
-      <div>
-        <h1 className="font-display text-xl sm:text-2xl lg:text-3xl font-semibold text-foreground">
-          {title} {thai && <span className="text-muted-foreground font-normal">({thai})</span>}
-        </h1>
-        {description && <p className="text-sm text-muted-foreground mt-1 max-w-2xl">{description}</p>}
+    <div className="mb-5 sm:mb-6">
+      {breadcrumbs}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+        <div>
+          <h1 className="font-display text-xl sm:text-2xl lg:text-3xl font-semibold text-foreground">
+            {title} {thai && <span className="text-muted-foreground font-normal">({thai})</span>}
+          </h1>
+          {description && <p className="text-sm text-muted-foreground mt-1 max-w-2xl">{description}</p>}
+        </div>
+        {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>
   );
 }

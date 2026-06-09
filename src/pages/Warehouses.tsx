@@ -9,9 +9,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { warehouses, stockItems, stockTotal } from "@/lib/mockExtended";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowRightLeft, Warehouse, AlertTriangle } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Warehouses() {
+  const [params] = useSearchParams();
+  const lowOnly = params.get("filter") === "low";
   const [open, setOpen] = useState(false);
   const [f, setF] = useState({ itemId: stockItems[0]?.id ?? "", from: "w1", to: "w2", qty: 1 });
 
@@ -92,7 +95,7 @@ export default function Warehouses() {
               <TableHead>สถานะ</TableHead>
             </TableRow></TableHeader>
             <TableBody>
-              {stockItems.map((s) => {
+              {stockItems.filter((s) => !lowOnly || stockTotal(s) < s.reorderPoint).map((s) => {
                 const total = stockTotal(s);
                 const low = total < s.reorderPoint;
                 return (
