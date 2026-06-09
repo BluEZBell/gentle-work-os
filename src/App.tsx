@@ -35,6 +35,7 @@ import Approvals from "@/pages/Approvals";
 import Warehouses from "@/pages/Warehouses";
 import ThaiDocuments from "@/pages/ThaiDocuments";
 import Notifications from "@/pages/Notifications";
+import PaymentVouchers, { PaymentVoucherDetail } from "@/pages/PaymentVouchers";
 import {
   JobDetail, QuotationDetail, DealDetail, CustomerPODetail, PurchaseOrderDetail,
   InvoiceDetail, SupplierBillDetail, ThaiDocumentDetail, ServiceDetail,
