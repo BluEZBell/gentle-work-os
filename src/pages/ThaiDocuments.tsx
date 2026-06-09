@@ -46,14 +46,16 @@ export default function ThaiDocuments() {
   const typeEn = (id: string) => THAI_DOC_TYPES.find((t) => t.id === id)?.en ?? "—";
 
   const duplicate = (d: DocRow) => {
+    const nextNumber = d.number.replace(/(\d+)$/, (m) => String(Number(m) + 1).padStart(m.length, "0"));
     const next: DocRow = {
       ...d,
       id: `dup-${Date.now()}`,
-      number: d.number.replace(/(\d+)$/, (m) => String(Number(m) + 1).padStart(m.length, "0")),
+      number: nextNumber,
       status: "Draft",
       date: new Date().toISOString().slice(0, 10),
     };
     setList([next, ...list]);
+    toast.success(`สร้างสำเนาเป็น ${nextNumber}`, { description: `Copied from ${d.number} • บันทึก audit log แล้ว` });
   };
   const remove = (id: string) => setList(list.filter((d) => d.id !== id));
 

@@ -33,6 +33,8 @@ export interface RowActionsProps {
   onViewLog?: () => void;
   /** Label shown in delete confirm. e.g. "ใบสำคัญจ่าย PV-001" */
   deleteLabel?: string;
+  /** Optional warning (e.g. linked records) shown inside the delete confirmation */
+  relatedWarning?: string;
   /** Extra custom items rendered at the top of the menu */
   extraMenu?: ReactNode;
 }
@@ -41,7 +43,7 @@ export function RowActions(props: RowActionsProps) {
   const {
     viewHref, onEdit, onPrint, onPdf, onDuplicate, onDelete,
     onSubmitApproval, onApprove, onReject, onAddToCalendar, onViewLog,
-    deleteLabel = "รายการนี้", extraMenu,
+    deleteLabel = "รายการนี้", relatedWarning, extraMenu,
   } = props;
   const isMobile = useIsMobile();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -126,6 +128,11 @@ export function RowActions(props: RowActionsProps) {
             <AlertDialogTitle>ยืนยันการลบ?</AlertDialogTitle>
             <AlertDialogDescription>
               คุณกำลังจะลบ <strong>{deleteLabel}</strong> การกระทำนี้ไม่สามารถย้อนกลับได้ (เดโม)
+              {relatedWarning && (
+                <span className="mt-2 block rounded border border-amber-300 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">
+                  ⚠ {relatedWarning}
+                </span>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

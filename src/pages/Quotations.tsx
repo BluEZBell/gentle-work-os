@@ -17,7 +17,7 @@ import {
 import { warehouses } from "@/lib/mockExtended";
 import { CustomerLink } from "@/components/CustomerLink";
 import { RowActions } from "@/components/RowActions";
-import { useTick } from "@/lib/store";
+import { useTick, audit } from "@/lib/store";
 import { Link, useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FileText, Paperclip, Plus, Printer, FileDown, Trash2 } from "lucide-react";
@@ -35,8 +35,13 @@ export default function Quotations() {
   const duplicate = (q: Quotation) => {
     const num = `QT-2026-${String(60 + list.length + 1).padStart(4, "0")}`;
     setList([{ ...q, id: `q-${Date.now()}`, number: num, status: "Draft" }, ...list]);
+    audit("Khun Ploy", "Duplicate Quotation", `${num} (Copied from ${q.number})`, "Quotations");
+    toast.success(`สร้างสำเนาเป็น ${num}`, { description: `Copied from ${q.number}` });
   };
-  const remove = (id: string) => setList(list.filter((q) => q.id !== id));
+  const remove = (q: Quotation) => {
+    setList(list.filter((x) => x.id !== q.id));
+    audit("Khun Ploy", "Delete Quotation", q.number, "Quotations");
+  };
   const upsert = (q: Quotation) => {
     if (list.some((x) => x.id === q.id)) {
       setList(list.map((x) => (x.id === q.id ? q : x)));
@@ -98,7 +103,8 @@ export default function Quotations() {
                     onReject={() => setStatus(q, "Rejected")}
                     onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
                     onViewLog={() => navigate(`/quotations/${q.id}`)}
-                    onDelete={() => remove(q.id)}
+                    onDelete={() => remove(q)}
+                    relatedWarning="หากใบเสนอราคานี้ผูกกับ Job หรือ Invoice แล้ว ความสัมพันธ์อาจถูกตัด"
                     deleteLabel={`ใบเสนอราคา ${q.number}`}
                     extraMenu={
                       <button
