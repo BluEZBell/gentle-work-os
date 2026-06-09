@@ -24,8 +24,8 @@ const zones: Zone[] = [
     id: "overview", label: "Overview", thai: "ภาพรวม",
     items: [
       { to: "/", icon: LayoutDashboard, en: "Dashboard", th: "แดชบอร์ด", end: true },
+      { to: "/notifications", icon: Bell, en: "Notifications", th: "แจ้งเตือน" },
       { to: "/tasks", icon: ListTodo, en: "Tasks", th: "งานที่ต้องทำ" },
-      { to: "/audit", icon: Bell, en: "Notifications", th: "แจ้งเตือน" },
     ],
   },
   {
@@ -44,8 +44,9 @@ const zones: Zone[] = [
       { to: "/jobs", icon: Wrench, en: "Jobs", th: "งานผลิต/งานบริการ" },
       { to: "/parts", icon: Package, en: "Work Specification", th: "สเปกงาน" },
       { to: "/change-orders", icon: GitPullRequest, en: "Change Orders", th: "เปลี่ยนแปลงงาน" },
-      { to: "/barcode-issue", icon: ClipboardCheck, en: "Receiving / QC", th: "รับของและตรวจงาน" },
+      { to: "/barcode-issue?view=receiving", icon: ClipboardCheck, en: "Receiving / QC", th: "รับของและตรวจงาน" },
       { to: "/service", icon: Headphones, en: "Service / Calibration", th: "บริการหลังการขาย" },
+      { to: "/suppliers", icon: Truck, en: "Suppliers", th: "ซัพพลายเออร์" },
     ],
   },
   {
@@ -61,8 +62,8 @@ const zones: Zone[] = [
   {
     id: "inv", label: "Inventory & Assets", thai: "สต๊อกและสินทรัพย์",
     items: [
-      { to: "/parts", icon: Package, en: "Inventory", th: "วัตถุดิบและพัสดุ" },
-      { to: "/warehouses", icon: Warehouse, en: "Warehouses", th: "คลังสินค้า" },
+      { to: "/warehouses", icon: Warehouse, en: "Inventory", th: "วัตถุดิบและพัสดุ" },
+      { to: "/warehouses", icon: Boxes, en: "Warehouses", th: "คลังสินค้า" },
       { to: "/barcode-issue", icon: ScanBarcode, en: "Barcode Issue", th: "เบิกของ" },
       { to: "/assets", icon: Boxes, en: "Assets / Depreciation", th: "สินทรัพย์และค่าเสื่อม" },
     ],
@@ -79,9 +80,9 @@ const zones: Zone[] = [
     items: [
       { to: "/ocr-documents", icon: FileScan, en: "OCR Documents", th: "สแกนเอกสาร" },
       { to: "/ai-email", icon: Mail, en: "AI Email Intake", th: "อ่านอีเมล" },
-      { to: "/calendar", icon: CalendarDays, en: "Calendar", th: "ปฏิทิน" },
       { to: "/calendar-sync", icon: CalendarCheck, en: "Calendar Sync", th: "เชื่อมต่อปฏิทิน" },
       { to: "/customer-portal", icon: Globe, en: "Customer Portal", th: "พอร์ทัลลูกค้า" },
+      { to: "/calendar", icon: CalendarDays, en: "Calendar", th: "ปฏิทิน" },
     ],
   },
   {
@@ -89,7 +90,6 @@ const zones: Zone[] = [
     items: [
       { to: "/reports", icon: BarChart3, en: "Reports", th: "รายงาน" },
       { to: "/audit", icon: ShieldCheck, en: "Audit Log", th: "ประวัติการใช้งาน" },
-      { to: "/suppliers", icon: Truck, en: "Suppliers", th: "ซัพพลายเออร์" },
       { to: "/settings", icon: Settings, en: "Settings", th: "ตั้งค่า" },
     ],
   },
