@@ -86,7 +86,7 @@ export default function Dashboard() {
               const profit = j.sellPrice - j.actualCost;
               const margin = Math.round((profit / j.sellPrice) * 100);
               return (
-                <div key={j.id} className="flex items-center justify-between text-sm">
+                <Link key={j.id} to={`/jobs/${j.id}`} className="flex items-center justify-between text-sm hover:bg-secondary/40 rounded px-1 -mx-1 py-1">
                   <div className="min-w-0">
                     <div className="truncate font-medium">{j.number}</div>
                     <div className="text-xs text-muted-foreground truncate">{j.name}</div>
@@ -95,7 +95,7 @@ export default function Dashboard() {
                     <div className="font-medium text-success">{fmtTHB(profit)}</div>
                     <div className="text-xs text-muted-foreground">มาร์จิ้น {margin}%</div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
