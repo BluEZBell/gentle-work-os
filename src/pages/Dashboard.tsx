@@ -49,9 +49,9 @@ export default function Dashboard() {
         <StatCard label="Est. Monthly Revenue" value={fmtTHB(s.monthlyRevenue)} icon={TrendingUp} tone="success" />
         <StatCard label="Est. Gross Profit" value={fmtTHB(s.monthlyProfit)} icon={Coins} tone="success"
           hint={`${Math.round((s.monthlyProfit / s.monthlyRevenue) * 100)}% margin`} />
-        <StatCard label="Bills Due Soon" thai="บิลใกล้ครบ" value={s.billsDueSoon} icon={Receipt} tone="warning" />
-        <StatCard label="Service Due Soon" thai="บริการใกล้ครบ" value={s.svcDueSoon} icon={Wrench} tone="warning" />
-        <StatCard label="Overdue Alerts" thai="เกินกำหนด" value={s.overdue} icon={AlertTriangle} tone="danger" />
+        <Link to="/supplier-bills?filter=due-soon"><StatCard label="Bills Due Soon" thai="บิลใกล้ครบ" value={s.billsDueSoon} icon={Receipt} tone="warning" /></Link>
+        <Link to="/service?filter=due-soon"><StatCard label="Service Due Soon" thai="บริการใกล้ครบ" value={s.svcDueSoon} icon={Wrench} tone="warning" /></Link>
+        <Link to="/invoices?filter=Overdue"><StatCard label="Overdue Alerts" thai="เกินกำหนด" value={s.overdue} icon={AlertTriangle} tone="danger" /></Link>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4 mt-6">
@@ -259,8 +259,8 @@ export default function Dashboard() {
         <StatCard label="Asset Book Value" thai="มูลค่าสินทรัพย์" value={fmtTHB(assets.reduce((s, a) => s + assetBookValue(a), 0))} icon={Boxes} tone="success" />
         <StatCard label="Monthly Depreciation" thai="ค่าเสื่อม/เดือน" value={fmtTHB(assets.filter(a => a.status === "Active").reduce((s, a) => s + assetMonthlyDep(a), 0))} icon={TrendingUp} tone="warning" />
         <StatCard label="Payroll This Month" thai="เงินเดือนเดือนนี้" value={fmtTHB(payrollLines.reduce((s, p) => s + payrollNetPay(p), 0))} icon={Wallet} />
-        <StatCard label="Pending Approvals" thai="รออนุมัติ" value={docApprovals.filter(a => a.status === "Pending Review" || a.status === "Submitted").length} icon={CheckSquare} tone="warning" />
-        <StatCard label="Low Stock Items" thai="สต๊อกต่ำ" value={stockItems.filter(s => stockTotal(s) < s.reorderPoint).length} icon={Warehouse} tone="danger" />
+        <Link to="/approvals?filter=Pending Review"><StatCard label="Pending Approvals" thai="รออนุมัติ" value={docApprovals.filter(a => a.status === "Pending Review" || a.status === "Submitted").length} icon={CheckSquare} tone="warning" /></Link>
+        <Link to="/warehouses?filter=low"><StatCard label="Low Stock Items" thai="สต๊อกต่ำ" value={stockItems.filter(s => stockTotal(s) < s.reorderPoint).length} icon={Warehouse} tone="danger" /></Link>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
