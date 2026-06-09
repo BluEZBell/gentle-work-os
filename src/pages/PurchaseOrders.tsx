@@ -14,11 +14,17 @@ import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { CustomerLink } from "@/components/CustomerLink";
+import { RowActions } from "@/components/RowActions";
+import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Printer, FileDown } from "lucide-react";
 
 export default function PurchaseOrders() {
   useBizTick();
   const { user, can } = useAuth();
   const [q, setQ] = useState("");
+  const [preview, setPreview] = useState<string | null>(null);
   const [filter, setFilter] = useState("all");
   const list = purchaseOrders.filter((p) => {
     const sup = findSupplier(p.supplierId);
@@ -74,6 +80,20 @@ export default function PurchaseOrders() {
                       {PO_STATUSES.map((s) => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}
                     </SelectContent>
                   </Select>
+                  <RowActions
+                    viewHref={`/purchase-orders/${p.id}`}
+                    onEdit={() => toast.info(`แก้ไข ${p.number}`)}
+                    onPrint={() => setPreview(p.number)}
+                    onPdf={() => toast.info(`PDF ${p.number}`)}
+                    onDuplicate={() => toast.success(`ทำสำเนา ${p.number}`)}
+                    onSubmitApproval={() => toast.success("ส่งขออนุมัติแล้ว")}
+                    onApprove={() => toast.success(`อนุมัติ ${p.number}`)}
+                    onReject={() => toast.error(`ไม่อนุมัติ ${p.number}`)}
+                    onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
+                    onViewLog={() => toast.info("ดูประวัติ PO")}
+                    onDelete={() => toast.success(`ลบ ${p.number}`)}
+                    deleteLabel={`ใบสั่งซื้อ ${p.number}`}
+                  />
                 </div>
               </div>
               <Table>
@@ -100,6 +120,17 @@ export default function PurchaseOrders() {
           );
         })}
       </div>}
+
+      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader><DialogTitle>พรีวิวใบสั่งซื้อ {preview}</DialogTitle></DialogHeader>
+          {preview && <ThaiDocLayout docTypeId="td9" number={preview} />}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => toast.info("พิมพ์ (เดโม)")}><Printer className="w-4 h-4 mr-1" /> พิมพ์</Button>
+            <Button onClick={() => toast.info("PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" /> PDF</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

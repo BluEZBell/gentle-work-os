@@ -16,6 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { NewDealDialog } from "@/components/dialogs/NewDealDialog";
+import { RowActions } from "@/components/RowActions";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -168,11 +169,25 @@ export default function Deals() {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">{d.expectedCloseDate}</TableCell>
                     <TableCell>
-                      {d.status === "Won" && (
-                        <Button size="sm" variant="outline" onClick={() => onWin(d.id)}>
-                          สร้างงาน <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                        </Button>
-                      )}
+                      <div className="flex items-center justify-end gap-1">
+                        {d.status === "Won" && (
+                          <Button size="sm" variant="outline" onClick={() => onWin(d.id)}>
+                            สร้างงาน <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                          </Button>
+                        )}
+                        <RowActions
+                          viewHref={`/deals/${d.id}`}
+                          onEdit={() => toast.info(`แก้ไข ${d.name}`)}
+                          onDuplicate={() => toast.success(`ทำสำเนา ${d.name}`)}
+                          onSubmitApproval={() => toast.success("ส่งขออนุมัติแล้ว")}
+                          onApprove={() => onStatusChange(d.id, "Won")}
+                          onReject={() => setLostFor(d.id)}
+                          onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
+                          onViewLog={() => toast.info("ดูประวัติดีล")}
+                          onDelete={() => toast.success(`ลบ ${d.name}`)}
+                          deleteLabel={d.name}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

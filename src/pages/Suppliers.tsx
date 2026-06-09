@@ -9,6 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Eye, EyeOff, Lock, Search } from "lucide-react";
 import { NewSupplierDialog } from "@/components/dialogs/NewSupplierDialog";
 import { EmptyState } from "@/components/EmptyState";
+import { RowActions } from "@/components/RowActions";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export default function Suppliers() {
   useTick();
@@ -44,6 +47,7 @@ export default function Suppliers() {
               <TableHead>Open bills</TableHead>
               <TableHead>Active jobs</TableHead>
               <TableHead>Risk</TableHead>
+              <TableHead className="text-right w-32">การกระทำ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,6 +85,15 @@ export default function Suppliers() {
                 </TableCell>
                 <TableCell className="text-sm">{sJobs.length}</TableCell>
                 <TableCell><StatusBadge status={s.riskLevel} /></TableCell>
+                <TableCell>
+                  <RowActions
+                    onEdit={() => toast.info(`แก้ไข ${s.name}`)}
+                    onDuplicate={() => toast.success(`ทำสำเนา ${s.name}`)}
+                    onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
+                    onDelete={() => toast.success(`ลบ ${s.name}`)}
+                    deleteLabel={s.name}
+                  />
+                </TableCell>
               </TableRow>
             );})}
           </TableBody>

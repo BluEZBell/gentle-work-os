@@ -10,6 +10,8 @@ import { assets, ASSET_STATUSES, assetMonthlyDep, assetAccumDep, assetBookValue,
 import { fmtTHB } from "@/lib/mockData";
 import { Boxes, Wrench, Archive, TrendingDown, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { RowActions } from "@/components/RowActions";
+import { toast } from "sonner";
 
 export default function Assets() {
   const [q, setQ] = useState("");
@@ -57,6 +59,7 @@ export default function Assets() {
               <TableHead className="text-right">ค่าเสื่อม/เดือน</TableHead><TableHead className="text-right">ค่าเสื่อมสะสม</TableHead>
               <TableHead className="text-right">มูลค่าคงเหลือ</TableHead>
               <TableHead>ที่ตั้ง</TableHead><TableHead>ผู้รับผิดชอบ</TableHead><TableHead>สถานะ</TableHead>
+              <TableHead className="text-right w-28">การกระทำ</TableHead>
             </TableRow></TableHeader>
             <TableBody>
               {list.map((a) => (
@@ -72,6 +75,17 @@ export default function Assets() {
                   <TableCell>{a.location}</TableCell>
                   <TableCell>{a.assignedUser}</TableCell>
                   <TableCell><StatusBadge status={a.status} tone={a.status === "Active" ? "success" : a.status === "Repair" ? "warning" : a.status === "Retired" ? "muted" : "info" as never} /></TableCell>
+                  <TableCell>
+                    <RowActions
+                      viewHref={`/assets/${a.id}`}
+                      onEdit={() => toast.info(`แก้ไข ${a.name}`)}
+                      onDuplicate={() => toast.success(`ทำสำเนา ${a.code}`)}
+                      onSubmitApproval={() => toast.success("ส่งขออนุมัติปลดระวาง")}
+                      onAddToCalendar={() => toast.success("เพิ่มเตือนบำรุงรักษาในปฏิทิน")}
+                      onDelete={() => toast.success(`ลบ ${a.name}`)}
+                      deleteLabel={a.name}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

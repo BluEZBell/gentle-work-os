@@ -6,6 +6,8 @@ import { payrollLines, payrollAllowances, payrollDeductions, payrollNetPay } fro
 import { Link } from "react-router-dom";
 import { fmtTHB } from "@/lib/mockData";
 import { Wallet, Minus, Plus, Coins } from "lucide-react";
+import { RowActions } from "@/components/RowActions";
+import { toast } from "sonner";
 
 export default function Payroll() {
   const totalBase = payrollLines.reduce((s, p) => s + p.baseSalary, 0);
@@ -35,6 +37,7 @@ export default function Payroll() {
               <TableHead className="text-right">หัก</TableHead>
               <TableHead className="text-right">รับสุทธิ</TableHead>
               <TableHead>หมายเหตุ</TableHead>
+              <TableHead className="text-right w-28">การกระทำ</TableHead>
             </TableRow></TableHeader>
             <TableBody>
               {payrollLines.map((p) => (
@@ -47,6 +50,22 @@ export default function Payroll() {
                   <TableCell className="text-right text-destructive">−{fmtTHB(payrollDeductions(p))}</TableCell>
                   <TableCell className="text-right font-semibold">{fmtTHB(payrollNetPay(p))}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{p.notes || "—"}</TableCell>
+                  <TableCell>
+                    <RowActions
+                      viewHref={`/payroll/${p.id}`}
+                      onEdit={() => toast.info(`แก้ไข ${p.employeeName}`)}
+                      onPrint={() => toast.info("พิมพ์สลิปเงินเดือน (เดโม)")}
+                      onPdf={() => toast.info("PDF สลิปเงินเดือน (เดโม)")}
+                      onDuplicate={() => toast.success("ทำสำเนาเดือนถัดไป")}
+                      onSubmitApproval={() => toast.success("ส่งขออนุมัติเงินเดือน")}
+                      onApprove={() => toast.success("อนุมัติแล้ว")}
+                      onReject={() => toast.error("ไม่อนุมัติ")}
+                      onAddToCalendar={() => toast.success("เพิ่มวันจ่ายเงินเดือนในปฏิทิน")}
+                      onViewLog={() => toast.info("ดูประวัติเงินเดือน")}
+                      onDelete={() => toast.success(`ลบรายการของ ${p.employeeName}`)}
+                      deleteLabel={`เงินเดือน ${p.employeeName}`}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
