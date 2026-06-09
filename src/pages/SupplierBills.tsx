@@ -129,17 +129,27 @@ export default function SupplierBills() {
                 <TableCell><StatusBadge status={b.status} /></TableCell>
                 <TableCell><StatusBadge status={b.reviewStatus} /></TableCell>
                 <TableCell>
-                  <div className="flex gap-1">
-                    {b.reviewStatus === "Pending Review" && (
-                      <Button size="sm" variant="outline" disabled={!can("edit")}
-                        onClick={() => setApproveId(b.id)}>Review</Button>
-                    )}
+                  <div className="flex items-center justify-end gap-1">
                     {b.reviewStatus === "Approved" && b.status !== "Paid" && (
                       <Button size="sm" variant="ghost" disabled={!can("edit")}
                         onClick={() => { markBillPaid(b.id, user?.name ?? "Demo"); toast.success("Marked paid"); }}>
                         Mark Paid
                       </Button>
                     )}
+                    <RowActions
+                      viewHref={`/supplier-bills/${b.id}`}
+                      onEdit={() => toast.info(`แก้ไข ${b.number}`)}
+                      onPrint={() => setPreview(b.number)}
+                      onPdf={() => toast.info(`PDF ${b.number}`)}
+                      onDuplicate={() => toast.success(`ทำสำเนา ${b.number}`)}
+                      onSubmitApproval={() => setApproveId(b.id)}
+                      onApprove={() => { setBillReview(b.id, "Approved", user?.name ?? "Demo"); toast.success("Bill approved"); }}
+                      onReject={() => { setBillReview(b.id, "Rejected", user?.name ?? "Demo"); toast.error("Bill rejected"); }}
+                      onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
+                      onViewLog={() => toast.info("ดูประวัติบิล")}
+                      onDelete={() => toast.success(`ลบ ${b.number}`)}
+                      deleteLabel={`บิล ${b.number}`}
+                    />
                   </div>
                 </TableCell>
               </TableRow>
@@ -173,6 +183,17 @@ export default function SupplierBills() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader><DialogTitle>พรีวิวบิล {preview}</DialogTitle></DialogHeader>
+          {preview && <ThaiDocLayout docTypeId="td10" number={preview} />}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => toast.info("พิมพ์ (เดโม)")}><Printer className="w-4 h-4 mr-1" /> พิมพ์</Button>
+            <Button onClick={() => toast.info("PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" /> PDF</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
