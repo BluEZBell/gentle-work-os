@@ -73,12 +73,14 @@ export default function Warehouses() {
           const total = stockItems.reduce((s, it) => s + (it.byWarehouse[w.id] ?? 0), 0);
           return (
             <Card key={w.id} className="card-soft p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Warehouse className="w-4 h-4 text-primary" />
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">{w.name}</div>
-              </div>
-              <div className="font-display text-2xl font-semibold">{total}</div>
-              <div className="text-xs text-muted-foreground">{w.thai}</div>
+              <Link to={`/warehouses/${w.id}`} className="block group">
+                <div className="flex items-center gap-2 mb-1">
+                  <Warehouse className="w-4 h-4 text-primary" />
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground group-hover:text-foreground">{w.name}</div>
+                </div>
+                <div className="font-display text-2xl font-semibold">{total}</div>
+                <div className="text-xs text-muted-foreground">{w.thai}</div>
+              </Link>
             </Card>
           );
         })}
