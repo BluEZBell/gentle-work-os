@@ -14,6 +14,8 @@ import {
 } from "@/lib/mockBusiness";
 import { addTask, setTaskStatus, setTaskPriority, useBizTick } from "@/lib/storeBusiness";
 import { customers, deals, jobs, findCustomer, findJob, findDeal } from "@/lib/mockData";
+import { CustomerLink } from "@/components/CustomerLink";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { Plus, Search, CheckCircle2, ListTodo } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
@@ -151,11 +153,11 @@ export default function Tasks() {
               <div className={"font-medium text-sm " + (t.status === "Done" ? "line-through text-muted-foreground" : "")}>
                 {t.name}
               </div>
-              <div className="text-xs text-muted-foreground truncate">
-                Due {t.dueDate} • {t.owner}
-                {t.customerId && ` • ${findCustomer(t.customerId)?.name}`}
-                {t.dealId && ` • ${findDeal(t.dealId)?.name}`}
-                {t.jobId && ` • ${findJob(t.jobId)?.number}`}
+              <div className="text-xs text-muted-foreground truncate flex items-center gap-1 flex-wrap">
+                <span>Due {t.dueDate} • {t.owner}</span>
+                {t.customerId && <><span>•</span><CustomerLink customerId={t.customerId} muted /></>}
+                {t.dealId && <><span>•</span><Link to="/deals" className="hover:underline">{findDeal(t.dealId)?.name}</Link></>}
+                {t.jobId && <><span>•</span><Link to="/jobs" className="hover:underline">{findJob(t.jobId)?.number}</Link></>}
               </div>
             </div>
             <Select value={t.priority} onValueChange={(v) => setTaskPriority(t.id, v as Priority)}>
