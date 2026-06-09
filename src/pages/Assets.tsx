@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { assets, ASSET_STATUSES, assetMonthlyDep, assetAccumDep, assetBookValue, type AssetStatus } from "@/lib/mockExtended";
 import { fmtTHB } from "@/lib/mockData";
 import { Boxes, Wrench, Archive, TrendingDown, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Assets() {
   const [q, setQ] = useState("");
