@@ -47,11 +47,11 @@ export function JobDetail() {
   const spec = workSpecs.find((w) => w.jobId === j.id);
 
   const timeline: TimelineEvent[] = [
-    { id: `start-${j.id}`, date: j.startDate, title: "เริ่มงาน", detail: j.notes, tone: "info" },
+    { id: `start-${j.id}`, date: j.startDate, title: "เริ่มงาน", detail: j.notes, tone: "info" as const },
     ...jobPOs.map((p) => ({ id: `po-${p.id}`, date: p.date, title: `PO ${p.number}`, detail: findSupplier(p.supplierId)?.name, tone: "info" as const })),
     ...jobBills.map((b) => ({ id: `b-${b.id}`, date: b.billDate, title: `Supplier bill ${b.number}`, detail: fmtTHB(b.total), tone: "warning" as const })),
     ...jobCOs.map((c) => ({ id: `co-${c.id}`, date: c.requestDate, title: `Change order ${c.number}`, detail: c.description, tone: "warning" as const })),
-    ...jobInvs.map((i) => ({ id: `inv-${i.id}`, date: i.date, title: `Customer invoice ${i.number}`, detail: fmtTHB(i.total), tone: i.status === "Paid" ? "success" as const : "info" as const })),
+    ...jobInvs.map((i) => ({ id: `inv-${i.id}`, date: i.date, title: `Customer invoice ${i.number}`, detail: fmtTHB(i.total), tone: (i.status === "Paid" ? "success" : "info") as TimelineEvent["tone"] })),
     ...(j.deliveryDate ? [{ id: `d-${j.id}`, date: j.deliveryDate, title: "ส่งมอบแล้ว", tone: "success" as const }] : []),
   ].sort((a, b) => b.date.localeCompare(a.date));
 
