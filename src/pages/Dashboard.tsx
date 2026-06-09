@@ -389,3 +389,80 @@ export default function Dashboard() {
   );
 }
 
+function CalendarBillingWidgets() {
+  const today = new Date().toISOString().slice(0, 10);
+  const inDays = (n: number) => {
+    const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10);
+  };
+  const weekEnd = inDays(7);
+  const todayEvents = calendarEvents.filter((e) => e.date === today);
+  const billingThisWeek = calendarEvents.filter((e) => e.type === "Billing Submission" && e.date >= today && e.date <= weekEnd);
+  const incoming = calendarEvents.filter((e) => e.type === "Receive Payment" && e.date >= today && e.date <= weekEnd);
+  const outgoing = calendarEvents.filter((e) => e.type === "Pay Supplier" && e.date >= today && e.date <= weekEnd);
+  const pendingPV = paymentVouchers.filter((v) => v.approvalStatus === "Pending Approval");
+  const printedToday = printLog.filter((l) => l.printedAt.startsWith(today));
+  const syncQueue = calendarEvents.filter((e) => e.syncStatus === "Pending" || !e.syncStatus);
+
+  const Widget = ({ title, thai, to, items, render, tone, empty }: {
+    title: string; thai: string; to: string; items: unknown[]; tone?: "info" | "success" | "warning" | "danger";
+    render: (x: unknown, i: number) => React.ReactNode; empty: string;
+  }) => (
+    <Card className="card-soft p-4">
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <div className="font-display font-semibold text-sm">{title}</div>
+          <div className="text-[11px] text-muted-foreground">{thai}</div>
+        </div>
+        <Link to={to} className="text-xs text-primary hover:underline">ดูทั้งหมด →</Link>
+      </div>
+      {items.length === 0 ? (
+        <div className="text-xs text-muted-foreground py-3 text-center">{empty}</div>
+      ) : (
+        <div className="space-y-1 text-sm">{items.slice(0, 4).map(render)}</div>
+      )}
+      {items.length > 0 && tone && (
+        <div className="mt-2"><StatusBadge status={`${items.length} รายการ`} tone={tone} /></div>
+      )}
+    </Card>
+  );
+
+  return (
+    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
+      <Widget title="Today's Calendar" thai="กิจกรรมวันนี้" to="/calendar" items={todayEvents} tone="info" empty="ไม่มีกิจกรรมวันนี้"
+        render={(e: unknown, i) => { const ev = e as typeof todayEvents[number]; return (
+          <Link key={i} to="/calendar" className="block truncate hover:text-primary">• {eventTitle(ev)}</Link>
+        ); }} />
+      <Widget title="Billing Due This Week" thai="กำหนดวางบิลสัปดาห์นี้" to="/calendar" items={billingThisWeek} tone="warning" empty="ไม่มีกำหนดวางบิล"
+        render={(e: unknown, i) => { const ev = e as typeof billingThisWeek[number]; return (
+          <div key={i} className="flex justify-between"><span className="truncate">{eventTitle(ev)}</span><span className="text-xs text-muted-foreground ml-2">{ev.date.slice(5)}</span></div>
+        ); }} />
+      <Widget title="Expected Payments" thai="ยอดรับเงินสัปดาห์นี้" to="/calendar" items={incoming} tone="success" empty="ไม่มีรายการ"
+        render={(e: unknown, i) => { const ev = e as typeof incoming[number]; return (
+          <div key={i} className="flex justify-between"><span className="truncate">{eventTitle(ev)}</span><span className="text-xs ml-2">{ev.amount?.toLocaleString()}</span></div>
+        ); }} />
+      <Widget title="Supplier Payments" thai="ยอดต้องจ่ายสัปดาห์นี้" to="/payment-vouchers" items={outgoing} tone="danger" empty="ไม่มีรายการ"
+        render={(e: unknown, i) => { const ev = e as typeof outgoing[number]; return (
+          <div key={i} className="flex justify-between"><span className="truncate">{eventTitle(ev)}</span><span className="text-xs ml-2">{ev.amount?.toLocaleString()}</span></div>
+        ); }} />
+      <Widget title="Vouchers Pending" thai="ใบสำคัญจ่ายรออนุมัติ" to="/payment-vouchers" items={pendingPV} tone="warning" empty="ไม่มีรายการรออนุมัติ"
+        render={(v: unknown, i) => { const pv = v as typeof pendingPV[number]; return (
+          <Link key={i} to={`/payment-vouchers/${pv.id}`} className="flex justify-between hover:text-primary"><span>{pv.number}</span><span className="text-xs">{pv.amount.toLocaleString()}</span></Link>
+        ); }} />
+      <Widget title="Vouchers Printed Today" thai="พิมพ์วันนี้" to="/payment-vouchers" items={printedToday} tone="info" empty="ยังไม่มีการพิมพ์วันนี้"
+        render={(l: unknown, i) => { const log = l as typeof printedToday[number]; return (
+          <div key={i} className="flex justify-between"><span>{log.relatedId}</span><span className="text-xs">{log.copies} ชุด</span></div>
+        ); }} />
+      <Widget title="Calendar Sync Queue" thai="คิวซิงค์ Google" to="/calendar-sync" items={syncQueue} tone="info" empty="คิวว่าง"
+        render={(e: unknown, i) => { const ev = e as typeof syncQueue[number]; return (
+          <div key={i} className="truncate">• {eventTitle(ev)}</div>
+        ); }} />
+      <Widget title="Receive Goods" thai="รับสินค้าสัปดาห์นี้" to="/calendar"
+        items={calendarEvents.filter((e) => e.type === "Receive Goods" && e.date >= today && e.date <= weekEnd)} tone="info" empty="ไม่มีรายการ"
+        render={(e: unknown, i) => { const ev = e as typeof calendarEvents[number]; return (
+          <div key={i} className="truncate">• {eventTitle(ev)}</div>
+        ); }} />
+    </div>
+  );
+}
+
+
