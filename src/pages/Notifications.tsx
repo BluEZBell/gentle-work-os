@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatCard } from "@/components/StatCard";
-import { reminders, supplierBills, customerInvoices as ciFromMockData, serviceRecords } from "@/lib/mockData";
+import { reminders, supplierBills, serviceRecords } from "@/lib/mockData";
 import { Link } from "react-router-dom";
 import { Bell, AlertTriangle, Clock, CheckCircle2, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
