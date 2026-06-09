@@ -54,7 +54,10 @@ export default function Dashboard() {
         <Link to="/invoices?filter=Overdue"><StatCard label="Overdue Alerts" thai="เกินกำหนด" value={s.overdue} icon={AlertTriangle} tone="danger" /></Link>
       </div>
 
+      <CalendarBillingWidgets />
+
       <div className="grid lg:grid-cols-3 gap-4 mt-6">
+
         <Card className="card-soft p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
