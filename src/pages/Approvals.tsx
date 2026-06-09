@@ -72,7 +72,7 @@ export default function Approvals() {
             <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{it.reference}</span>
+                  <Link to={`/approvals/${it.id}`} className="font-medium text-primary hover:underline">{it.reference}</Link>
                   <span className="text-xs text-muted-foreground">• {it.docType}</span>
                 </div>
                 <div className="text-xs text-muted-foreground mt-0.5">
