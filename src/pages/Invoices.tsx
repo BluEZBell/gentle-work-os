@@ -108,14 +108,15 @@ export default function Invoices() {
                       onEdit={() => toast.info(`แก้ไข ${i.number}`)}
                       onPrint={() => setPreview({ number: i.number, type: "td5" })}
                       onPdf={() => toast.info(`PDF ${i.number}`)}
-                      onDuplicate={() => toast.success(`ทำสำเนา ${i.number}`)}
+                      onDuplicate={() => toast.success(`ทำสำเนา ${i.number}`, { description: `Copied from ${i.number}` })}
                       onSubmitApproval={() => toast.success("ส่งขออนุมัติแล้ว")}
                       onApprove={() => toast.success(`อนุมัติ ${i.number}`)}
                       onReject={() => toast.error(`ไม่อนุมัติ ${i.number}`)}
                       onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
                       onViewLog={() => toast.info("ดูประวัติเอกสาร")}
-                      onDelete={() => toast.success(`ลบ ${i.number}`)}
+                      onDelete={() => { const idx = customerInvoices.findIndex(x => x.id === i.id); if (idx >= 0) customerInvoices.splice(idx, 1); setInvoiceStatus(i.id, i.status, user?.name ?? "Demo"); }}
                       deleteLabel={`ใบแจ้งหนี้ ${i.number}`}
+                      relatedWarning={`ใบนี้ผูกกับงาน ${findJob(i.jobId)?.number ?? ""} หากลบประวัติงานจะหายไป`}
                     />
                   </div>
                 </TableCell>

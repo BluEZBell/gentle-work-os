@@ -215,8 +215,32 @@ export default function PaymentVouchers() {
 
       {/* New voucher */}
       <NewVoucherDialog open={newOpen} onClose={() => setNewOpen(false)}
-        onCreate={(v) => { setList([v, ...list]); setNewOpen(false); toast.success(`สร้าง ${v.number} แล้ว`); }}
+        onCreate={(v) => { setList([v, ...list]); setNewOpen(false); audit("Khun Ploy", "Create Payment Voucher", v.number, "Payment Vouchers"); toast.success(`สร้าง ${v.number} แล้ว`); }}
         nextNumber={`PV-2026-${String(1000 + list.length + 1).slice(1)}`} />
+
+      {/* Per-voucher Print Log */}
+      <Dialog open={!!logFor} onOpenChange={(o) => !o && setLogFor(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>ประวัติการพิมพ์ — {logFor?.number}</DialogTitle>
+            <DialogDescription>เฉพาะใบสำคัญจ่ายฉบับนี้</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5 max-h-[50vh] overflow-y-auto">
+            {logFor && log.filter((l) => l.relatedId === logFor.id).map((l) => (
+              <div key={l.id} className="flex items-center justify-between text-sm border-b last:border-0 py-1.5">
+                <div>
+                  <div className="font-medium">{l.printedBy}</div>
+                  <div className="text-xs text-muted-foreground">{l.printedAt}</div>
+                </div>
+                <StatusBadge status={`${l.copies} ชุด`} tone="info" />
+              </div>
+            ))}
+            {logFor && !log.filter((l) => l.relatedId === logFor.id).length && (
+              <div className="text-sm text-muted-foreground text-center py-6">ยังไม่มีการพิมพ์สำหรับใบนี้</div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
