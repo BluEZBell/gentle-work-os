@@ -25,6 +25,8 @@ import {
   tasks, activities,
 } from "@/lib/mockBusiness";
 import { BillingRulesTab } from "@/components/BillingRulesTab";
+import { RowActions } from "@/components/RowActions";
+import { toast } from "sonner";
 
 
 export default function Customers() {
@@ -80,13 +82,14 @@ export default function Customers() {
               <TableHead>Lead Source</TableHead>
               <TableHead>Updated</TableHead>
               <TableHead className="text-right">Deals</TableHead>
+              <TableHead className="text-right w-32">การกระทำ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.map((c) => {
               const dealCount = deals.filter((d) => d.customerId === c.id).length;
               return (
-                <TableRow key={c.id} className="cursor-pointer">
+                <TableRow key={c.id}>
                   <TableCell>
                     <Link to={`/customers/${c.id}`} className="font-medium text-primary hover:underline flex items-center gap-2">
                       {c.confidential && <Lock className="w-3.5 h-3.5 text-warning" />}
@@ -102,6 +105,17 @@ export default function Customers() {
                   <TableCell className="text-sm"><StatusBadge status={customerLeadSource[c.id] ?? "Other"} tone="info" /></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{c.updatedAt}</TableCell>
                   <TableCell className="text-right font-medium">{dealCount}</TableCell>
+                  <TableCell>
+                    <RowActions
+                      viewHref={`/customers/${c.id}`}
+                      onEdit={() => toast.info(`แก้ไข ${c.name} (เดโม)`)}
+                      onDuplicate={() => toast.success(`ทำสำเนา ${c.name}`)}
+                      onAddToCalendar={() => toast.success("เพิ่มนัดติดตามในปฏิทินแล้ว")}
+                      onViewLog={() => toast.info("ดูประวัติลูกค้า")}
+                      onDelete={() => toast.success(`ลบ ${c.name}`)}
+                      deleteLabel={c.name}
+                    />
+                  </TableCell>
                 </TableRow>
               );
             })}
