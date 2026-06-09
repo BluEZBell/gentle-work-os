@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/StatCard";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { payrollLines, payrollAllowances, payrollDeductions, payrollNetPay } from "@/lib/mockExtended";
+import { Link } from "react-router-dom";
 import { fmtTHB } from "@/lib/mockData";
 import { Wallet, Minus, Plus, Coins } from "lucide-react";
 
