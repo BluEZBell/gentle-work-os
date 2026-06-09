@@ -68,7 +68,7 @@ export default function OcrDocuments() {
           <Card key={d.id} className="card-soft p-5">
             <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
               <div>
-                <div className="font-medium">{d.fileName}</div>
+                <Link to={`/ocr-documents/${d.id}`} className="font-medium text-primary hover:underline">{d.fileName}</Link>
                 <div className="text-xs text-muted-foreground">{d.docType} • อัปโหลด {d.uploadedDate}</div>
               </div>
               <StatusBadge status={d.status} tone={d.status === "Approved" ? "success" : d.status === "Rejected" ? "danger" : "warning"} />
