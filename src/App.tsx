@@ -35,6 +35,7 @@ import Approvals from "@/pages/Approvals";
 import Warehouses from "@/pages/Warehouses";
 import ThaiDocuments from "@/pages/ThaiDocuments";
 import Notifications from "@/pages/Notifications";
+import PaymentVouchers, { PaymentVoucherDetail } from "@/pages/PaymentVouchers";
 import {
   JobDetail, QuotationDetail, DealDetail, CustomerPODetail, PurchaseOrderDetail,
   InvoiceDetail, SupplierBillDetail, ThaiDocumentDetail, ServiceDetail,
@@ -98,6 +99,8 @@ const App = () => (
               <Route path="/service" element={<Service />} />
               <Route path="/service/:id" element={<ServiceDetail />} />
               <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/payment-vouchers" element={<PaymentVouchers />} />
+              <Route path="/payment-vouchers/:id" element={<PaymentVoucherDetail />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/audit" element={<AuditLogPage />} />

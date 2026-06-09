@@ -24,6 +24,7 @@ import {
   customerLeadSource, LEAD_SOURCES, customerInvoices, purchaseOrders, changeOrders,
   tasks, activities,
 } from "@/lib/mockBusiness";
+import { BillingRulesTab } from "@/components/BillingRulesTab";
 
 
 export default function Customers() {
@@ -186,6 +187,7 @@ export function CustomerDetail() {
               <TabsTrigger value="service">Service ({cSvc.length})</TabsTrigger>
               <TabsTrigger value="activities">Activities ({cActivities.length})</TabsTrigger>
               <TabsTrigger value="tasks">Tasks ({cTasks.length})</TabsTrigger>
+              <TabsTrigger value="billing">Billing Rules (กฎวางบิล)</TabsTrigger>
               <TabsTrigger value="attach">Attachments</TabsTrigger>
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
             </TabsList>
@@ -300,6 +302,11 @@ export function CustomerDetail() {
                   right={<StatusBadge status={t.status} />} sub={`ครบกำหนด ${t.dueDate} • ${t.owner}`} />
               )} />
             </TabsContent>
+
+            <TabsContent value="billing" className="mt-4">
+              <BillingRulesTab customerId={c.id} />
+            </TabsContent>
+
 
             <TabsContent value="attach" className="mt-4">
               <Card className="card-soft p-5"><Attachments module="Customer" id={c.id} /></Card>
