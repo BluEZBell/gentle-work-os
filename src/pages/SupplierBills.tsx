@@ -17,6 +17,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useSearchParams, Link } from "react-router-dom";
+import { RowActions } from "@/components/RowActions";
+import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Printer, FileDown } from "lucide-react";
 
 const flow = [
   { icon: Mail, label: "อีเมลจากซัพพลายเออร์" },
@@ -35,6 +39,7 @@ export default function SupplierBills() {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState(dueSoon ? "all" : initial);
   const [approveId, setApproveId] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
 
   const list = supplierBills.filter((b) => {
     const sup = findSupplier(b.supplierId);
