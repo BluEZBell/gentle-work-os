@@ -120,6 +120,17 @@ export default function PurchaseOrders() {
           );
         })}
       </div>}
+
+      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader><DialogTitle>พรีวิวใบสั่งซื้อ {preview}</DialogTitle></DialogHeader>
+          {preview && <ThaiDocLayout docTypeId="td9" number={preview} />}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => toast.info("พิมพ์ (เดโม)")}><Printer className="w-4 h-4 mr-1" /> พิมพ์</Button>
+            <Button onClick={() => toast.info("PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" /> PDF</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
