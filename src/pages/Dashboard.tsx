@@ -86,7 +86,7 @@ export default function Dashboard() {
               const profit = j.sellPrice - j.actualCost;
               const margin = Math.round((profit / j.sellPrice) * 100);
               return (
-                <div key={j.id} className="flex items-center justify-between text-sm">
+                <Link key={j.id} to={`/jobs/${j.id}`} className="flex items-center justify-between text-sm hover:bg-secondary/40 rounded px-1 -mx-1 py-1">
                   <div className="min-w-0">
                     <div className="truncate font-medium">{j.number}</div>
                     <div className="text-xs text-muted-foreground truncate">{j.name}</div>
@@ -95,7 +95,7 @@ export default function Dashboard() {
                     <div className="font-medium text-success">{fmtTHB(profit)}</div>
                     <div className="text-xs text-muted-foreground">มาร์จิ้น {margin}%</div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -107,7 +107,7 @@ export default function Dashboard() {
           <h2 className="font-display text-lg font-semibold mb-3">Upcoming Payments (รายการที่ต้องจ่าย)</h2>
           <div className="space-y-2">
             {supplierBills.filter((b) => b.status !== "Paid").map((b) => (
-              <div key={b.id} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
+              <Link key={b.id} to={`/supplier-bills/${b.id}`} className="flex items-center justify-between text-sm py-2 border-b last:border-0 hover:bg-secondary/40 rounded px-1 -mx-1">
                 <div>
                   <div className="font-medium">{findSupplier(b.supplierId)?.name}</div>
                   <div className="text-xs text-muted-foreground">{b.number} • ครบกำหนด {b.dueDate}</div>
@@ -116,7 +116,7 @@ export default function Dashboard() {
                   <div className="font-medium">{fmtTHB(b.total)}</div>
                   <StatusBadge status={b.status} />
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </Card>
@@ -125,7 +125,7 @@ export default function Dashboard() {
           <h2 className="font-display text-lg font-semibold mb-3">Upcoming Service / Calibration (บริการที่ใกล้ครบ)</h2>
           <div className="space-y-2">
             {serviceRecords.filter((s) => s.status !== "Completed").map((s) => (
-              <div key={s.id} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
+              <Link key={s.id} to={`/service/${s.id}`} className="flex items-center justify-between text-sm py-2 border-b last:border-0 hover:bg-secondary/40 rounded px-1 -mx-1">
                 <div className="min-w-0">
                   <div className="font-medium truncate">{findCustomer(s.customerId)?.name}</div>
                   <div className="text-xs text-muted-foreground truncate">
@@ -133,7 +133,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <StatusBadge status={s.status} />
-              </div>
+              </Link>
             ))}
           </div>
         </Card>

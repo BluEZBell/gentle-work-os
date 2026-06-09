@@ -8,6 +8,7 @@ import { Mail, ShieldAlert, Check, X } from "lucide-react";
 import { aiEmails, type AiEmail } from "@/lib/mockExtended";
 import { fmtTHB } from "@/lib/mockData";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export default function AiEmailIntake() {
   const [list, setList] = useState<AiEmail[]>(aiEmails);
@@ -36,7 +37,7 @@ export default function AiEmailIntake() {
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-lg bg-accent text-primary grid place-items-center"><Mail className="w-5 h-5" /></div>
                 <div>
-                  <div className="font-medium">{e.subject}</div>
+                  <Link to={`/ai-email/${e.id}`} className="font-medium text-primary hover:underline">{e.subject}</Link>
                   <div className="text-xs text-muted-foreground">จาก {e.from} • รับเมื่อ {e.receivedDate}</div>
                 </div>
               </div>

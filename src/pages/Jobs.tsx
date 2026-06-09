@@ -13,6 +13,7 @@ import { useAuth } from "@/lib/auth";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarDays, Search, Sparkles, TrendingUp, Truck, Headphones } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const statuses: JobStatus[] = ["Pending", "In Progress", "Waiting Supplier", "Waiting Customer", "Delivered", "Closed", "Problem"];
 
@@ -55,11 +56,11 @@ export default function Jobs() {
               <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-display font-semibold">{j.number}</span>
+                    <Link to={`/jobs/${j.id}`} className="font-display font-semibold text-primary hover:underline">{j.number}</Link>
                     <StatusBadge status={j.status} />
                     <span className="text-xs text-muted-foreground">({jobStatusThai[j.status]})</span>
                   </div>
-                  <div className="text-sm mt-1">{j.name}</div>
+                  <div className="text-sm mt-1"><Link to={`/jobs/${j.id}`} className="hover:underline">{j.name}</Link></div>
                   <div className="text-xs text-muted-foreground"><CustomerLink customerId={j.customerId} muted /></div>
                 </div>
                 <div className="flex items-center gap-2">

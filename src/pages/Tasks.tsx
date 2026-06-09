@@ -156,8 +156,8 @@ export default function Tasks() {
               <div className="text-xs text-muted-foreground truncate flex items-center gap-1 flex-wrap">
                 <span>Due {t.dueDate} • {t.owner}</span>
                 {t.customerId && <><span>•</span><CustomerLink customerId={t.customerId} muted /></>}
-                {t.dealId && <><span>•</span><Link to="/deals" className="hover:underline">{findDeal(t.dealId)?.name}</Link></>}
-                {t.jobId && <><span>•</span><Link to="/jobs" className="hover:underline">{findJob(t.jobId)?.number}</Link></>}
+                {t.dealId && <><span>•</span><Link to={`/deals/${t.dealId}`} className="hover:underline">{findDeal(t.dealId)?.name}</Link></>}
+                {t.jobId && <><span>•</span><Link to={`/jobs/${t.jobId}`} className="hover:underline">{findJob(t.jobId)?.number}</Link></>}
               </div>
             </div>
             <Select value={t.priority} onValueChange={(v) => setTaskPriority(t.id, v as Priority)}>

@@ -34,6 +34,13 @@ import AiEmailIntake from "@/pages/AiEmailIntake";
 import Approvals from "@/pages/Approvals";
 import Warehouses from "@/pages/Warehouses";
 import ThaiDocuments from "@/pages/ThaiDocuments";
+import Notifications from "@/pages/Notifications";
+import {
+  JobDetail, QuotationDetail, DealDetail, CustomerPODetail, PurchaseOrderDetail,
+  InvoiceDetail, SupplierBillDetail, ThaiDocumentDetail, ServiceDetail,
+  ChangeOrderDetail, ApprovalDetail, AssetDetail, PayrollDetail,
+  WarehouseDetail, OcrDocumentDetail, AiEmailDetail,
+} from "@/pages/details/RecordDetails";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,31 +56,48 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route element={<Layout />}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/notifications" element={<Notifications />} />
               <Route path="/customers" element={<Customers />} />
               <Route path="/customers/:id" element={<CustomerDetail />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/deals" element={<Deals />} />
+              <Route path="/deals/:id" element={<DealDetail />} />
               <Route path="/quotations" element={<Quotations />} />
+              <Route path="/quotations/:id" element={<QuotationDetail />} />
               <Route path="/jobs" element={<Jobs />} />
+              <Route path="/jobs/:id" element={<JobDetail />} />
               <Route path="/parts" element={<Parts />} />
               <Route path="/suppliers" element={<Suppliers />} />
               <Route path="/supplier-bills" element={<SupplierBills />} />
+              <Route path="/supplier-bills/:id" element={<SupplierBillDetail />} />
               <Route path="/purchase-orders" element={<PurchaseOrders />} />
+              <Route path="/purchase-orders/:id" element={<PurchaseOrderDetail />} />
+              <Route path="/customer-po/:id" element={<CustomerPODetail />} />
               <Route path="/invoices" element={<Invoices />} />
+              <Route path="/invoices/:id" element={<InvoiceDetail />} />
               <Route path="/change-orders" element={<ChangeOrders />} />
+              <Route path="/change-orders/:id" element={<ChangeOrderDetail />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/assets" element={<Assets />} />
+              <Route path="/assets/:id" element={<AssetDetail />} />
               <Route path="/payroll" element={<Payroll />} />
+              <Route path="/payroll/:id" element={<PayrollDetail />} />
               <Route path="/barcode-issue" element={<BarcodeIssue />} />
               <Route path="/ocr-documents" element={<OcrDocuments />} />
+              <Route path="/ocr-documents/:id" element={<OcrDocumentDetail />} />
               <Route path="/customer-portal" element={<CustomerPortal />} />
               <Route path="/calendar-sync" element={<CalendarSync />} />
               <Route path="/ai-email" element={<AiEmailIntake />} />
+              <Route path="/ai-email/:id" element={<AiEmailDetail />} />
               <Route path="/approvals" element={<Approvals />} />
+              <Route path="/approvals/:id" element={<ApprovalDetail />} />
               <Route path="/warehouses" element={<Warehouses />} />
+              <Route path="/warehouses/:id" element={<WarehouseDetail />} />
               <Route path="/thai-documents" element={<ThaiDocuments />} />
-              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/thai-documents/:id" element={<ThaiDocumentDetail />} />
               <Route path="/service" element={<Service />} />
+              <Route path="/service/:id" element={<ServiceDetail />} />
+              <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/audit" element={<AuditLogPage />} />

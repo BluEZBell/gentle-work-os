@@ -11,6 +11,7 @@ import { ocrDocuments, OCR_TYPES, type OcrDocument, type OcrDocType } from "@/li
 import { fmtTHB } from "@/lib/mockData";
 import { FileScan, ShieldAlert, Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export default function OcrDocuments() {
   const [docs, setDocs] = useState<OcrDocument[]>(ocrDocuments);
@@ -67,7 +68,7 @@ export default function OcrDocuments() {
           <Card key={d.id} className="card-soft p-5">
             <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
               <div>
-                <div className="font-medium">{d.fileName}</div>
+                <Link to={`/ocr-documents/${d.id}`} className="font-medium text-primary hover:underline">{d.fileName}</Link>
                 <div className="text-xs text-muted-foreground">{d.docType} • อัปโหลด {d.uploadedDate}</div>
               </div>
               <StatusBadge status={d.status} tone={d.status === "Approved" ? "success" : d.status === "Rejected" ? "danger" : "warning"} />

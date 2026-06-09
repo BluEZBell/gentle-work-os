@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { THAI_DOC_TYPES } from "@/lib/mockExtended";
 import { Printer, FileText, FileDown } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const sampleItems = [
   { name: "Precision Jig Type A", number: "PJ-A-12", qty: 50, unit: 7200, discount: 0 },
@@ -99,26 +100,29 @@ export default function ThaiDocuments() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {THAI_DOC_TYPES.map((d) => (
           <Card key={d.id} className="card-soft p-5 flex flex-col gap-3">
-            <div className="flex items-start gap-3">
+            <Link to={`/thai-documents/${d.id}`} className="flex items-start gap-3 group">
               <div className="w-10 h-10 rounded-lg bg-accent text-primary grid place-items-center"><FileText className="w-5 h-5" /></div>
               <div>
-                <div className="font-medium">{d.name}</div>
+                <div className="font-medium group-hover:underline">{d.name}</div>
                 <div className="text-xs text-muted-foreground">{d.en}</div>
               </div>
+            </Link>
+            <div className="flex gap-2 mt-auto">
+              <Dialog open={openId === d.id} onOpenChange={(o) => setOpenId(o ? d.id : null)}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex-1"><Printer className="w-3.5 h-3.5 mr-1" /> พรีวิว</Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader><DialogTitle>{d.name} — {d.en}</DialogTitle></DialogHeader>
+                  {current && <ThaiDocPreview name={current.name} en={current.en} />}
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => toast.info("พิมพ์เอกสาร (เดโม)")}><Printer className="w-4 h-4 mr-1" /> พิมพ์</Button>
+                    <Button onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" /> ดาวน์โหลด PDF</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              <Button asChild size="sm" variant="ghost"><Link to={`/thai-documents/${d.id}`}>เปิด</Link></Button>
             </div>
-            <Dialog open={openId === d.id} onOpenChange={(o) => setOpenId(o ? d.id : null)}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="mt-auto"><Printer className="w-3.5 h-3.5 mr-1" /> พรีวิว</Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-3xl">
-                <DialogHeader><DialogTitle>{d.name} — {d.en}</DialogTitle></DialogHeader>
-                {current && <ThaiDocPreview name={current.name} en={current.en} />}
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => toast.info("พิมพ์เอกสาร (เดโม)")}><Printer className="w-4 h-4 mr-1" /> พิมพ์</Button>
-                  <Button onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" /> ดาวน์โหลด PDF</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
           </Card>
         ))}
       </div>

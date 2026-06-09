@@ -16,7 +16,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 
 const flow = [
   { icon: Mail, label: "อีเมลจากซัพพลายเออร์" },
@@ -109,7 +109,7 @@ export default function SupplierBills() {
           <TableBody>
             {list.map((b) => (
               <TableRow key={b.id}>
-                <TableCell className="font-medium">{b.number}</TableCell>
+                <TableCell className="font-medium"><Link to={`/supplier-bills/${b.id}`} className="text-primary hover:underline">{b.number}</Link></TableCell>
                 <TableCell>
                   <div className="text-sm">{findSupplier(b.supplierId)?.name}</div>
                   <div className="text-xs text-muted-foreground">จาก {b.emailSource}</div>

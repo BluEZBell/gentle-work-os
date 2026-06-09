@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { assets, ASSET_STATUSES, assetMonthlyDep, assetAccumDep, assetBookValue, type AssetStatus } from "@/lib/mockExtended";
 import { fmtTHB } from "@/lib/mockData";
 import { Boxes, Wrench, Archive, TrendingDown, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Assets() {
   const [q, setQ] = useState("");
@@ -60,8 +61,8 @@ export default function Assets() {
             <TableBody>
               {list.map((a) => (
                 <TableRow key={a.id}>
-                  <TableCell className="font-mono text-xs">{a.code}</TableCell>
-                  <TableCell className="font-medium">{a.name}</TableCell>
+                  <TableCell className="font-mono text-xs"><Link to={`/assets/${a.id}`} className="text-primary hover:underline">{a.code}</Link></TableCell>
+                  <TableCell className="font-medium"><Link to={`/assets/${a.id}`} className="hover:underline">{a.name}</Link></TableCell>
                   <TableCell>{a.type}</TableCell>
                   <TableCell>{a.purchaseDate}</TableCell>
                   <TableCell className="text-right">{fmtTHB(a.purchasePrice)}</TableCell>

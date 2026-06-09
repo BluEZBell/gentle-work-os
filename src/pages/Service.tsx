@@ -7,7 +7,7 @@ import { CustomerLink } from "@/components/CustomerLink";
 import { useTick } from "@/lib/store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sparkles, MessageCircle } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Service() {
@@ -40,7 +40,7 @@ export default function Service() {
               <TableRow key={s.id}>
                 <TableCell className="font-medium"><CustomerLink customerId={s.customerId} /></TableCell>
                 <TableCell>
-                  <div className="text-sm">{s.partName}</div>
+                  <div className="text-sm"><Link to={`/service/${s.id}`} className="text-primary hover:underline">{s.partName}</Link></div>
                   <div className="text-xs text-muted-foreground">{s.partNumber}</div>
                 </TableCell>
                 <TableCell className="text-sm">{s.deliveryDate}</TableCell>

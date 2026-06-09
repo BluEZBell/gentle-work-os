@@ -12,6 +12,8 @@ import { useAuth } from "@/lib/auth";
 import { Search, Truck } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { CustomerLink } from "@/components/CustomerLink";
 
 export default function PurchaseOrders() {
   useBizTick();
@@ -47,16 +49,17 @@ export default function PurchaseOrders() {
       <div className="space-y-4">
         {list.map((p) => {
           const total = poTotal(p);
+          const j = findJob(p.jobId);
           return (
             <Card key={p.id} className="card-soft p-5">
               <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-display font-semibold">{p.number}</span>
+                    <Link to={`/purchase-orders/${p.id}`} className="font-display font-semibold text-primary hover:underline">{p.number}</Link>
                     <StatusBadge status={p.status} />
                   </div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {findSupplier(p.supplierId)?.name} • งาน {findJob(p.jobId)?.number ?? "—"} • {p.date} → คาดว่าจะได้รับ {p.expectedDelivery}
+                  <div className="text-sm text-muted-foreground mt-1 flex items-center gap-1 flex-wrap">
+                    {findSupplier(p.supplierId)?.name} • งาน {j ? <Link to={`/jobs/${j.id}`} className="text-primary hover:underline">{j.number}</Link> : "—"} • <CustomerLink customerId={j?.customerId} muted /> • {p.date} → คาดว่าจะได้รับ {p.expectedDelivery}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
