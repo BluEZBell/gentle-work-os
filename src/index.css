@@ -7,63 +7,63 @@
 
 @layer base {
   :root {
-    /* Surfaces */
-    --background: 36 22% 96%;            /* warm gray */
-    --foreground: 217 25% 18%;
-    --card: 40 30% 99%;                  /* off-white */
-    --card-foreground: 217 25% 18%;
-    --popover: 40 30% 99%;
-    --popover-foreground: 217 25% 18%;
+    /* Surfaces — warm peony cream */
+    --background: 33 35% 97%;
+    --foreground: 25 25% 16%;
+    --card: 36 45% 99%;
+    --card-foreground: 25 25% 16%;
+    --popover: 36 45% 99%;
+    --popover-foreground: 25 25% 16%;
 
-    /* Brand: soft navy */
-    --primary: 217 45% 26%;
-    --primary-foreground: 40 30% 99%;
-    --primary-glow: 217 55% 42%;
+    /* Brand: Peony warm amber #dc8e35 */
+    --primary: 31 70% 53%;
+    --primary-foreground: 36 45% 99%;
+    --primary-glow: 28 80% 62%;
 
-    --secondary: 36 18% 92%;
-    --secondary-foreground: 217 25% 22%;
+    --secondary: 32 30% 93%;
+    --secondary-foreground: 25 25% 20%;
 
-    --muted: 36 16% 90%;
-    --muted-foreground: 217 12% 42%;
+    --muted: 32 24% 91%;
+    --muted-foreground: 25 12% 42%;
 
-    --accent: 217 30% 92%;
-    --accent-foreground: 217 45% 26%;
+    --accent: 31 60% 92%;
+    --accent-foreground: 31 70% 38%;
 
     /* Signals */
-    --success: 145 28% 42%;              /* sage green */
-    --success-foreground: 40 30% 99%;
+    --success: 145 30% 40%;
+    --success-foreground: 36 45% 99%;
     --success-soft: 145 30% 92%;
 
-    --warning: 38 70% 50%;               /* muted amber */
-    --warning-foreground: 217 35% 15%;
-    --warning-soft: 38 70% 93%;
+    --warning: 38 80% 50%;
+    --warning-foreground: 25 35% 15%;
+    --warning-soft: 38 80% 93%;
 
-    --destructive: 4 65% 56%;            /* soft red */
-    --destructive-foreground: 40 30% 99%;
+    --destructive: 4 65% 56%;
+    --destructive-foreground: 36 45% 99%;
     --destructive-soft: 4 65% 95%;
 
     --info: 210 60% 50%;
     --info-soft: 210 60% 94%;
 
-    --border: 36 14% 86%;
-    --input: 36 14% 86%;
-    --ring: 217 45% 36%;
+    --border: 32 22% 87%;
+    --input: 32 22% 87%;
+    --ring: 31 70% 53%;
 
     --radius: 0.75rem;
 
-    --shadow-soft: 0 1px 2px hsl(217 25% 18% / 0.04), 0 4px 16px hsl(217 25% 18% / 0.06);
-    --shadow-card: 0 1px 2px hsl(217 25% 18% / 0.05), 0 8px 24px hsl(217 25% 18% / 0.05);
-    --gradient-hero: linear-gradient(135deg, hsl(217 45% 26%), hsl(217 55% 42%));
+    --shadow-soft: 0 1px 2px hsl(25 25% 18% / 0.04), 0 4px 16px hsl(25 25% 18% / 0.06);
+    --shadow-card: 0 1px 2px hsl(25 25% 18% / 0.05), 0 8px 24px hsl(25 25% 18% / 0.05);
+    --gradient-hero: linear-gradient(135deg, hsl(31 70% 53%), hsl(28 80% 62%));
 
-    /* Sidebar */
-    --sidebar-background: 217 40% 22%;
-    --sidebar-foreground: 40 25% 92%;
-    --sidebar-primary: 40 30% 99%;
-    --sidebar-primary-foreground: 217 45% 26%;
-    --sidebar-accent: 217 38% 28%;
-    --sidebar-accent-foreground: 40 30% 99%;
-    --sidebar-border: 217 35% 30%;
-    --sidebar-ring: 217 55% 60%;
+    /* Sidebar — warm deep brown */
+    --sidebar-background: 25 22% 18%;
+    --sidebar-foreground: 32 30% 92%;
+    --sidebar-primary: 31 70% 53%;
+    --sidebar-primary-foreground: 36 45% 99%;
+    --sidebar-accent: 25 18% 25%;
+    --sidebar-accent-foreground: 36 45% 99%;
+    --sidebar-border: 25 18% 28%;
+    --sidebar-ring: 31 70% 53%;
   }
 
   .dark {
