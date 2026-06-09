@@ -11,6 +11,7 @@ import { ocrDocuments, OCR_TYPES, type OcrDocument, type OcrDocType } from "@/li
 import { fmtTHB } from "@/lib/mockData";
 import { FileScan, ShieldAlert, Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export default function OcrDocuments() {
   const [docs, setDocs] = useState<OcrDocument[]>(ocrDocuments);
