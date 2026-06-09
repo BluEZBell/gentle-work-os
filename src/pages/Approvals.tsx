@@ -10,7 +10,7 @@ import { fmtTHB } from "@/lib/mockData";
 import { Check, X, RotateCcw, ChevronDown, Search } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { toast } from "sonner";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 
 const tone = (s: DocApprovalStatus) =>
   s === "Approved" ? "success" : s === "Rejected" ? "danger" :
