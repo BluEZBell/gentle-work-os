@@ -66,9 +66,9 @@ export default function ChangeOrders() {
               const j = findJob(c.jobId);
               return (
                 <TableRow key={c.id}>
-                  <TableCell className="font-medium">{c.number}</TableCell>
+                  <TableCell className="font-medium"><Link to={`/change-orders/${c.id}`} className="text-primary hover:underline">{c.number}</Link></TableCell>
                   <TableCell className="text-sm">
-                    <div><Link to="/jobs" className="text-primary hover:underline">{j?.number ?? "—"}</Link></div>
+                    <div>{j ? <Link to={`/jobs/${j.id}`} className="text-primary hover:underline">{j.number}</Link> : "—"}</div>
                     <div className="text-xs"><CustomerLink customerId={j?.customerId} muted /></div>
                   </TableCell>
                   <TableCell className="text-sm">{c.requestedBy}<div className="text-xs text-muted-foreground">{c.requestDate}</div></TableCell>
