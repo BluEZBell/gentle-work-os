@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { THAI_DOC_TYPES } from "@/lib/mockExtended";
 import { Printer, FileText, FileDown } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const sampleItems = [
   { name: "Precision Jig Type A", number: "PJ-A-12", qty: 50, unit: 7200, discount: 0 },
