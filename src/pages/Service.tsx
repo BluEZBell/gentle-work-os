@@ -7,7 +7,7 @@ import { CustomerLink } from "@/components/CustomerLink";
 import { useTick } from "@/lib/store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sparkles, MessageCircle } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Service() {
