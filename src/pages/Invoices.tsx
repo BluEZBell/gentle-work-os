@@ -13,8 +13,12 @@ import { findCustomer, findJob, fmtTHB } from "@/lib/mockData";
 import { useAuth } from "@/lib/auth";
 import { Link, useSearchParams } from "react-router-dom";
 import { CustomerLink } from "@/components/CustomerLink";
-import { Search, Receipt, Info } from "lucide-react";
+import { Search, Receipt, Info, Printer, FileDown } from "lucide-react";
 import { toast } from "sonner";
+import { RowActions } from "@/components/RowActions";
+import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function Invoices() {
   useBizTick();
@@ -24,6 +28,7 @@ export default function Invoices() {
   const dueSoon = initial === "due-soon";
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState(dueSoon ? "all" : initial);
+  const [preview, setPreview] = useState<{ number: string; type: string } | null>(null);
   const list = customerInvoices.filter((i) => {
     const cust = findCustomer(i.customerId);
     const m = i.number.toLowerCase().includes(q.toLowerCase()) ||
@@ -91,13 +96,29 @@ export default function Invoices() {
                 <TableCell className="text-right font-medium">{fmtTHB(i.total)}</TableCell>
                 <TableCell><StatusBadge status={i.status} /></TableCell>
                 <TableCell>
-                  <Select value={i.status} disabled={!can("edit")}
-                    onValueChange={(v) => { setInvoiceStatus(i.id, v as InvoiceStatus, user?.name ?? "Demo"); toast.success(`Invoice → ${v}`); }}>
-                    <SelectTrigger className="h-8 w-36 text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {INVOICE_STATUSES.map((s) => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center justify-end gap-2">
+                    <Select value={i.status} disabled={!can("edit")}
+                      onValueChange={(v) => { setInvoiceStatus(i.id, v as InvoiceStatus, user?.name ?? "Demo"); toast.success(`Invoice → ${v}`); }}>
+                      <SelectTrigger className="h-8 w-32 text-xs"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {INVOICE_STATUSES.map((s) => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <RowActions
+                      viewHref={`/invoices/${i.id}`}
+                      onEdit={() => toast.info(`แก้ไข ${i.number}`)}
+                      onPrint={() => setPreview({ number: i.number, type: "td5" })}
+                      onPdf={() => toast.info(`PDF ${i.number}`)}
+                      onDuplicate={() => toast.success(`ทำสำเนา ${i.number}`)}
+                      onSubmitApproval={() => toast.success("ส่งขออนุมัติแล้ว")}
+                      onApprove={() => toast.success(`อนุมัติ ${i.number}`)}
+                      onReject={() => toast.error(`ไม่อนุมัติ ${i.number}`)}
+                      onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
+                      onViewLog={() => toast.info("ดูประวัติเอกสาร")}
+                      onDelete={() => toast.success(`ลบ ${i.number}`)}
+                      deleteLabel={`ใบแจ้งหนี้ ${i.number}`}
+                    />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -105,6 +126,17 @@ export default function Invoices() {
         </Table>
         {list.length === 0 && <div className="p-8 text-center text-sm text-muted-foreground flex items-center justify-center gap-2"><Receipt className="w-4 h-4" /> ยังไม่มีใบแจ้งหนี้</div>}
       </Card>
+
+      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader><DialogTitle>พรีวิว {preview?.number}</DialogTitle></DialogHeader>
+          {preview && <ThaiDocLayout docTypeId={preview.type} number={preview.number} />}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => toast.info("พิมพ์ (เดโม)")}><Printer className="w-4 h-4 mr-1" /> พิมพ์</Button>
+            <Button onClick={() => toast.info("PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" /> PDF</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
