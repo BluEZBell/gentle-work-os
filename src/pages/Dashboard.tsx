@@ -14,7 +14,7 @@ import {
   supplierBills, serviceRecords, auditLogs, jobs,
 } from "@/lib/mockData";
 import {
-  tasks, customerInvoices, purchaseOrders, changeOrders,
+  tasks, customerInvoices, changeOrders,
 } from "@/lib/mockBusiness";
 import { docApprovals, stockItems, stockTotal } from "@/lib/mockExtended";
 import { calendarEvents, eventTitle, paymentVouchers } from "@/lib/mockCalendar";
