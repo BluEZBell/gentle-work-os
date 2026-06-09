@@ -39,7 +39,7 @@ export default function Payroll() {
             <TableBody>
               {payrollLines.map((p) => (
                 <TableRow key={p.id}>
-                  <TableCell className="font-medium">{p.employeeName}</TableCell>
+                  <TableCell className="font-medium"><Link to={`/payroll/${p.id}`} className="text-primary hover:underline">{p.employeeName}</Link></TableCell>
                   <TableCell className="text-xs text-muted-foreground">{p.role}</TableCell>
                   <TableCell className="text-right">{fmtTHB(p.baseSalary)}</TableCell>
                   <TableCell className="text-right">{fmtTHB(p.otWeekday + p.otHoliday)}</TableCell>
