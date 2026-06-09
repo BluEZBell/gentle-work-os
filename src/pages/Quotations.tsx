@@ -7,7 +7,7 @@ import {
 } from "@/lib/mockData";
 import { useTick } from "@/lib/store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ExternalLink, FileText, Paperclip, Plus } from "lucide-react";
+import { FileText, Paperclip, Plus } from "lucide-react";
 
 export default function Quotations() {
   useTick();
