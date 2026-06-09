@@ -31,7 +31,7 @@ export default function Quotations() {
                 <div>
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-primary" />
-                    <span className="font-display font-semibold">{q.number}</span>
+                    <Link to={`/quotations/${q.id}`} className="font-display font-semibold text-primary hover:underline">{q.number}</Link>
                     <StatusBadge status={q.status} />
                   </div>
                   <div className="text-sm text-muted-foreground mt-1 flex items-center gap-1 flex-wrap">
