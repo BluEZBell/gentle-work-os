@@ -24,6 +24,16 @@ import PurchaseOrders from "@/pages/PurchaseOrders";
 import Invoices from "@/pages/Invoices";
 import ChangeOrders from "@/pages/ChangeOrders";
 import Tasks from "@/pages/Tasks";
+import Assets from "@/pages/Assets";
+import Payroll from "@/pages/Payroll";
+import BarcodeIssue from "@/pages/BarcodeIssue";
+import OcrDocuments from "@/pages/OcrDocuments";
+import CustomerPortal from "@/pages/CustomerPortal";
+import CalendarSync from "@/pages/CalendarSync";
+import AiEmailIntake from "@/pages/AiEmailIntake";
+import Approvals from "@/pages/Approvals";
+import Warehouses from "@/pages/Warehouses";
+import ThaiDocuments from "@/pages/ThaiDocuments";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +62,16 @@ const App = () => (
               <Route path="/invoices" element={<Invoices />} />
               <Route path="/change-orders" element={<ChangeOrders />} />
               <Route path="/tasks" element={<Tasks />} />
+              <Route path="/assets" element={<Assets />} />
+              <Route path="/payroll" element={<Payroll />} />
+              <Route path="/barcode-issue" element={<BarcodeIssue />} />
+              <Route path="/ocr-documents" element={<OcrDocuments />} />
+              <Route path="/customer-portal" element={<CustomerPortal />} />
+              <Route path="/calendar-sync" element={<CalendarSync />} />
+              <Route path="/ai-email" element={<AiEmailIntake />} />
+              <Route path="/approvals" element={<Approvals />} />
+              <Route path="/warehouses" element={<Warehouses />} />
+              <Route path="/thai-documents" element={<ThaiDocuments />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/service" element={<Service />} />
               <Route path="/reports" element={<Reports />} />

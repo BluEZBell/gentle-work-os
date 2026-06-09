@@ -78,7 +78,7 @@ export interface QuotationItem {
 export interface Quotation {
   id: string; number: string; customerId: string; dealId: string;
   date: string; validUntil: string; status: QuotationStatus;
-  items: QuotationItem[]; flowAccountLink: string; attachment?: string;
+  items: QuotationItem[]; attachment?: string;
 }
 
 export const quotations: Quotation[] = [
@@ -86,20 +86,15 @@ export const quotations: Quotation[] = [
     items: [
       { id: "qi1", partName: "Precision Jig Type A", partNumber: "PJ-A-12", quantity: 50, sellPrice: 7200, estimatedCost: 4400 },
       { id: "qi2", partName: "Mounting Plate", partNumber: "MP-44", quantity: 50, sellPrice: 2400, estimatedCost: 1500 },
-    ],
-    flowAccountLink: "https://flowaccount.com/mock/doc/QT-2026-0042" },
+    ] },
   { id: "q2", number: "QT-2026-0048", customerId: "c2", dealId: "d2", date: "2026-05-08", validUntil: "2026-06-08", status: "Sent",
-    items: [{ id: "qi3", partName: "Custom Bracket", partNumber: "CB-22", quantity: 200, sellPrice: 1100, estimatedCost: 720 }],
-    flowAccountLink: "https://flowaccount.com/mock/doc/QT-2026-0048" },
+    items: [{ id: "qi3", partName: "Custom Bracket", partNumber: "CB-22", quantity: 200, sellPrice: 1100, estimatedCost: 720 }] },
   { id: "q3", number: "QT-2026-0051", customerId: "c3", dealId: "d3", date: "2026-05-18", validUntil: "2026-06-17", status: "Sent",
-    items: [{ id: "qi4", partName: "Sensor Housing", partNumber: "SH-01", quantity: 25, sellPrice: 3800, estimatedCost: 2600 }],
-    flowAccountLink: "https://flowaccount.com/mock/doc/QT-2026-0051" },
+    items: [{ id: "qi4", partName: "Sensor Housing", partNumber: "SH-01", quantity: 25, sellPrice: 3800, estimatedCost: 2600 }] },
   { id: "q4", number: "QT-2026-0033", customerId: "c4", dealId: "d7", date: "2026-03-10", validUntil: "2026-04-10", status: "Rejected",
-    items: [{ id: "qi5", partName: "Mold Insert", partNumber: "MI-7", quantity: 4, sellPrice: 45000, estimatedCost: 30000 }],
-    flowAccountLink: "https://flowaccount.com/mock/doc/QT-2026-0033" },
+    items: [{ id: "qi5", partName: "Mold Insert", partNumber: "MI-7", quantity: 4, sellPrice: 45000, estimatedCost: 30000 }] },
   { id: "q5", number: "QT-2026-0029", customerId: "c2", dealId: "d6", date: "2026-04-01", validUntil: "2026-05-01", status: "Accepted",
-    items: [{ id: "qi6", partName: "Calibration Service", partNumber: "CAL-2026", quantity: 1, sellPrice: 60000, estimatedCost: 25000 }],
-    flowAccountLink: "https://flowaccount.com/mock/doc/QT-2026-0029" },
+    items: [{ id: "qi6", partName: "Calibration Service", partNumber: "CAL-2026", quantity: 1, sellPrice: 60000, estimatedCost: 25000 }] },
 ];
 
 export type JobStatus = "Pending" | "In Progress" | "Waiting Supplier" | "Waiting Customer" | "Delivered" | "Closed" | "Problem";
