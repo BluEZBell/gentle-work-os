@@ -303,6 +303,11 @@ export function CustomerDetail() {
               )} />
             </TabsContent>
 
+            <TabsContent value="billing" className="mt-4">
+              <BillingRulesTab customerId={c.id} />
+            </TabsContent>
+
+
             <TabsContent value="attach" className="mt-4">
               <Card className="card-soft p-5"><Attachments module="Customer" id={c.id} /></Card>
             </TabsContent>
