@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Link } from "react-router-dom";
 import { NewContactDialog } from "@/components/dialogs/NewContactDialog";
 import { EmptyState } from "@/components/EmptyState";
+import { RowActions } from "@/components/RowActions";
+import { toast } from "sonner";
 
 export default function Contacts() {
   useTick();
@@ -40,6 +42,7 @@ export default function Contacts() {
               <TableHead>Customer</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
+              <TableHead className="text-right w-32">การกระทำ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -57,6 +60,16 @@ export default function Contacts() {
                   </TableCell>
                   <TableCell className="text-sm">{c.email}</TableCell>
                   <TableCell className="text-sm">{c.phone}</TableCell>
+                  <TableCell>
+                    <RowActions
+                      viewHref={cust ? `/customers/${cust.id}` : undefined}
+                      onEdit={() => toast.info(`แก้ไข ${c.name}`)}
+                      onDuplicate={() => toast.success(`ทำสำเนา ${c.name}`)}
+                      onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
+                      onDelete={() => toast.success(`ลบ ${c.name}`)}
+                      deleteLabel={c.name}
+                    />
+                  </TableCell>
                 </TableRow>
               );
             })}
