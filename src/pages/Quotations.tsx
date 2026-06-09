@@ -33,7 +33,7 @@ export default function Quotations() {
   const [preview, setPreview] = useState<Quotation | null>(null);
 
   const duplicate = (q: Quotation) => {
-    const num = `QT-2026-${String(2000 + list.length + 1).slice(1)}`;
+    const num = `QT-2026-${String(60 + list.length + 1).padStart(4, "0")}`;
     setList([{ ...q, id: `q-${Date.now()}`, number: num, status: "Draft" }, ...list]);
   };
   const remove = (id: string) => setList(list.filter((q) => q.id !== id));
@@ -150,7 +150,7 @@ export default function Quotations() {
         editing={editing}
         onClose={() => { setFormOpen(false); setEditing(null); }}
         onSave={upsert}
-        nextNumber={`QT-2026-${String(2000 + list.length + 1).slice(1)}`}
+        nextNumber={`QT-2026-${String(60 + list.length + 1).padStart(4, "0")}`}
       />
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
