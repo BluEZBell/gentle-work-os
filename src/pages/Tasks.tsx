@@ -13,7 +13,7 @@ import {
   tasks, TASK_STATUSES, PRIORITIES, type TaskStatus, type Priority,
 } from "@/lib/mockBusiness";
 import { addTask, setTaskStatus, setTaskPriority, useBizTick } from "@/lib/storeBusiness";
-import { customers, deals, jobs, findCustomer, findJob, findDeal } from "@/lib/mockData";
+import { customers, deals, jobs, findJob, findDeal } from "@/lib/mockData";
 import { CustomerLink } from "@/components/CustomerLink";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
