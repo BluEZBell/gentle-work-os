@@ -18,6 +18,7 @@ import {
   assets, assetBookValue, assetMonthlyDep, payrollLines, payrollNetPay,
   stockItems, stockTotal, docApprovals, ocrDocuments, aiEmails, portalActivity,
 } from "@/lib/mockExtended";
+import { calendarEvents, eventTitle, paymentVouchers, printLog } from "@/lib/mockCalendar";
 import { useTick } from "@/lib/store";
 import { Link } from "react-router-dom";
 
