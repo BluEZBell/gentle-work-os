@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Sparkles, MessageCircle } from "lucide-react";
 import { useSearchParams, Link } from "react-router-dom";
 import { toast } from "sonner";
+import { RowActions } from "@/components/RowActions";
 
 export default function Service() {
   useTick();
@@ -55,10 +56,21 @@ export default function Service() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Button size="sm" variant="outline"
-                    onClick={() => toast.success(`Follow-up scheduled with ${findCustomer(s.customerId)?.name}`)}>
-                    <MessageCircle className="w-3.5 h-3.5 mr-1" /> Follow up
-                  </Button>
+                  <div className="flex items-center justify-end gap-1">
+                    <Button size="sm" variant="outline"
+                      onClick={() => toast.success(`Follow-up scheduled with ${findCustomer(s.customerId)?.name}`)}>
+                      <MessageCircle className="w-3.5 h-3.5 mr-1" /> Follow up
+                    </Button>
+                    <RowActions
+                      viewHref={`/service/${s.id}`}
+                      onEdit={() => toast.info(`แก้ไข ${s.partName}`)}
+                      onDuplicate={() => toast.success(`ทำสำเนา ${s.partName}`)}
+                      onAddToCalendar={() => toast.success("เพิ่ม Calibration ในปฏิทินแล้ว")}
+                      onViewLog={() => toast.info("ดูประวัติการบริการ")}
+                      onDelete={() => toast.success(`ลบ ${s.partName}`)}
+                      deleteLabel={`Service ${s.partName}`}
+                    />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

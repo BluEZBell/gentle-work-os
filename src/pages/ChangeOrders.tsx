@@ -14,6 +14,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Search, GitPullRequest } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
+import { RowActions } from "@/components/RowActions";
 
 export default function ChangeOrders() {
   useBizTick();
@@ -78,13 +79,26 @@ export default function ChangeOrders() {
                   <TableCell>{c.additionalQuotationRequired ? <StatusBadge status="Required" tone="warning" /> : <StatusBadge status="No" tone="muted" />}</TableCell>
                   <TableCell><StatusBadge status={c.approvalStatus} /></TableCell>
                   <TableCell>
-                    <Select value={c.approvalStatus} disabled={!can("edit")}
-                      onValueChange={(v) => { setChangeOrderStatus(c.id, v as ApprovalStatus, user?.name ?? "Demo"); toast.success(`CO → ${v}`); }}>
-                      <SelectTrigger className="h-8 w-32 text-xs"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {APPROVAL_STATUSES.map((s) => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex items-center justify-end gap-1">
+                      <Select value={c.approvalStatus} disabled={!can("edit")}
+                        onValueChange={(v) => { setChangeOrderStatus(c.id, v as ApprovalStatus, user?.name ?? "Demo"); toast.success(`CO → ${v}`); }}>
+                        <SelectTrigger className="h-8 w-28 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {APPROVAL_STATUSES.map((s) => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <RowActions
+                        viewHref={`/change-orders/${c.id}`}
+                        onEdit={() => toast.info(`แก้ไข ${c.number}`)}
+                        onDuplicate={() => toast.success(`ทำสำเนา ${c.number}`)}
+                        onApprove={() => { setChangeOrderStatus(c.id, "Approved", user?.name ?? "Demo"); toast.success("อนุมัติแล้ว"); }}
+                        onReject={() => { setChangeOrderStatus(c.id, "Rejected", user?.name ?? "Demo"); toast.error("ไม่อนุมัติ"); }}
+                        onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
+                        onViewLog={() => toast.info("ดูประวัติ CO")}
+                        onDelete={() => toast.success(`ลบ ${c.number}`)}
+                        deleteLabel={`คำขอเปลี่ยนแปลง ${c.number}`}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               );

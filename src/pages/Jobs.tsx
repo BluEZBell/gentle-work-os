@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CalendarDays, Search, Sparkles, TrendingUp, Truck, Headphones } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { RowActions } from "@/components/RowActions";
 
 const statuses: JobStatus[] = ["Pending", "In Progress", "Waiting Supplier", "Waiting Customer", "Delivered", "Closed", "Problem"];
 
@@ -80,6 +81,19 @@ export default function Jobs() {
                       <Headphones className="w-3.5 h-3.5 mr-1" /> สร้างแจ้งเตือนบริการ
                     </Button>
                   )}
+                  <RowActions
+                    viewHref={`/jobs/${j.id}`}
+                    onEdit={() => toast.info(`แก้ไข ${j.number}`)}
+                    onPrint={() => toast.info(`พิมพ์ใบงาน ${j.number}`)}
+                    onPdf={() => toast.info(`PDF ${j.number}`)}
+                    onDuplicate={() => toast.success(`ทำสำเนา ${j.number}`)}
+                    onApprove={() => toast.success(`อนุมัติ ${j.number}`)}
+                    onReject={() => toast.error(`ไม่อนุมัติ ${j.number}`)}
+                    onAddToCalendar={() => toast.success("เพิ่มวันส่งมอบในปฏิทินแล้ว")}
+                    onViewLog={() => toast.info("ดูประวัติงาน")}
+                    onDelete={() => toast.success(`ลบ ${j.number}`)}
+                    deleteLabel={`งาน ${j.number}`}
+                  />
                 </div>
               </div>
 

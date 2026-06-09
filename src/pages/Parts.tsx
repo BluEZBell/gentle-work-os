@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { parts, findCustomer, findSupplier, fmtTHB } from "@/lib/mockData";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusBadge } from "@/components/StatusBadge";
+import { RowActions } from "@/components/RowActions";
+import { toast } from "sonner";
 
 export default function Parts() {
   return (
@@ -20,6 +22,7 @@ export default function Parts() {
               <TableHead className="text-right">Sell</TableHead>
               <TableHead>Warranty</TableHead>
               <TableHead>Calibration</TableHead>
+              <TableHead className="text-right w-28">การกระทำ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -38,6 +41,15 @@ export default function Parts() {
                   {p.calibrationRequired
                     ? <StatusBadge status={`Every ${p.calibrationCycleMonths}m`} tone="warning" />
                     : <StatusBadge status="Not required" tone="muted" />}
+                </TableCell>
+                <TableCell>
+                  <RowActions
+                    onEdit={() => toast.info(`แก้ไข ${p.name}`)}
+                    onDuplicate={() => toast.success(`ทำสำเนา ${p.name}`)}
+                    onAddToCalendar={() => toast.success("เพิ่มเตือน Calibration ในปฏิทินแล้ว")}
+                    onDelete={() => toast.success(`ลบ ${p.name}`)}
+                    deleteLabel={p.name}
+                  />
                 </TableCell>
               </TableRow>
             ))}
