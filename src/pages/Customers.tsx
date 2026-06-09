@@ -187,6 +187,7 @@ export function CustomerDetail() {
               <TabsTrigger value="service">Service ({cSvc.length})</TabsTrigger>
               <TabsTrigger value="activities">Activities ({cActivities.length})</TabsTrigger>
               <TabsTrigger value="tasks">Tasks ({cTasks.length})</TabsTrigger>
+              <TabsTrigger value="billing">Billing Rules (กฎวางบิล)</TabsTrigger>
               <TabsTrigger value="attach">Attachments</TabsTrigger>
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
             </TabsList>
