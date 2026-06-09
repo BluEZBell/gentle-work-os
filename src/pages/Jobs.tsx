@@ -13,6 +13,7 @@ import { useAuth } from "@/lib/auth";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarDays, Search, Sparkles, TrendingUp, Truck, Headphones } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const statuses: JobStatus[] = ["Pending", "In Progress", "Waiting Supplier", "Waiting Customer", "Delivered", "Closed", "Problem"];
 
