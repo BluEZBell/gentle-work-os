@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -217,9 +217,9 @@ function QuotationForm({
 
   const [f, setF] = useState<FormState>(blank);
 
-  // reset when toggled or editing changes
+  // Reset form when dialog opens or when editing record changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useState(() => { if (open) setF(blank()); });
+  useEffect(() => { if (open) setF(blank()); }, [open, editing?.id]);
 
   const setField = <K extends keyof FormState>(k: K, v: FormState[K]) => setF({ ...f, [k]: v });
   const updateItem = (i: number, patch: Partial<ItemDraft>) => {
