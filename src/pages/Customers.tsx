@@ -193,22 +193,22 @@ export function CustomerDetail() {
             <TabsContent value="overview" className="mt-4 grid md:grid-cols-2 gap-4">
               <SectionCard title={`ดีลล่าสุด (${cDeals.length})`} empty={!cDeals.length}>
                 {cDeals.slice(0, 4).map((d) => (
-                  <Row key={d.id} left={d.name} right={<><span className="text-muted-foreground mr-2">{fmtTHB(d.estimatedValue)}</span><StatusBadge status={d.status} /></>} />
+                  <Row key={d.id} left={<Link to={`/deals/${d.id}`} className="text-primary hover:underline">{d.name}</Link>} right={<><span className="text-muted-foreground mr-2">{fmtTHB(d.estimatedValue)}</span><StatusBadge status={d.status} /></>} />
                 ))}
               </SectionCard>
               <SectionCard title={`งานล่าสุด (${cJobs.length})`} empty={!cJobs.length}>
                 {cJobs.slice(0, 4).map((j) => (
-                  <Row key={j.id} left={<Link to="/jobs" className="text-primary hover:underline">{j.number}</Link>} right={<StatusBadge status={j.status} />} sub={j.name} />
+                  <Row key={j.id} left={<Link to={`/jobs/${j.id}`} className="text-primary hover:underline">{j.number}</Link>} right={<StatusBadge status={j.status} />} sub={j.name} />
                 ))}
               </SectionCard>
               <SectionCard title={`ใบเสนอราคา (${cQuots.length})`} empty={!cQuots.length}>
                 {cQuots.slice(0, 4).map((q) => (
-                  <Row key={q.id} left={<Link to="/quotations" className="text-primary hover:underline">{q.number}</Link>} right={<StatusBadge status={q.status} />} />
+                  <Row key={q.id} left={<Link to={`/quotations/${q.id}`} className="text-primary hover:underline">{q.number}</Link>} right={<StatusBadge status={q.status} />} />
                 ))}
               </SectionCard>
               <SectionCard title={`ใบแจ้งหนี้ (${cInvoices.length})`} empty={!cInvoices.length}>
                 {cInvoices.slice(0, 4).map((i) => (
-                  <Row key={i.id} left={<Link to="/invoices" className="text-primary hover:underline">{i.number}</Link>}
+                  <Row key={i.id} left={<Link to={`/invoices/${i.id}`} className="text-primary hover:underline">{i.number}</Link>}
                     right={<><span className="text-muted-foreground mr-2">{fmtTHB(i.total)}</span><StatusBadge status={i.status} /></>} />
                 ))}
               </SectionCard>
