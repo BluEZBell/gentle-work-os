@@ -125,7 +125,7 @@ export default function Dashboard() {
           <h2 className="font-display text-lg font-semibold mb-3">Upcoming Service / Calibration (บริการที่ใกล้ครบ)</h2>
           <div className="space-y-2">
             {serviceRecords.filter((s) => s.status !== "Completed").map((s) => (
-              <div key={s.id} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
+              <Link key={s.id} to={`/service/${s.id}`} className="flex items-center justify-between text-sm py-2 border-b last:border-0 hover:bg-secondary/40 rounded px-1 -mx-1">
                 <div className="min-w-0">
                   <div className="font-medium truncate">{findCustomer(s.customerId)?.name}</div>
                   <div className="text-xs text-muted-foreground truncate">
@@ -133,7 +133,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <StatusBadge status={s.status} />
-              </div>
+              </Link>
             ))}
           </div>
         </Card>
