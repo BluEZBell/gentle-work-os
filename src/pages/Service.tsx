@@ -40,7 +40,7 @@ export default function Service() {
               <TableRow key={s.id}>
                 <TableCell className="font-medium"><CustomerLink customerId={s.customerId} /></TableCell>
                 <TableCell>
-                  <div className="text-sm">{s.partName}</div>
+                  <div className="text-sm"><Link to={`/service/${s.id}`} className="text-primary hover:underline">{s.partName}</Link></div>
                   <div className="text-xs text-muted-foreground">{s.partNumber}</div>
                 </TableCell>
                 <TableCell className="text-sm">{s.deliveryDate}</TableCell>
