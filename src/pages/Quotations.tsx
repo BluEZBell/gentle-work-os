@@ -7,6 +7,7 @@ import {
 } from "@/lib/mockData";
 import { CustomerLink } from "@/components/CustomerLink";
 import { useTick } from "@/lib/store";
+import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FileText, Paperclip, Plus } from "lucide-react";
 
