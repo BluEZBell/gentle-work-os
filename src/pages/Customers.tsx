@@ -233,7 +233,7 @@ export function CustomerDetail() {
 
             <TabsContent value="deals" className="mt-4">
               <ListCard items={cDeals} empty="ยังไม่มีดีล" render={(d) => (
-                <Row key={d.id} left={<Link to="/deals" className="text-primary hover:underline">{d.name}</Link>}
+                <Row key={d.id} left={<Link to={`/deals/${d.id}`} className="text-primary hover:underline">{d.name}</Link>}
                   right={<><span className="text-muted-foreground mr-2">{fmtTHB(d.estimatedValue)}</span><StatusBadge status={d.status} /></>}
                   sub={`ปิดคาด ${d.expectedCloseDate} • ${d.probability}%`} />
               )} />
@@ -241,7 +241,7 @@ export function CustomerDetail() {
 
             <TabsContent value="pos" className="mt-4">
               <ListCard items={cPOs} empty="ยังไม่มี PO ลูกค้า" render={(p) => (
-                <Row key={p.id} left={<Link to="/purchase-orders" className="text-primary hover:underline">{p.number}</Link>}
+                <Row key={p.id} left={<Link to={`/customer-po/${p.id}`} className="text-primary hover:underline">{p.number}</Link>}
                   right={<StatusBadge status={p.status} />}
                   sub={`Job ${findJob(p.jobId)?.number ?? "—"} • ครบกำหนด ${p.expectedDelivery}`} />
               )} />
@@ -249,21 +249,21 @@ export function CustomerDetail() {
 
             <TabsContent value="quotes" className="mt-4">
               <ListCard items={cQuots} empty="ยังไม่มีใบเสนอราคา" render={(q) => (
-                <Row key={q.id} left={<Link to="/quotations" className="text-primary hover:underline">{q.number}</Link>}
+                <Row key={q.id} left={<Link to={`/quotations/${q.id}`} className="text-primary hover:underline">{q.number}</Link>}
                   right={<StatusBadge status={q.status} />} sub={`${q.date} → ${q.validUntil}`} />
               )} />
             </TabsContent>
 
             <TabsContent value="jobs" className="mt-4">
               <ListCard items={cJobs} empty="ยังไม่มีงาน" render={(j) => (
-                <Row key={j.id} left={<Link to="/jobs" className="text-primary hover:underline">{j.number}</Link>}
+                <Row key={j.id} left={<Link to={`/jobs/${j.id}`} className="text-primary hover:underline">{j.number}</Link>}
                   right={<StatusBadge status={j.status} />} sub={`${j.name} • ครบกำหนด ${j.dueDate}`} />
               )} />
             </TabsContent>
 
             <TabsContent value="invoices" className="mt-4 space-y-4">
               <ListCard items={cInvoices} empty="ยังไม่มีใบแจ้งหนี้" render={(i) => (
-                <Row key={i.id} left={<Link to="/invoices" className="text-primary hover:underline">{i.number}</Link>}
+                <Row key={i.id} left={<Link to={`/invoices/${i.id}`} className="text-primary hover:underline">{i.number}</Link>}
                   right={<><span className="text-muted-foreground mr-2">{fmtTHB(i.total)}</span><StatusBadge status={i.status} /></>}
                   sub={`Job ${findJob(i.jobId)?.number ?? "—"} • ครบกำหนด ${i.dueDate}${i.paymentDate ? ` • ชำระแล้ว ${i.paymentDate}` : ""}`} />
               )} />
@@ -271,7 +271,7 @@ export function CustomerDetail() {
                 <Card className="card-soft p-5">
                   <h3 className="font-semibold mb-3">คำขอเปลี่ยนแปลงงาน ({cCOs.length})</h3>
                   {cCOs.map((co) => (
-                    <Row key={co.id} left={<Link to="/change-orders" className="text-primary hover:underline">{co.number}</Link>}
+                    <Row key={co.id} left={<Link to={`/change-orders/${co.id}`} className="text-primary hover:underline">{co.number}</Link>}
                       right={<><span className="text-muted-foreground mr-2">{fmtTHB(co.costImpact)}</span><StatusBadge status={co.approvalStatus} /></>}
                       sub={co.description} />
                   ))}
@@ -281,7 +281,7 @@ export function CustomerDetail() {
 
             <TabsContent value="service" className="mt-4">
               <ListCard items={cSvc} empty="ยังไม่มีงานบริการ" render={(s) => (
-                <Row key={s.id} left={s.partName} right={<StatusBadge status={s.status} />}
+                <Row key={s.id} left={<Link to={`/service/${s.id}`} className="text-primary hover:underline">{s.partName}</Link>} right={<StatusBadge status={s.status} />}
                   sub={`ครบกำหนด calibration ${s.calibrationDueDate}`} />
               )} />
             </TabsContent>
