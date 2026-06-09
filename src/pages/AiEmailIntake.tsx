@@ -8,6 +8,7 @@ import { Mail, ShieldAlert, Check, X } from "lucide-react";
 import { aiEmails, type AiEmail } from "@/lib/mockExtended";
 import { fmtTHB } from "@/lib/mockData";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export default function AiEmailIntake() {
   const [list, setList] = useState<AiEmail[]>(aiEmails);
