@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
-  jobs, findCustomer, findSupplier, fmtTHB, jobStatusThai, type JobStatus,
+  jobs, findSupplier, fmtTHB, jobStatusThai, type JobStatus,
 } from "@/lib/mockData";
+import { CustomerLink } from "@/components/CustomerLink";
 import { setJobStatus, createServiceFromJob, useTick } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -59,7 +60,7 @@ export default function Jobs() {
                     <span className="text-xs text-muted-foreground">({jobStatusThai[j.status]})</span>
                   </div>
                   <div className="text-sm mt-1">{j.name}</div>
-                  <div className="text-xs text-muted-foreground">{findCustomer(j.customerId)?.name}</div>
+                  <div className="text-xs text-muted-foreground"><CustomerLink customerId={j.customerId} muted /></div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Select value={j.status} disabled={!can("edit")}
