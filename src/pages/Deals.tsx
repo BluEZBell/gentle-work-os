@@ -152,7 +152,7 @@ export default function Deals() {
               <TableBody>
                 {filtered.map((d) => (
                   <TableRow key={d.id}>
-                    <TableCell className="font-medium">{d.name}</TableCell>
+                    <TableCell className="font-medium"><Link to={`/deals/${d.id}`} className="text-primary hover:underline">{d.name}</Link></TableCell>
                     <TableCell>
                       <Link to={`/customers/${d.customerId}`} className="text-primary hover:underline">{findCustomer(d.customerId)?.name}</Link>
                     </TableCell>
