@@ -13,7 +13,8 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { RowActions } from "@/components/RowActions";
 import { paymentVouchers as seed, PaymentVoucher, PV_METHODS, PVMethod, pvFmt, printLog as seedLog, PrintLogEntry, copyLabel } from "@/lib/mockCalendar";
 import { customers, findCustomer } from "@/lib/mockData";
-import { Search, Plus, Eye, Printer, Download, Copy as CopyIcon, FileText } from "lucide-react";
+import { audit } from "@/lib/store";
+import { Search, Plus, Eye, Printer, Download, Copy as CopyIcon, FileText, History } from "lucide-react";
 import { toast } from "sonner";
 
 const STATUS_TONE: Record<string, "muted" | "warning" | "success" | "info"> = {
@@ -28,6 +29,7 @@ export default function PaymentVouchers() {
   const [log, setLog] = useState<PrintLogEntry[]>(seedLog);
   const [q, setQ] = useState("");
   const [preview, setPreview] = useState<PaymentVoucher | null>(null);
+  const [logFor, setLogFor] = useState<PaymentVoucher | null>(null);
   const [copies, setCopies] = useState<number>(2);
   const [customCopies, setCustomCopies] = useState<string>("");
   const [newOpen, setNewOpen] = useState(false);
@@ -44,13 +46,24 @@ export default function PaymentVouchers() {
       copies: c, documentType: "Payment Voucher", relatedId: v.id,
     };
     setLog([entry, ...log]);
+    audit("Khun Ploy", "Print Payment Voucher", `${v.number} × ${c} ชุด`, "Payment Vouchers");
     toast.success(`พิมพ์ ${v.number} จำนวน ${c} ชุด พร้อมบันทึก Print Log`);
   };
 
   const duplicate = (v: PaymentVoucher) => {
     const num = `PV-2026-${String(1000 + list.length + 1).slice(1)}`;
-    setList([{ ...v, id: `pv-${Date.now()}`, number: num, approvalStatus: "Draft" }, ...list]);
-    toast.success(`สร้างสำเนาเป็น ${num}`);
+    const copied: PaymentVoucher = {
+      ...v, id: `pv-${Date.now()}`, number: num, approvalStatus: "Draft",
+      notes: `Copied from ${v.number}${v.notes ? ` • ${v.notes}` : ""}`,
+    };
+    setList([copied, ...list]);
+    audit("Khun Ploy", "Duplicate Payment Voucher", `${num} (Copied from ${v.number})`, "Payment Vouchers");
+    toast.success(`สร้างสำเนาเป็น ${num}`, { description: `Copied from ${v.number}` });
+  };
+
+  const removeVoucher = (v: PaymentVoucher) => {
+    setList(list.filter((x) => x.id !== v.id));
+    audit("Khun Ploy", "Delete Payment Voucher", v.number, "Payment Vouchers");
   };
 
   return (
@@ -102,9 +115,10 @@ export default function PaymentVouchers() {
                     onApprove={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Approved" } : x)); toast.success(`อนุมัติ ${v.number}`); }}
                     onReject={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Draft" } : x)); toast.error(`ไม่อนุมัติ ${v.number}`); }}
                     onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
-                    onViewLog={() => toast.info(`ดู Print Log ของ ${v.number}`)}
-                    onDelete={() => { setList(list.filter((x) => x.id !== v.id)); }}
+                    onViewLog={() => setLogFor(v)}
+                    onDelete={() => removeVoucher(v)}
                     deleteLabel={`ใบสำคัญจ่าย ${v.number}`}
+                    relatedWarning={v.supplierBillId || v.jobId ? "ใบสำคัญจ่ายนี้ผูกกับบิลซัพพลายเออร์/งาน หากลบความสัมพันธ์จะถูกตัด" : undefined}
                   />
                 </td>
               </tr>
@@ -135,7 +149,8 @@ export default function PaymentVouchers() {
                 onDuplicate={() => duplicate(v)}
                 onApprove={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Approved" } : x)); toast.success("อนุมัติแล้ว"); }}
                 onReject={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Draft" } : x)); }}
-                onDelete={() => setList(list.filter((x) => x.id !== v.id))}
+                onViewLog={() => setLogFor(v)}
+                onDelete={() => removeVoucher(v)}
                 deleteLabel={v.number}
               />
             </div>
