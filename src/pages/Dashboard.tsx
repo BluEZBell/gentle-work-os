@@ -249,6 +249,115 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {/* New: Peony Business OS module widgets */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mt-6">
+        <StatCard label="Asset Book Value" thai="มูลค่าสินทรัพย์" value={fmtTHB(assets.reduce((s, a) => s + assetBookValue(a), 0))} icon={Boxes} tone="success" />
+        <StatCard label="Monthly Depreciation" thai="ค่าเสื่อม/เดือน" value={fmtTHB(assets.filter(a => a.status === "Active").reduce((s, a) => s + assetMonthlyDep(a), 0))} icon={TrendingUp} tone="warning" />
+        <StatCard label="Payroll This Month" thai="เงินเดือนเดือนนี้" value={fmtTHB(payrollLines.reduce((s, p) => s + payrollNetPay(p), 0))} icon={Wallet} />
+        <StatCard label="Pending Approvals" thai="รออนุมัติ" value={docApprovals.filter(a => a.status === "Pending Review" || a.status === "Submitted").length} icon={CheckSquare} tone="warning" />
+        <StatCard label="Low Stock Items" thai="สต๊อกต่ำ" value={stockItems.filter(s => stockTotal(s) < s.reorderPoint).length} icon={Warehouse} tone="danger" />
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        <Card className="card-soft p-5">
+          <div className="flex items-center gap-2 mb-1"><FileScan className="w-4 h-4 text-primary" />
+            <h2 className="font-display text-lg font-semibold">OCR Pending Review (สแกนรอตรวจสอบ)</h2></div>
+          <p className="text-xs text-muted-foreground mb-3">เอกสารที่ AI สกัดข้อมูลแล้ว ต้องตรวจสอบก่อนบันทึก</p>
+          <div className="space-y-2">
+            {ocrDocuments.filter(o => o.status === "Pending Review").map(o => (
+              <div key={o.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div className="min-w-0"><div className="truncate font-medium">{o.fileName}</div>
+                  <div className="text-xs text-muted-foreground">{o.docType} • {o.extracted.companyName}</div></div>
+                <div className="text-right text-sm font-medium">{fmtTHB(o.extracted.total)}</div>
+              </div>
+            ))}
+            {ocrDocuments.filter(o => o.status === "Pending Review").length === 0 && <div className="text-xs text-muted-foreground">ไม่มีรายการรอตรวจสอบ</div>}
+          </div>
+          <Link to="/ocr-documents" className="text-xs text-primary hover:underline mt-3 inline-block">ดูเอกสารทั้งหมด →</Link>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <div className="flex items-center gap-2 mb-1"><Mail className="w-4 h-4 text-primary" />
+            <h2 className="font-display text-lg font-semibold">AI Email Pending (อีเมลรอตรวจ)</h2></div>
+          <p className="text-xs text-muted-foreground mb-3">บิลที่ AI ดึงข้อมูลจากอีเมลซัพพลายเออร์</p>
+          <div className="space-y-2">
+            {aiEmails.filter(e => e.status === "Pending Review").map(e => (
+              <div key={e.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div className="min-w-0"><div className="truncate font-medium">{e.extracted.supplierName}</div>
+                  <div className="text-xs text-muted-foreground">{e.extracted.billNumber} • ครบกำหนด {e.extracted.dueDate}</div></div>
+                <div className="text-right text-sm font-medium">{fmtTHB(e.extracted.amount)}</div>
+              </div>
+            ))}
+            {aiEmails.filter(e => e.status === "Pending Review").length === 0 && <div className="text-xs text-muted-foreground">ไม่มีอีเมลรอตรวจ</div>}
+          </div>
+          <Link to="/ai-email" className="text-xs text-primary hover:underline mt-3 inline-block">ดูอีเมลทั้งหมด →</Link>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <div className="flex items-center gap-2 mb-1"><Warehouse className="w-4 h-4 text-primary" />
+            <h2 className="font-display text-lg font-semibold">Low Stock Alert (สต๊อกใกล้หมด)</h2></div>
+          <p className="text-xs text-muted-foreground mb-3">รายการที่ต่ำกว่าจุดสั่งซื้อ</p>
+          <div className="space-y-2">
+            {stockItems.filter(s => stockTotal(s) < s.reorderPoint).map(s => (
+              <div key={s.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div className="min-w-0"><div className="truncate font-medium">{s.name}</div>
+                  <div className="text-xs text-muted-foreground">{s.code}</div></div>
+                <div className="text-right"><div className="font-medium text-destructive">{stockTotal(s)} {s.unit}</div>
+                  <div className="text-xs text-muted-foreground">จุดสั่ง {s.reorderPoint}</div></div>
+              </div>
+            ))}
+            {stockItems.filter(s => stockTotal(s) < s.reorderPoint).length === 0 && <div className="text-xs text-muted-foreground">สต๊อกเพียงพอ</div>}
+          </div>
+          <Link to="/warehouses" className="text-xs text-primary hover:underline mt-3 inline-block">ดูคลังทั้งหมด →</Link>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <div className="flex items-center gap-2 mb-1"><Globe className="w-4 h-4 text-primary" />
+            <h2 className="font-display text-lg font-semibold">Customer Portal Activity (กิจกรรมพอร์ทัล)</h2></div>
+          <p className="text-xs text-muted-foreground mb-3">สิ่งที่ลูกค้าทำในพอร์ทัล</p>
+          <div className="space-y-2">
+            {portalActivity.slice(0, 4).map(p => (
+              <div key={p.id} className="text-sm py-1.5 border-b last:border-0">
+                <div className="flex justify-between gap-2"><span className="font-medium truncate">{p.customerName}</span>
+                  <span className="text-xs text-muted-foreground">{p.date.slice(11)}</span></div>
+                <div className="text-xs text-muted-foreground">{p.action} • {p.reference}</div>
+              </div>
+            ))}
+          </div>
+          <Link to="/customer-portal" className="text-xs text-primary hover:underline mt-3 inline-block">เปิดพอร์ทัล →</Link>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <div className="flex items-center gap-2 mb-1"><CheckSquare className="w-4 h-4 text-primary" />
+            <h2 className="font-display text-lg font-semibold">Pending Approvals (รออนุมัติ)</h2></div>
+          <p className="text-xs text-muted-foreground mb-3">เอกสารที่รอการตรวจสอบ</p>
+          <div className="space-y-2">
+            {docApprovals.filter(a => a.status === "Pending Review" || a.status === "Submitted").map(a => (
+              <div key={a.id} className="flex justify-between text-sm py-1.5 border-b last:border-0">
+                <div className="min-w-0"><div className="truncate font-medium">{a.reference}</div>
+                  <div className="text-xs text-muted-foreground">{a.docType} • {a.requestedBy}</div></div>
+                {a.amount !== undefined && <div className="text-right text-sm font-medium">{fmtTHB(a.amount)}</div>}
+              </div>
+            ))}
+          </div>
+          <Link to="/approvals" className="text-xs text-primary hover:underline mt-3 inline-block">ดูทั้งหมด →</Link>
+        </Card>
+
+        <Card className="card-soft p-5">
+          <div className="flex items-center gap-2 mb-1"><CalendarCheck className="w-4 h-4 text-primary" />
+            <h2 className="font-display text-lg font-semibold">Calendar Sync (สถานะปฏิทิน)</h2></div>
+          <p className="text-xs text-muted-foreground mb-3">การเชื่อมต่อกับ Google Calendar (เดโม)</p>
+          <div className="text-sm space-y-1.5">
+            <div className="flex justify-between"><span>สถานะ</span><StatusBadge status="Connected Demo" tone="success" /></div>
+            <div className="flex justify-between"><span>ซิงค์ล่าสุด</span><span className="text-muted-foreground">2026-05-29 09:12</span></div>
+            <div className="flex justify-between"><span>รายการที่ซิงค์</span><span className="text-muted-foreground">4 หมวด</span></div>
+          </div>
+          <Link to="/calendar-sync" className="text-xs text-primary hover:underline mt-3 inline-block">จัดการการซิงค์ →</Link>
+        </Card>
+      </div>
+
+
+
       <Card className="card-soft p-5 mt-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-display text-lg font-semibold">All Reminders (การแจ้งเตือนทั้งหมด)</h2>
