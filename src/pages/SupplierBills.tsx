@@ -109,7 +109,7 @@ export default function SupplierBills() {
           <TableBody>
             {list.map((b) => (
               <TableRow key={b.id}>
-                <TableCell className="font-medium">{b.number}</TableCell>
+                <TableCell className="font-medium"><Link to={`/supplier-bills/${b.id}`} className="text-primary hover:underline">{b.number}</Link></TableCell>
                 <TableCell>
                   <div className="text-sm">{findSupplier(b.supplierId)?.name}</div>
                   <div className="text-xs text-muted-foreground">จาก {b.emailSource}</div>
