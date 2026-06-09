@@ -11,20 +11,26 @@ import { customerInvoices, INVOICE_STATUSES, type InvoiceStatus } from "@/lib/mo
 import { setInvoiceStatus, useBizTick } from "@/lib/storeBusiness";
 import { findCustomer, findJob, fmtTHB } from "@/lib/mockData";
 import { useAuth } from "@/lib/auth";
+import { Link, useSearchParams } from "react-router-dom";
+import { CustomerLink } from "@/components/CustomerLink";
 import { Search, Receipt, Info } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Invoices() {
   useBizTick();
   const { user, can } = useAuth();
+  const [params] = useSearchParams();
+  const initial = params.get("filter") ?? "all";
+  const dueSoon = initial === "due-soon";
   const [q, setQ] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(dueSoon ? "all" : initial);
   const list = customerInvoices.filter((i) => {
     const cust = findCustomer(i.customerId);
     const m = i.number.toLowerCase().includes(q.toLowerCase()) ||
       (cust?.name ?? "").toLowerCase().includes(q.toLowerCase());
     const s = filter === "all" || i.status === filter;
-    return m && s;
+    const d = !dueSoon || i.status !== "Paid";
+    return m && s && d;
   });
   const outstanding = customerInvoices.filter((i) => i.status !== "Paid").reduce((a, b) => a + b.total, 0);
   return (
@@ -74,8 +80,8 @@ export default function Invoices() {
             {list.map((i) => (
               <TableRow key={i.id}>
                 <TableCell className="font-medium">{i.number}</TableCell>
-                <TableCell>{findCustomer(i.customerId)?.name}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">{findJob(i.jobId)?.number}</TableCell>
+                <TableCell><CustomerLink customerId={i.customerId} /></TableCell>
+                <TableCell className="text-sm"><Link to="/jobs" className="text-primary hover:underline">{findJob(i.jobId)?.number}</Link></TableCell>
                 <TableCell className="text-sm">
                   <div>{i.date}</div>
                   <div className="text-xs text-muted-foreground">ครบกำหนด {i.dueDate}{i.paymentDate ? ` • ชำระแล้ว ${i.paymentDate}` : ""}</div>
