@@ -8,7 +8,7 @@ import { PeriodFilter, defaultPeriod, matchesPeriod, type PeriodValue } from "@/
 import { DashboardCharts } from "@/components/DashboardCharts";
 import {
   AlertTriangle, Wallet, Banknote, Briefcase, CheckSquare, Boxes, Wrench,
-  TrendingUp, Coins, FileText, Trophy, CalendarCheck, ArrowRight, Bell, Truck,
+  TrendingUp, Coins, CalendarCheck, ArrowRight, Bell, Truck,
 } from "lucide-react";
 import {
   deals, dealStatusThai, fmtTHB, findCustomer, findSupplier,
