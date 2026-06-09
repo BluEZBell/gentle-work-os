@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { RowActions } from "@/components/RowActions";
 import { paymentVouchers as seed, PaymentVoucher, PV_METHODS, PVMethod, pvFmt, printLog as seedLog, PrintLogEntry, copyLabel } from "@/lib/mockCalendar";
 import { customers, findCustomer } from "@/lib/mockData";
 import { Search, Plus, Eye, Printer, Download, Copy as CopyIcon, FileText } from "lucide-react";
@@ -91,8 +92,20 @@ export default function PaymentVouchers() {
                 <td className="px-4 py-2.5">{v.method}</td>
                 <td className="px-4 py-2.5"><StatusBadge status={v.approvalStatus} tone={STATUS_TONE[v.approvalStatus]} /></td>
                 <td className="px-4 py-2.5 text-right">
-                  <Button size="sm" variant="ghost" onClick={() => setPreview(v)}><Eye className="w-4 h-4" /></Button>
-                  <Button size="sm" variant="ghost" onClick={() => duplicate(v)}><CopyIcon className="w-4 h-4" /></Button>
+                  <RowActions
+                    viewHref={`/payment-vouchers/${v.id}`}
+                    onEdit={() => toast.info(`แก้ไข ${v.number} (เดโม)`)}
+                    onPrint={() => setPreview(v)}
+                    onPdf={() => toast.info(`PDF ${v.number}`)}
+                    onDuplicate={() => duplicate(v)}
+                    onSubmitApproval={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Pending Approval" } : x)); toast.success("ส่งขออนุมัติแล้ว"); }}
+                    onApprove={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Approved" } : x)); toast.success(`อนุมัติ ${v.number}`); }}
+                    onReject={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Draft" } : x)); toast.error(`ไม่อนุมัติ ${v.number}`); }}
+                    onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
+                    onViewLog={() => toast.info(`ดู Print Log ของ ${v.number}`)}
+                    onDelete={() => { setList(list.filter((x) => x.id !== v.id)); }}
+                    deleteLabel={`ใบสำคัญจ่าย ${v.number}`}
+                  />
                 </td>
               </tr>
             ))}
@@ -113,9 +126,18 @@ export default function PaymentVouchers() {
               <StatusBadge status={v.approvalStatus} tone={STATUS_TONE[v.approvalStatus]} />
             </div>
             <div className="text-sm mt-2 flex justify-between"><span>{v.method}</span><span className="font-medium">{pvFmt(v.amount)}</span></div>
-            <div className="flex gap-2 mt-2">
-              <Button size="sm" variant="outline" className="flex-1" onClick={() => setPreview(v)}>ดู</Button>
-              <Button size="sm" variant="outline" className="flex-1" onClick={() => duplicate(v)}>สำเนา</Button>
+            <div className="flex gap-2 mt-2 justify-end">
+              <Button size="sm" variant="outline" className="flex-1" onClick={() => setPreview(v)}>ดู/พิมพ์</Button>
+              <RowActions
+                onEdit={() => toast.info(`แก้ไข ${v.number}`)}
+                onPrint={() => setPreview(v)}
+                onPdf={() => toast.info(`PDF ${v.number}`)}
+                onDuplicate={() => duplicate(v)}
+                onApprove={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Approved" } : x)); toast.success("อนุมัติแล้ว"); }}
+                onReject={() => { setList(list.map((x) => x.id === v.id ? { ...x, approvalStatus: "Draft" } : x)); }}
+                onDelete={() => setList(list.filter((x) => x.id !== v.id))}
+                deleteLabel={v.number}
+              />
             </div>
           </Card>
         ))}
