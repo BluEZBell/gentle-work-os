@@ -16,6 +16,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { useSearchParams } from "react-router-dom";
 
 const flow = [
   { icon: Mail, label: "อีเมลจากซัพพลายเออร์" },
@@ -33,6 +34,7 @@ export default function SupplierBills() {
   const dueSoon = initial === "due-soon";
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState(dueSoon ? "all" : initial);
+  const [approveId, setApproveId] = useState<string | null>(null);
 
   const list = supplierBills.filter((b) => {
     const sup = findSupplier(b.supplierId);
