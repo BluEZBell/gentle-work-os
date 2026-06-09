@@ -24,6 +24,7 @@ import {
   customerLeadSource, LEAD_SOURCES, customerInvoices, purchaseOrders, changeOrders,
   tasks, activities,
 } from "@/lib/mockBusiness";
+import { BillingRulesTab } from "@/components/BillingRulesTab";
 
 
 export default function Customers() {
