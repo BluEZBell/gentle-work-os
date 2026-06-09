@@ -7,8 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { changeOrders, APPROVAL_STATUSES, type ApprovalStatus } from "@/lib/mockBusiness";
 import { setChangeOrderStatus, useBizTick } from "@/lib/storeBusiness";
-import { findJob, findCustomer, fmtTHB } from "@/lib/mockData";
+import { findJob, fmtTHB } from "@/lib/mockData";
+import { CustomerLink } from "@/components/CustomerLink";
 import { useAuth } from "@/lib/auth";
+import { Link } from "react-router-dom";
 import { Search, GitPullRequest } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
@@ -61,13 +63,12 @@ export default function ChangeOrders() {
           <TableBody>
             {list.map((c) => {
               const j = findJob(c.jobId);
-              const cust = j ? findCustomer(j.customerId) : undefined;
               return (
                 <TableRow key={c.id}>
                   <TableCell className="font-medium">{c.number}</TableCell>
                   <TableCell className="text-sm">
-                    <div>{j?.number ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground">{cust?.name}</div>
+                    <div><Link to="/jobs" className="text-primary hover:underline">{j?.number ?? "—"}</Link></div>
+                    <div className="text-xs"><CustomerLink customerId={j?.customerId} muted /></div>
                   </TableCell>
                   <TableCell className="text-sm">{c.requestedBy}<div className="text-xs text-muted-foreground">{c.requestDate}</div></TableCell>
                   <TableCell className="text-sm max-w-[280px]">{c.description}</TableCell>

@@ -3,13 +3,18 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import { serviceRecords, findCustomer, fmtTHB } from "@/lib/mockData";
+import { CustomerLink } from "@/components/CustomerLink";
 import { useTick } from "@/lib/store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sparkles, MessageCircle } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Service() {
   useTick();
+  const [params] = useSearchParams();
+  const dueSoon = params.get("filter") === "due-soon";
+  const list = serviceRecords.filter((s) => !dueSoon || s.status !== "Completed");
   return (
     <>
       <PageHeader title="Service" thai="บริการหลังขาย"
@@ -31,9 +36,9 @@ export default function Service() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {serviceRecords.map((s) => (
+            {list.map((s) => (
               <TableRow key={s.id}>
-                <TableCell className="font-medium">{findCustomer(s.customerId)?.name}</TableCell>
+                <TableCell className="font-medium"><CustomerLink customerId={s.customerId} /></TableCell>
                 <TableCell>
                   <div className="text-sm">{s.partName}</div>
                   <div className="text-xs text-muted-foreground">{s.partNumber}</div>
