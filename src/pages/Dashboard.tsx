@@ -107,7 +107,7 @@ export default function Dashboard() {
           <h2 className="font-display text-lg font-semibold mb-3">Upcoming Payments (รายการที่ต้องจ่าย)</h2>
           <div className="space-y-2">
             {supplierBills.filter((b) => b.status !== "Paid").map((b) => (
-              <div key={b.id} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
+              <Link key={b.id} to={`/supplier-bills/${b.id}`} className="flex items-center justify-between text-sm py-2 border-b last:border-0 hover:bg-secondary/40 rounded px-1 -mx-1">
                 <div>
                   <div className="font-medium">{findSupplier(b.supplierId)?.name}</div>
                   <div className="text-xs text-muted-foreground">{b.number} • ครบกำหนด {b.dueDate}</div>
@@ -116,7 +116,7 @@ export default function Dashboard() {
                   <div className="font-medium">{fmtTHB(b.total)}</div>
                   <StatusBadge status={b.status} />
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </Card>
