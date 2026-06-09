@@ -101,8 +101,27 @@ export const setChangeOrderStatus = (id: string, status: ApprovalStatus, user: s
 
 // Tasks
 export const addTask = (t: Omit<Task, "id">, user: string) => {
-  tasks.push({ ...t, id: uid("t") });
+  const n = { ...t, id: uid("t") };
+  tasks.push(n);
   audit(user, "Create Task", t.name, "Tasks"); bump();
+  return n;
+};
+export const updateTask = (id: string, patch: Partial<Task>, user: string) => {
+  const t = tasks.find((x) => x.id === id); if (!t) return;
+  Object.assign(t, patch);
+  audit(user, "Edit Task", t.name, "Tasks"); bump();
+};
+export const deleteTask = (id: string, user: string) => {
+  const idx = tasks.findIndex((x) => x.id === id); if (idx < 0) return;
+  const [t] = tasks.splice(idx, 1);
+  audit(user, "Delete Task", t.name, "Tasks"); bump();
+};
+export const duplicateTask = (id: string, user: string) => {
+  const t = tasks.find((x) => x.id === id); if (!t) return;
+  const n: Task = { ...t, id: uid("t"), name: t.name + " (สำเนา)", status: "Open" };
+  tasks.push(n);
+  audit(user, "Duplicate Task", n.name, "Tasks"); bump();
+  return n;
 };
 export const setTaskStatus = (id: string, status: TaskStatus) => {
   const t = tasks.find((x) => x.id === id); if (!t) return;
@@ -111,4 +130,20 @@ export const setTaskStatus = (id: string, status: TaskStatus) => {
 export const setTaskPriority = (id: string, p: Priority) => {
   const t = tasks.find((x) => x.id === id); if (!t) return;
   t.priority = p; bump();
+};
+/** Push a calendar event for a task. */
+export const addTaskCalendarEvent = (taskId: string) => {
+  const t = tasks.find((x) => x.id === taskId); if (!t) return;
+  import("./mockCalendar").then(({ calendarEvents }) => {
+    calendarEvents.push({
+      id: uid("ev"),
+      date: t.dueDate,
+      type: "Customer Follow-up",
+      customerId: t.customerId,
+      title: `🤖 งาน: ${t.name}`,
+      notes: t.note,
+      urgent: t.priority === "Urgent",
+    });
+    bump();
+  });
 };
