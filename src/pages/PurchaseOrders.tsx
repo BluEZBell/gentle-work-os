@@ -12,6 +12,8 @@ import { useAuth } from "@/lib/auth";
 import { Search, Truck } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { CustomerLink } from "@/components/CustomerLink";
 
 export default function PurchaseOrders() {
   useBizTick();
