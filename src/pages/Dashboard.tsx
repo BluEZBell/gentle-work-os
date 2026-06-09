@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
   Users, Briefcase, FileText, Trophy, XCircle, TrendingUp, Coins,
-  Receipt, Wrench, AlertTriangle,
+  Receipt, Wrench, AlertTriangle, Boxes, Wallet, CheckSquare, FileScan, Mail,
+  Warehouse, Globe, CalendarCheck,
 } from "lucide-react";
 import {
   dashboardStats, deals, dealStatusThai, reminders, fmtTHB, findCustomer,
@@ -13,6 +14,10 @@ import {
 import {
   tasks, customerInvoices, purchaseOrders, changeOrders, receivingRecords,
 } from "@/lib/mockBusiness";
+import {
+  assets, assetBookValue, assetMonthlyDep, payrollLines, payrollNetPay,
+  stockItems, stockTotal, docApprovals, ocrDocuments, aiEmails, portalActivity,
+} from "@/lib/mockExtended";
 import { useTick } from "@/lib/store";
 import { Link } from "react-router-dom";
 
