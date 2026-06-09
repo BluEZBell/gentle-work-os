@@ -44,9 +44,11 @@ function buildNotifications(): Note[] {
     out.push({ id: `co-${c.id}`, title: `คำขอเปลี่ยนแปลงรออนุมัติ ${c.number}`, detail: `${findJob(c.jobId)?.number} • ${fmtTHB(c.costImpact)}`, date: c.requestDate, tone: "warning", category: "Approvals", to: `/change-orders/${c.id}` }));
   purchaseOrders.filter((p) => p.status === "Draft" || p.status === "Sent").forEach((p) =>
     out.push({ id: `po-${p.id}`, title: `ใบสั่งซื้อ ${p.number} • ${p.status}`, detail: findSupplier(p.supplierId)?.name, date: p.date, tone: "info", category: "Operations", to: `/purchase-orders/${p.id}` }));
-  void ciFromMockData;
   return out.sort((a, b) => b.date.localeCompare(a.date));
 }
+// silence unused if any
+void buildNotifications;
+const _unused = () => null; void _unused;
 
 const toneClass = (t: Note["tone"]) =>
   t === "danger" ? "border-l-destructive bg-destructive/5" :
