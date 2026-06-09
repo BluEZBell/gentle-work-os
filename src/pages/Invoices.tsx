@@ -79,9 +79,9 @@ export default function Invoices() {
           <TableBody>
             {list.map((i) => (
               <TableRow key={i.id}>
-                <TableCell className="font-medium">{i.number}</TableCell>
+                <TableCell className="font-medium"><Link to={`/invoices/${i.id}`} className="text-primary hover:underline">{i.number}</Link></TableCell>
                 <TableCell><CustomerLink customerId={i.customerId} /></TableCell>
-                <TableCell className="text-sm"><Link to="/jobs" className="text-primary hover:underline">{findJob(i.jobId)?.number}</Link></TableCell>
+                <TableCell className="text-sm"><Link to={`/jobs/${i.jobId}`} className="text-primary hover:underline">{findJob(i.jobId)?.number}</Link></TableCell>
                 <TableCell className="text-sm">
                   <div>{i.date}</div>
                   <div className="text-xs text-muted-foreground">ครบกำหนด {i.dueDate}{i.paymentDate ? ` • ชำระแล้ว ${i.paymentDate}` : ""}</div>
