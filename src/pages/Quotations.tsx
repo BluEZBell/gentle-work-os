@@ -17,7 +17,7 @@ import {
 import { warehouses } from "@/lib/mockExtended";
 import { CustomerLink } from "@/components/CustomerLink";
 import { RowActions } from "@/components/RowActions";
-import { useTick } from "@/lib/store";
+import { useTick, audit } from "@/lib/store";
 import { Link, useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FileText, Paperclip, Plus, Printer, FileDown, Trash2 } from "lucide-react";
@@ -103,7 +103,8 @@ export default function Quotations() {
                     onReject={() => setStatus(q, "Rejected")}
                     onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
                     onViewLog={() => navigate(`/quotations/${q.id}`)}
-                    onDelete={() => remove(q.id)}
+                    onDelete={() => remove(q)}
+                    relatedWarning="หากใบเสนอราคานี้ผูกกับ Job หรือ Invoice แล้ว ความสัมพันธ์อาจถูกตัด"
                     deleteLabel={`ใบเสนอราคา ${q.number}`}
                     extraMenu={
                       <button
