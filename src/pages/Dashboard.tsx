@@ -3,7 +3,6 @@ import { PageHeader } from "@/components/Layout";
 import { StatCard } from "@/components/StatCard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/StatusBadge";
 import { PeriodFilter, defaultPeriod, matchesPeriod, type PeriodValue } from "@/components/PeriodFilter";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import {
