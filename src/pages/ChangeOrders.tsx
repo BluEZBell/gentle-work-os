@@ -10,7 +10,7 @@ import { setChangeOrderStatus, useBizTick } from "@/lib/storeBusiness";
 import { findJob, fmtTHB } from "@/lib/mockData";
 import { CustomerLink } from "@/components/CustomerLink";
 import { useAuth } from "@/lib/auth";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Search, GitPullRequest } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
@@ -18,8 +18,9 @@ import { toast } from "sonner";
 export default function ChangeOrders() {
   useBizTick();
   const { user, can } = useAuth();
+  const [params] = useSearchParams();
   const [q, setQ] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(params.get("filter") ?? "all");
   const list = changeOrders.filter((c) => {
     const m = c.number.toLowerCase().includes(q.toLowerCase()) ||
       c.description.toLowerCase().includes(q.toLowerCase());
