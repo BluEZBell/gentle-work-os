@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
-  reminders, supplierBills, serviceRecords, customers, jobs,
+  reminders, supplierBills, serviceRecords, customers,
   findCustomer, findSupplier, findJob, fmtTHB,
 } from "@/lib/mockData";
 import { Link } from "react-router-dom";
