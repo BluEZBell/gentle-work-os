@@ -388,28 +388,6 @@ export default function Notifications() {
         </Card>
       )}
 
-      {/* Main status filter */}
-      <Card className="card-soft p-3 mb-3">
-        <div className="text-xs text-muted-foreground mb-2">สถานะ</div>
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {STATUS_ORDER.map((s) => {
-            const active = status === s;
-            const c = counts[s];
-            return (
-              <button key={s} onClick={() => setStatus(s)}
-                className={
-                  "shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition " +
-                  (active
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-background hover:bg-secondary/60 border-border")
-                }>
-                <span>{STATUS_LABELS[s]}</span>
-                <span className={"px-1.5 rounded-full text-[10px] " + (active ? "bg-primary-foreground/20" : "bg-muted")}>{c}</span>
-              </button>
-            );
-          })}
-        </div>
-      </Card>
 
       {/* Module filter (secondary) */}
       <Card className="card-soft p-3 mb-3">
