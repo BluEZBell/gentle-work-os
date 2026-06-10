@@ -269,11 +269,16 @@ export default function Notifications() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [all, read, pinned, urgentOverride]);
 
+  // Module chip counts reflect current status + scope + search (but ignore module
+  // itself) so picking a status first updates the chips to that subset.
+  const moduleScoped = all.filter((n) => matchStatus(n) && matchScope(n) && matchSearch(n));
+  const moduleAllCount = moduleScoped.length;
   const moduleCounts = useMemo(() => {
     const m = {} as Record<NoteType, number>;
-    TYPES.forEach((t) => { m[t] = all.filter((n) => n.type === t).length; });
+    TYPES.forEach((t) => { m[t] = moduleScoped.filter((n) => n.type === t).length; });
     return m;
-  }, [all]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [all, status, custScope, customerId, q, read, pinned, urgentOverride]);
 
   const pinnedUrgent = all.filter((n) => pinned[n.id] && isUrgent(n));
 
