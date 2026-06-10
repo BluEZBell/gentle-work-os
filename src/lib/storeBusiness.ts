@@ -131,12 +131,18 @@ export const setTaskPriority = (id: string, p: Priority) => {
   const t = tasks.find((x) => x.id === id); if (!t) return;
   t.priority = p; bump();
 };
+/** Map taskId -> calendar event id (mock linkage). */
+const taskCalendarMap: Record<string, string> = {};
+export const isTaskInCalendar = (taskId: string) => !!taskCalendarMap[taskId];
+export const calendarTaskIds = () => Object.keys(taskCalendarMap);
 /** Push a calendar event for a task. */
-export const addTaskCalendarEvent = (taskId: string) => {
+export const addTaskCalendarEvent = (taskId: string, user?: string) => {
   const t = tasks.find((x) => x.id === taskId); if (!t) return;
+  if (taskCalendarMap[taskId]) return;
   import("./mockCalendar").then(({ calendarEvents }) => {
+    const evId = uid("ev");
     calendarEvents.push({
-      id: uid("ev"),
+      id: evId,
       date: t.dueDate,
       type: "Customer Follow-up",
       customerId: t.customerId,
@@ -144,6 +150,19 @@ export const addTaskCalendarEvent = (taskId: string) => {
       notes: t.note,
       urgent: t.priority === "Urgent",
     });
+    taskCalendarMap[taskId] = evId;
+    if (user) audit(user, "Add Task to Calendar", t.name, "Tasks");
+    bump();
+  });
+};
+export const removeTaskCalendarEvent = (taskId: string, user?: string) => {
+  const t = tasks.find((x) => x.id === taskId); if (!t) return;
+  const evId = taskCalendarMap[taskId]; if (!evId) return;
+  import("./mockCalendar").then(({ calendarEvents }) => {
+    const idx = calendarEvents.findIndex((e) => e.id === evId);
+    if (idx >= 0) calendarEvents.splice(idx, 1);
+    delete taskCalendarMap[taskId];
+    if (user) audit(user, "Remove Task from Calendar", t.name, "Tasks");
     bump();
   });
 };
