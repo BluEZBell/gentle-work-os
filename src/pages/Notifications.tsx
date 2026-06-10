@@ -301,14 +301,55 @@ export default function Notifications() {
       <PageHeader title="Notifications" thai="แจ้งเตือน"
         description="ศูนย์ควบคุมการแจ้งเตือน — กรอง อ่าน ปักหมุด รายการสำคัญได้ในที่เดียว" />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-        <StatCard label="Urgent" thai="ด่วน" value={counts.urgent} icon={AlertTriangle} tone="danger" />
-        <StatCard label="Unread" thai="ยังไม่อ่าน" value={counts.unread} icon={Mail} tone="warning" />
-        <StatCard label="Pinned" thai="ปักหมุด" value={counts.pinned} icon={Pin} tone="info" />
-        <StatCard label="Today" thai="วันนี้" value={counts.today} icon={Clock} />
-      </div>
+      {/* Large clickable status summary cards */}
+      {(() => {
+        const cards: { key: StatusFilter; label: string; thai: string; icon: typeof Bell; tone: string; iconCls: string }[] = [
+          { key: "all",     label: "All",     thai: "ทั้งหมด",       icon: Bell,            tone: "bg-accent text-primary",                 iconCls: "text-primary" },
+          { key: "urgent",  label: "Urgent",  thai: "ด่วน",          icon: AlertTriangle,   tone: "bg-destructive-soft text-destructive",   iconCls: "text-destructive" },
+          { key: "unread",  label: "Unread",  thai: "ยังไม่อ่าน",   icon: Mail,            tone: "bg-warning-soft text-warning-foreground", iconCls: "text-warning" },
+          { key: "read",    label: "Read",    thai: "อ่านแล้ว",      icon: MailOpen,        tone: "bg-muted text-muted-foreground",         iconCls: "text-muted-foreground" },
+          { key: "pinned",  label: "Pinned",  thai: "ปักหมุด",       icon: Pin,             tone: "bg-info-soft text-info",                 iconCls: "text-info" },
+          { key: "today",   label: "Today",   thai: "วันนี้",        icon: Clock,           tone: "bg-accent text-primary",                 iconCls: "text-primary" },
+          { key: "overdue", label: "Overdue", thai: "เกินกำหนด",     icon: CalendarSync,    tone: "bg-destructive-soft text-destructive",   iconCls: "text-destructive" },
+        ];
+        return (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-4">
+            {cards.map((c) => {
+              const Icon = c.icon;
+              const active = status === c.key;
+              return (
+                <button
+                  key={c.key}
+                  type="button"
+                  onClick={() => setStatus(c.key)}
+                  aria-pressed={active}
+                  className={
+                    "text-left rounded-xl border bg-card p-4 transition shadow-sm hover:shadow-md hover:-translate-y-0.5 " +
+                    (active
+                      ? "border-primary ring-2 ring-primary/30 bg-primary/5"
+                      : "border-border")
+                  }
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
+                        {c.label}<span className="ml-1 normal-case text-[11px]">({c.thai})</span>
+                      </div>
+                      <div className="mt-1 font-display text-2xl font-semibold text-foreground">{counts[c.key]}</div>
+                    </div>
+                    <div className={"w-10 h-10 rounded-lg grid place-items-center shrink-0 " + c.tone}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* Pinned urgent zone */}
+
       {pinnedUrgent.length > 0 && (
         <Card className="card-soft p-4 mb-4 border-l-4 border-l-destructive bg-destructive/5">
           <div className="flex items-center gap-2 mb-3">
@@ -347,28 +388,6 @@ export default function Notifications() {
         </Card>
       )}
 
-      {/* Main status filter */}
-      <Card className="card-soft p-3 mb-3">
-        <div className="text-xs text-muted-foreground mb-2">สถานะ</div>
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {STATUS_ORDER.map((s) => {
-            const active = status === s;
-            const c = counts[s];
-            return (
-              <button key={s} onClick={() => setStatus(s)}
-                className={
-                  "shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition " +
-                  (active
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-background hover:bg-secondary/60 border-border")
-                }>
-                <span>{STATUS_LABELS[s]}</span>
-                <span className={"px-1.5 rounded-full text-[10px] " + (active ? "bg-primary-foreground/20" : "bg-muted")}>{c}</span>
-              </button>
-            );
-          })}
-        </div>
-      </Card>
 
       {/* Module filter (secondary) */}
       <Card className="card-soft p-3 mb-3">
