@@ -106,15 +106,21 @@ export default function Customers() {
                   <TableCell className="text-sm text-muted-foreground">{c.updatedAt}</TableCell>
                   <TableCell className="text-right font-medium">{dealCount}</TableCell>
                   <TableCell>
-                    <RowActions
-                      viewHref={`/customers/${c.id}`}
-                      onEdit={() => toast.info(`แก้ไข ${c.name} (เดโม)`)}
-                      onDuplicate={() => toast.success(`ทำสำเนา ${c.name}`)}
-                      onAddToCalendar={() => toast.success("เพิ่มนัดติดตามในปฏิทินแล้ว")}
-                      onViewLog={() => toast.info("ดูประวัติลูกค้า")}
-                      onDelete={() => toast.success(`ลบ ${c.name}`)}
-                      deleteLabel={c.name}
-                    />
+                    {(() => {
+                      const rel = relatedForCustomer(c.id);
+                      return (
+                        <RowActions
+                          viewHref={`/customers/${c.id}`}
+                          onEdit={() => toast.info(`เปิดหน้าลูกค้าเพื่อแก้ไข ${c.name}`)}
+                          onDuplicate={() => duplicateCustomer(c.id, "Khun Ploy")}
+                          onAddToCalendar={() => toast.success("เพิ่มนัดติดตามในปฏิทินแล้ว")}
+                          onViewLog={() => toast.info("ดูประวัติลูกค้า")}
+                          onDelete={() => removeCustomer(c.id, "Khun Ploy")}
+                          deleteLabel={c.name}
+                          relatedWarning={relatedWarning({ Contacts: rel.contacts, Deals: rel.deals, Jobs: rel.jobs, Invoices: rel.invoices })}
+                        />
+                      );
+                    })()}
                   </TableCell>
                 </TableRow>
               );
