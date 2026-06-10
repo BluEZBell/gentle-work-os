@@ -1,18 +1,20 @@
 import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Calendar, X } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { Calendar, CalendarIcon, X } from "lucide-react";
 import { customers as allCustomers } from "@/lib/mockData";
+import { cn } from "@/lib/utils";
 
 export interface PeriodValue {
-  month: string; // "all" | "01".."12"
-  year: string;  // "all" | "2024" etc
-  from: string;  // "" or YYYY-MM-DD
-  to: string;    // "" or YYYY-MM-DD
-  customerId: string; // "all" or id
-  status: string;     // "all" or value
+  month: string;
+  year: string;
+  from: string; // YYYY-MM-DD
+  to: string;
+  customerId: string;
+  status: string;
 }
 
 export const defaultPeriod = (): PeriodValue => ({
@@ -20,6 +22,67 @@ export const defaultPeriod = (): PeriodValue => ({
 });
 
 const THAI_MONTHS = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+
+const toDDMMYYYY = (iso: string) => {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-");
+  return `${d}-${m}-${y}`;
+};
+const isoFromDate = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+const parseIso = (iso: string): Date | undefined => {
+  if (!iso) return undefined;
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d);
+};
+
+interface DateBtnProps {
+  label: string;
+  value: string;
+  onChange: (iso: string) => void;
+}
+function DateButton({ label, value, onChange }: DateBtnProps) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className={cn(
+            "h-9 rounded-md px-2.5 text-xs font-normal gap-1.5 justify-between shrink-0",
+            "w-[140px] tabular-nums",
+            !value && "text-muted-foreground",
+          )}
+        >
+          <span className="truncate">
+            <span className="text-muted-foreground mr-1">{label}</span>
+            {value ? toDDMMYYYY(value) : "วว-ดด-ปปปป"}
+          </span>
+          <CalendarIcon className="w-3.5 h-3.5 opacity-70 shrink-0" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
+        <CalendarPicker
+          mode="single"
+          selected={parseIso(value)}
+          onSelect={(d) => onChange(d ? isoFromDate(d) : "")}
+          initialFocus
+          className="pointer-events-auto"
+        />
+        {value && (
+          <div className="p-2 border-t flex justify-end">
+            <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => onChange("")}>
+              <X className="w-3 h-3 mr-1" /> ล้างวันที่
+            </Button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 interface Props {
   value: PeriodValue;
@@ -60,10 +123,10 @@ export function PeriodFilter({
             {years.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
           </SelectContent>
         </Select>
-        <div className="flex items-center gap-1 w-full sm:w-auto">
-          <Input type="date" value={value.from} onChange={(e) => set("from", e.target.value)} className="h-9 flex-1 min-w-0 sm:flex-none text-xs" style={{ minWidth: 0 }} placeholder="ตั้งแต่" />
-          <span className="text-xs text-muted-foreground px-0.5 shrink-0">→</span>
-          <Input type="date" value={value.to} onChange={(e) => set("to", e.target.value)} className="h-9 flex-1 min-w-0 sm:flex-none text-xs" style={{ minWidth: 0 }} placeholder="ถึง" />
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <DateButton label="ตั้งแต่" value={value.from} onChange={(v) => set("from", v)} />
+          <span className="text-xs text-muted-foreground shrink-0">→</span>
+          <DateButton label="ถึง" value={value.to} onChange={(v) => set("to", v)} />
         </div>
         {showCustomer && (
           <Select value={value.customerId} onValueChange={(v) => set("customerId", v)}>
@@ -93,10 +156,8 @@ export function PeriodFilter({
   );
 }
 
-/** True if a YYYY-MM-DD date string passes the period filter. */
 export function matchesPeriod(date: string | undefined, p: PeriodValue): boolean {
   if (!date) return true;
-  const ym = date.slice(0, 7); // YYYY-MM
   const y = date.slice(0, 4);
   const m = date.slice(5, 7);
   if (p.year !== "all" && y !== p.year) return false;
@@ -106,7 +167,6 @@ export function matchesPeriod(date: string | undefined, p: PeriodValue): boolean
   return true;
 }
 
-/** Convenience hook-free filter using memo. */
 export function usePeriodFilter<T>(
   items: T[],
   period: PeriodValue,
