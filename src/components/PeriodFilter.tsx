@@ -52,14 +52,15 @@ function DateButton({ label, value, onChange }: DateBtnProps) {
         <Button
           variant="outline"
           className={cn(
-            "h-9 rounded-md px-2.5 text-xs font-normal gap-1.5 justify-between shrink-0",
-            "w-[140px] tabular-nums",
-            !value && "text-muted-foreground",
+            "h-9 rounded-md px-3 text-xs font-normal gap-2 justify-between shrink-0",
+            "w-[170px] tabular-nums whitespace-nowrap",
           )}
         >
-          <span className="truncate">
-            <span className="text-muted-foreground mr-1">{label}</span>
-            {value ? toDDMMYYYY(value) : "วว-ดด-ปปปป"}
+          <span className="whitespace-nowrap">
+            <span className="text-muted-foreground mr-1.5">{label}</span>
+            <span className={cn(!value && "text-muted-foreground")}>
+              {value ? toDDMMYYYY(value) : "วว-ดด-ปปปป"}
+            </span>
           </span>
           <CalendarIcon className="w-3.5 h-3.5 opacity-70 shrink-0" />
         </Button>
