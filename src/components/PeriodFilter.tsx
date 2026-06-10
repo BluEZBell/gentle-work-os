@@ -61,9 +61,9 @@ export function PeriodFilter({
           </SelectContent>
         </Select>
         <div className="flex items-center gap-1 w-full sm:w-auto">
-          <Input type="date" value={value.from} onChange={(e) => set("from", e.target.value)} className="h-9 flex-1 min-w-0 sm:w-36 sm:flex-none text-xs" placeholder="ตั้งแต่" />
+          <Input type="date" value={value.from} onChange={(e) => set("from", e.target.value)} className="h-9 flex-1 min-w-0 sm:flex-none text-xs" style={{ minWidth: 0 }} placeholder="ตั้งแต่" />
           <span className="text-xs text-muted-foreground px-0.5 shrink-0">→</span>
-          <Input type="date" value={value.to} onChange={(e) => set("to", e.target.value)} className="h-9 flex-1 min-w-0 sm:w-36 sm:flex-none text-xs" placeholder="ถึง" />
+          <Input type="date" value={value.to} onChange={(e) => set("to", e.target.value)} className="h-9 flex-1 min-w-0 sm:flex-none text-xs" style={{ minWidth: 0 }} placeholder="ถึง" />
         </div>
         {showCustomer && (
           <Select value={value.customerId} onValueChange={(v) => set("customerId", v)}>
