@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { changeOrders, APPROVAL_STATUSES, type ApprovalStatus } from "@/lib/mockBusiness";
 import { setChangeOrderStatus, useBizTick } from "@/lib/storeBusiness";
+import { removeChangeOrder, duplicateChangeOrder } from "@/lib/store";
 import { findJob, fmtTHB } from "@/lib/mockData";
 import { CustomerLink } from "@/components/CustomerLink";
 import { useAuth } from "@/lib/auth";
@@ -89,14 +90,15 @@ export default function ChangeOrders() {
                       </Select>
                       <RowActions
                         viewHref={`/change-orders/${c.id}`}
-                        onEdit={() => toast.info(`แก้ไข ${c.number}`)}
-                        onDuplicate={() => toast.success(`ทำสำเนา ${c.number}`)}
+                        onEdit={() => toast.info(`เปิดรายละเอียดเพื่อแก้ไข ${c.number}`)}
+                        onDuplicate={() => duplicateChangeOrder(c.id, user?.name ?? "Demo")}
                         onApprove={() => { setChangeOrderStatus(c.id, "Approved", user?.name ?? "Demo"); toast.success("อนุมัติแล้ว"); }}
                         onReject={() => { setChangeOrderStatus(c.id, "Rejected", user?.name ?? "Demo"); toast.error("ไม่อนุมัติ"); }}
                         onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
                         onViewLog={() => toast.info("ดูประวัติ CO")}
-                        onDelete={() => toast.success(`ลบ ${c.number}`)}
+                        onDelete={() => removeChangeOrder(c.id, user?.name ?? "Demo")}
                         deleteLabel={`คำขอเปลี่ยนแปลง ${c.number}`}
+                        relatedWarning={j ? `ผูกกับงาน ${j.number} — ผลกระทบต่อต้นทุน ${c.costImpact.toLocaleString()} บาท` : undefined}
                       />
                     </div>
                   </TableCell>

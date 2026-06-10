@@ -11,6 +11,7 @@ import { fmtTHB } from "@/lib/mockData";
 import { Boxes, Wrench, Archive, TrendingDown, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RowActions } from "@/components/RowActions";
+import { removeAsset, duplicateAsset } from "@/lib/store";
 import { toast } from "sonner";
 
 export default function Assets() {
@@ -78,11 +79,11 @@ export default function Assets() {
                   <TableCell>
                     <RowActions
                       viewHref={`/assets/${a.id}`}
-                      onEdit={() => toast.info(`แก้ไข ${a.name}`)}
-                      onDuplicate={() => toast.success(`ทำสำเนา ${a.code}`)}
+                      onEdit={() => toast.info(`เปิดรายละเอียดเพื่อแก้ไข ${a.name}`)}
+                      onDuplicate={() => duplicateAsset(a.id, "Khun Ploy")}
                       onSubmitApproval={() => toast.success("ส่งขออนุมัติปลดระวาง")}
                       onAddToCalendar={() => toast.success("เพิ่มเตือนบำรุงรักษาในปฏิทิน")}
-                      onDelete={() => toast.success(`ลบ ${a.name}`)}
+                      onDelete={() => removeAsset(a.id, "Khun Ploy")}
                       deleteLabel={a.name}
                     />
                   </TableCell>

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/StatusBadge";
 import { suppliers, supplierBills, jobs, fmtTHB } from "@/lib/mockData";
-import { useTick } from "@/lib/store";
+import { useTick, removeSupplier, duplicateSupplier, relatedForSupplier, relatedWarning } from "@/lib/store";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Eye, EyeOff, Lock, Search } from "lucide-react";
 import { NewSupplierDialog } from "@/components/dialogs/NewSupplierDialog";
@@ -86,13 +86,19 @@ export default function Suppliers() {
                 <TableCell className="text-sm">{sJobs.length}</TableCell>
                 <TableCell><StatusBadge status={s.riskLevel} /></TableCell>
                 <TableCell>
-                  <RowActions
-                    onEdit={() => toast.info(`แก้ไข ${s.name}`)}
-                    onDuplicate={() => toast.success(`ทำสำเนา ${s.name}`)}
-                    onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
-                    onDelete={() => toast.success(`ลบ ${s.name}`)}
-                    deleteLabel={s.name}
-                  />
+                  {(() => {
+                    const rel = relatedForSupplier(s.id);
+                    return (
+                      <RowActions
+                        onEdit={() => toast.info(`เปิดรายละเอียดเพื่อแก้ไข ${s.name}`)}
+                        onDuplicate={() => duplicateSupplier(s.id, "Khun Ploy")}
+                        onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
+                        onDelete={() => removeSupplier(s.id, "Khun Ploy")}
+                        deleteLabel={s.name}
+                        relatedWarning={relatedWarning({ Bills: rel.bills, Jobs: rel.jobs, POs: rel.pos })}
+                      />
+                    );
+                  })()}
                 </TableCell>
               </TableRow>
             );})}

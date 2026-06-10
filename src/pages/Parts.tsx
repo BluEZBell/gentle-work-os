@@ -4,6 +4,7 @@ import { parts, findCustomer, findSupplier, fmtTHB } from "@/lib/mockData";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusBadge } from "@/components/StatusBadge";
 import { RowActions } from "@/components/RowActions";
+import { removePart, duplicatePart } from "@/lib/store";
 import { toast } from "sonner";
 
 export default function Parts() {
@@ -44,10 +45,10 @@ export default function Parts() {
                 </TableCell>
                 <TableCell>
                   <RowActions
-                    onEdit={() => toast.info(`แก้ไข ${p.name}`)}
-                    onDuplicate={() => toast.success(`ทำสำเนา ${p.name}`)}
+                    onEdit={() => toast.info(`เปิดรายละเอียดเพื่อแก้ไข ${p.name}`)}
+                    onDuplicate={() => duplicatePart(p.id, "Khun Ploy")}
                     onAddToCalendar={() => toast.success("เพิ่มเตือน Calibration ในปฏิทินแล้ว")}
-                    onDelete={() => toast.success(`ลบ ${p.name}`)}
+                    onDelete={() => removePart(p.id, "Khun Ploy")}
                     deleteLabel={p.name}
                   />
                 </TableCell>
