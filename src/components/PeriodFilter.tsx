@@ -147,11 +147,15 @@ export function PeriodFilter({
             </SelectContent>
           </Select>
         )}
-        {isDirty && (
-          <Button variant="ghost" size="sm" className="h-8 text-xs shrink-0" onClick={() => onChange(defaultPeriod())}>
-            <X className="w-3 h-3 mr-1" /> ล้างตัวกรอง
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-9 text-xs shrink-0 ml-auto"
+          onClick={() => onChange(defaultPeriod())}
+          disabled={!isDirty}
+        >
+          <X className="w-3.5 h-3.5 mr-1" /> ล้างตัวกรอง
+        </Button>
       </div>
     </Card>
   );
