@@ -40,53 +40,55 @@ export function PeriodFilter({
     value.customerId !== "all" || value.status !== "all";
   return (
     <Card className={"card-soft p-3 mb-4 flex flex-wrap gap-2 items-center " + (className ?? "")}>
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground pr-1">
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground pr-1 shrink-0">
         <Calendar className="w-3.5 h-3.5" /> ช่วงเวลา
       </div>
-      <Select value={value.month} onValueChange={(v) => set("month", v)}>
-        <SelectTrigger className="h-9 w-28 text-xs"><SelectValue placeholder="เดือน" /></SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">ทุกเดือน</SelectItem>
-          {THAI_MONTHS.map((m, i) => (
-            <SelectItem key={i} value={String(i + 1).padStart(2, "0")}>{m}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select value={value.year} onValueChange={(v) => set("year", v)}>
-        <SelectTrigger className="h-9 w-24 text-xs"><SelectValue placeholder="ปี" /></SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">ทุกปี</SelectItem>
-          {years.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
-        </SelectContent>
-      </Select>
-      <div className="flex items-center gap-1">
-        <Input type="date" value={value.from} onChange={(e) => set("from", e.target.value)} className="h-9 w-36 text-xs" placeholder="ตั้งแต่" />
-        <span className="text-xs text-muted-foreground px-0.5">→</span>
-        <Input type="date" value={value.to} onChange={(e) => set("to", e.target.value)} className="h-9 w-36 text-xs" placeholder="ถึง" />
+      <div className="flex flex-wrap gap-2 items-center flex-1 min-w-0">
+        <Select value={value.month} onValueChange={(v) => set("month", v)}>
+          <SelectTrigger className="h-9 w-24 sm:w-28 text-xs shrink-0"><SelectValue placeholder="เดือน" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">ทุกเดือน</SelectItem>
+            {THAI_MONTHS.map((m, i) => (
+              <SelectItem key={i} value={String(i + 1).padStart(2, "0")}>{m}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={value.year} onValueChange={(v) => set("year", v)}>
+          <SelectTrigger className="h-9 w-20 sm:w-24 text-xs shrink-0"><SelectValue placeholder="ปี" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">ทุกปี</SelectItem>
+            {years.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <div className="flex items-center gap-1 w-full sm:w-auto">
+          <Input type="date" value={value.from} onChange={(e) => set("from", e.target.value)} className="h-9 flex-1 min-w-0 sm:flex-none text-xs" style={{ minWidth: 0 }} placeholder="ตั้งแต่" />
+          <span className="text-xs text-muted-foreground px-0.5 shrink-0">→</span>
+          <Input type="date" value={value.to} onChange={(e) => set("to", e.target.value)} className="h-9 flex-1 min-w-0 sm:flex-none text-xs" style={{ minWidth: 0 }} placeholder="ถึง" />
+        </div>
+        {showCustomer && (
+          <Select value={value.customerId} onValueChange={(v) => set("customerId", v)}>
+            <SelectTrigger className="h-9 flex-1 min-w-0 sm:w-44 sm:flex-none text-xs"><SelectValue placeholder="ลูกค้า" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ทุกลูกค้า</SelectItem>
+              {allCustomers.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        )}
+        {showStatus && statuses && (
+          <Select value={value.status} onValueChange={(v) => set("status", v)}>
+            <SelectTrigger className="h-9 flex-1 min-w-0 sm:w-40 sm:flex-none text-xs"><SelectValue placeholder="สถานะ" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ทุกสถานะ</SelectItem>
+              {statuses.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        )}
+        {isDirty && (
+          <Button variant="ghost" size="sm" className="h-8 text-xs shrink-0" onClick={() => onChange(defaultPeriod())}>
+            <X className="w-3 h-3 mr-1" /> ล้างตัวกรอง
+          </Button>
+        )}
       </div>
-      {showCustomer && (
-        <Select value={value.customerId} onValueChange={(v) => set("customerId", v)}>
-          <SelectTrigger className="h-9 w-44 text-xs"><SelectValue placeholder="ลูกค้า" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">ทุกลูกค้า</SelectItem>
-            {allCustomers.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      )}
-      {showStatus && statuses && (
-        <Select value={value.status} onValueChange={(v) => set("status", v)}>
-          <SelectTrigger className="h-9 w-40 text-xs"><SelectValue placeholder="สถานะ" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">ทุกสถานะ</SelectItem>
-            {statuses.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      )}
-      {isDirty && (
-        <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => onChange(defaultPeriod())}>
-          <X className="w-3 h-3 mr-1" /> ล้างตัวกรอง
-        </Button>
-      )}
     </Card>
   );
 }
