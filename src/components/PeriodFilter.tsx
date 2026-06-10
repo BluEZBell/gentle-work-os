@@ -59,9 +59,11 @@ export function PeriodFilter({
           {years.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
         </SelectContent>
       </Select>
-      <Input type="date" value={value.from} onChange={(e) => set("from", e.target.value)} className="h-9 w-36 text-xs" placeholder="ตั้งแต่" />
-      <span className="text-xs text-muted-foreground">→</span>
-      <Input type="date" value={value.to} onChange={(e) => set("to", e.target.value)} className="h-9 w-36 text-xs" placeholder="ถึง" />
+      <div className="flex items-center gap-1">
+        <Input type="date" value={value.from} onChange={(e) => set("from", e.target.value)} className="h-9 w-36 text-xs" placeholder="ตั้งแต่" />
+        <span className="text-xs text-muted-foreground px-0.5">→</span>
+        <Input type="date" value={value.to} onChange={(e) => set("to", e.target.value)} className="h-9 w-36 text-xs" placeholder="ถึง" />
+      </div>
       {showCustomer && (
         <Select value={value.customerId} onValueChange={(v) => set("customerId", v)}>
           <SelectTrigger className="h-9 w-44 text-xs"><SelectValue placeholder="ลูกค้า" /></SelectTrigger>
