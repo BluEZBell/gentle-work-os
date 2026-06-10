@@ -403,7 +403,7 @@ export default function Notifications() {
               "shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs " +
               (moduleType === "all" ? "bg-secondary border-primary" : "bg-background hover:bg-secondary/60")
             }>
-            ทั้งหมด <span className="text-[10px] opacity-70">({all.length})</span>
+            ทั้งหมด <span className="text-[10px] opacity-70">({moduleAllCount})</span>
           </button>
           {TYPES.map((t) => {
             const meta = TYPE_META[t];
