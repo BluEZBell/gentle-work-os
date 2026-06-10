@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -14,23 +14,25 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   tasks, TASK_STATUSES, PRIORITIES, type TaskStatus, type Priority,
 } from "@/lib/mockBusiness";
 import {
   addTask, updateTask, deleteTask, duplicateTask, setTaskStatus, setTaskPriority,
-  addTaskCalendarEvent, useBizTick,
+  addTaskCalendarEvent, removeTaskCalendarEvent, isTaskInCalendar, useBizTick,
 } from "@/lib/storeBusiness";
 import { customers, deals, jobs, findJob, findDeal } from "@/lib/mockData";
 import { CustomerLink } from "@/components/CustomerLink";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import {
-  Plus, Search, ListTodo, MoreHorizontal, Pencil, Copy, Trash2, CheckCircle2, CalendarPlus,
+  Plus, Search, ListTodo, MoreHorizontal, Pencil, Copy, Trash2, CheckCircle2,
+  CalendarPlus, CalendarCheck2, CalendarX2, Calendar as CalendarIcon, X,
+  ListChecks, AlertTriangle, Clock, PlayCircle, PauseCircle, CheckCircle, CalendarClock, Flame, CalendarDays,
 } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
-import { PeriodFilter, defaultPeriod, matchesPeriod, type PeriodValue } from "@/components/PeriodFilter";
 
 const priorityTone: Record<Priority, string> = {
   Urgent: "text-destructive border-destructive/40 bg-destructive/5",
@@ -52,22 +54,98 @@ const blankForm = () => ({
   owner: "Khun Ploy", note: "",
 });
 
+type StatusCardKey =
+  | "all" | "today" | "urgent" | "open" | "inprogress" | "waiting"
+  | "done" | "overdue" | "calendar";
+
+const todayISO = () => new Date().toISOString().slice(0, 10);
+const isWaiting = (name: string) =>
+  /follow ?up|ติดตาม|รอ/i.test(name);
+
 export default function Tasks() {
   useBizTick();
   const { user, can } = useAuth();
   const [q, setQ] = useState("");
-  const [period, setPeriod] = useState<PeriodValue>(defaultPeriod());
+  const [statusCard, setStatusCard] = useState<StatusCardKey>("all");
+  const [moduleFilter, setModuleFilter] = useState<string>("all"); // all|customer|deal|job|general
+  const [customerFilter, setCustomerFilter] = useState<string>("all");
+  const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
+  const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [f, setF] = useState(blankForm());
 
-  const list = useMemo(() => tasks.filter((t) => {
+  const today = todayISO();
+  const assignees = useMemo(
+    () => Array.from(new Set(tasks.map((t) => t.owner))).sort(),
+    // re-eval when tasks length changes via useBizTick
+    [tasks.length],
+  );
+
+  const matchCard = (t: typeof tasks[number]) => {
+    switch (statusCard) {
+      case "all": return true;
+      case "today": return t.dueDate === today && t.status !== "Done";
+      case "urgent": return t.priority === "Urgent";
+      case "open": return t.status === "Open";
+      case "inprogress": return t.status === "In Progress";
+      case "waiting": return isWaiting(t.name);
+      case "done": return t.status === "Done";
+      case "overdue": return t.status === "Overdue";
+      case "calendar": return isTaskInCalendar(t.id);
+    }
+  };
+
+  const matchSecondary = (t: typeof tasks[number]) => {
     if (q && !t.name.toLowerCase().includes(q.toLowerCase())) return false;
-    if (!matchesPeriod(t.dueDate, period)) return false;
-    if (period.customerId !== "all" && t.customerId !== period.customerId) return false;
-    if (period.status !== "all" && t.status !== period.status) return false;
+    if (customerFilter !== "all" && t.customerId !== customerFilter) return false;
+    if (assigneeFilter !== "all" && t.owner !== assigneeFilter) return false;
+    if (priorityFilter !== "all" && t.priority !== priorityFilter) return false;
+    if (moduleFilter !== "all") {
+      if (moduleFilter === "customer" && !t.customerId) return false;
+      if (moduleFilter === "deal" && !t.dealId) return false;
+      if (moduleFilter === "job" && !t.jobId) return false;
+      if (moduleFilter === "general" && (t.customerId || t.dealId || t.jobId)) return false;
+    }
     return true;
-  }), [q, period]);
+  };
+
+  const list = useMemo(
+    () => tasks.filter((t) => matchCard(t) && matchSecondary(t)),
+    [q, statusCard, customerFilter, assigneeFilter, priorityFilter, moduleFilter, tasks.length],
+  );
+
+  const counts = useMemo(() => {
+    const c = (fn: (t: typeof tasks[number]) => boolean) => tasks.filter(fn).length;
+    return {
+      all: tasks.length,
+      today: c((t) => t.dueDate === today && t.status !== "Done"),
+      urgent: c((t) => t.priority === "Urgent"),
+      open: c((t) => t.status === "Open"),
+      inprogress: c((t) => t.status === "In Progress"),
+      waiting: c((t) => isWaiting(t.name)),
+      done: c((t) => t.status === "Done"),
+      overdue: c((t) => t.status === "Overdue"),
+      calendar: c((t) => isTaskInCalendar(t.id)),
+    };
+  }, [tasks.length, today]);
+
+  const cards: { key: StatusCardKey; label: string; icon: any; tone: string }[] = [
+    { key: "all",        label: "ทั้งหมด",      icon: ListChecks,    tone: "text-foreground" },
+    { key: "today",      label: "ต้องทำวันนี้",  icon: Clock,         tone: "text-primary" },
+    { key: "urgent",     label: "ด่วน",         icon: Flame,         tone: "text-destructive" },
+    { key: "open",       label: "ยังไม่เริ่ม",   icon: PauseCircle,   tone: "text-muted-foreground" },
+    { key: "inprogress", label: "กำลังทำ",      icon: PlayCircle,    tone: "text-sky-600" },
+    { key: "waiting",    label: "รอติดตาม",     icon: CalendarClock, tone: "text-warning" },
+    { key: "done",       label: "เสร็จแล้ว",     icon: CheckCircle,   tone: "text-success" },
+    { key: "overdue",    label: "เกินกำหนด",    icon: AlertTriangle, tone: "text-destructive" },
+    { key: "calendar",   label: "อยู่ในปฏิทิน",  icon: CalendarDays,  tone: "text-primary" },
+  ];
+
+  const clearFilters = () => {
+    setStatusCard("all"); setModuleFilter("all"); setCustomerFilter("all");
+    setAssigneeFilter("all"); setPriorityFilter("all"); setQ("");
+  };
 
   const openCreate = () => { setEditingId(null); setF(blankForm()); setOpen(true); };
   const openEdit = (id: string) => {
@@ -95,11 +173,14 @@ export default function Tasks() {
     setOpen(false);
   };
 
-  const counts = {
-    total: tasks.length,
-    open: tasks.filter((t) => t.status === "Open" || t.status === "In Progress").length,
-    overdue: tasks.filter((t) => t.status === "Overdue").length,
-    done: tasks.filter((t) => t.status === "Done").length,
+  const toggleCalendar = (id: string) => {
+    if (isTaskInCalendar(id)) {
+      removeTaskCalendarEvent(id, user?.name ?? "Demo");
+      toast.success("ลบงานออกจากปฏิทินแล้ว");
+    } else {
+      addTaskCalendarEvent(id, user?.name ?? "Demo");
+      toast.success("เพิ่มงานลงปฏิทินแล้ว");
+    }
   };
 
   return (
@@ -113,34 +194,94 @@ export default function Tasks() {
         }
       />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-        <Card className="card-soft p-3"><div className="text-xs text-muted-foreground">ทั้งหมด</div><div className="font-display text-xl font-semibold">{counts.total}</div></Card>
-        <Card className="card-soft p-3"><div className="text-xs text-muted-foreground">กำลังทำ</div><div className="font-display text-xl font-semibold text-primary">{counts.open}</div></Card>
-        <Card className="card-soft p-3"><div className="text-xs text-muted-foreground">เกินกำหนด</div><div className="font-display text-xl font-semibold text-destructive">{counts.overdue}</div></Card>
-        <Card className="card-soft p-3"><div className="text-xs text-muted-foreground">เสร็จแล้ว</div><div className="font-display text-xl font-semibold text-success">{counts.done}</div></Card>
+      {/* Status Summary Cards */}
+      <div className="mb-4">
+        <div className="text-sm font-medium text-muted-foreground mb-2">สถานะงาน</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          {cards.map((c) => {
+            const active = statusCard === c.key;
+            const Icon = c.icon;
+            return (
+              <button
+                key={c.key}
+                type="button"
+                onClick={() => setStatusCard(c.key)}
+                className={
+                  "text-left rounded-lg border bg-card p-3 transition shadow-sm hover:shadow-md hover:border-primary/40 " +
+                  (active ? "ring-2 ring-primary/30 border-primary bg-primary/5" : "")
+                }
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-xs text-muted-foreground">{c.label}</div>
+                  <Icon className={"w-4 h-4 " + c.tone} />
+                </div>
+                <div className="font-display text-2xl font-semibold mt-1 tabular-nums">
+                  {counts[c.key]}
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <PeriodFilter value={period} onChange={setPeriod} statuses={TASK_STATUSES} />
-
-      <Card className="card-soft p-3 mb-4 flex flex-wrap gap-2 items-center">
-        <div className="relative flex-1 min-w-[220px]">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหางาน…" className="pl-9 h-9" />
+      {/* Secondary filters */}
+      <Card className="card-soft p-3 mb-4">
+        <div className="flex flex-wrap gap-2 items-center">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหางาน…" className="pl-9 h-9" />
+          </div>
+          <Select value={moduleFilter} onValueChange={setModuleFilter}>
+            <SelectTrigger className="h-9 w-[140px]"><SelectValue placeholder="เกี่ยวกับ" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ทั้งหมด</SelectItem>
+              <SelectItem value="customer">ลูกค้า</SelectItem>
+              <SelectItem value="deal">ดีล</SelectItem>
+              <SelectItem value="job">งาน</SelectItem>
+              <SelectItem value="general">ทั่วไป</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={customerFilter} onValueChange={setCustomerFilter}>
+            <SelectTrigger className="h-9 w-[160px]"><SelectValue placeholder="ลูกค้า" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ทุกลูกค้า</SelectItem>
+              {customers.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+            <SelectTrigger className="h-9 w-[150px]"><SelectValue placeholder="ผู้รับผิดชอบ" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ทุกคน</SelectItem>
+              {assignees.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+            <SelectTrigger className="h-9 w-[130px]"><SelectValue placeholder="ความสำคัญ" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ทุกระดับ</SelectItem>
+              {PRIORITIES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Button variant="outline" size="sm" onClick={clearFilters} className="h-9">
+            <X className="w-3.5 h-3.5 mr-1" /> ล้างตัวกรอง
+          </Button>
         </div>
       </Card>
 
       {list.length === 0 ? (
         <Card className="card-soft"><EmptyState icon={ListTodo} title="ยังไม่มีงานในตัวกรองนี้" /></Card>
       ) : (
+        <TooltipProvider delayDuration={200}>
         <Card className="card-soft overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[28%]">งาน</TableHead>
+                  <TableHead className="w-[24%]">งาน</TableHead>
+                  <TableHead className="w-16 text-center">ปฏิทิน</TableHead>
                   <TableHead>ลูกค้า</TableHead>
-                  <TableHead>เกี่ยวข้อง</TableHead>
-                  <TableHead>กำหนดเสร็จ</TableHead>
+                  <TableHead>เกี่ยวกับ</TableHead>
+                  <TableHead>วันครบกำหนด</TableHead>
                   <TableHead className="w-32">ความสำคัญ</TableHead>
                   <TableHead className="w-36">สถานะ</TableHead>
                   <TableHead>ผู้รับผิดชอบ</TableHead>
@@ -152,14 +293,38 @@ export default function Tasks() {
                   const related = t.jobId ? { kind: "Job", label: findJob(t.jobId)?.number ?? "—", to: `/jobs/${t.jobId}` }
                     : t.dealId ? { kind: "Deal", label: findDeal(t.dealId)?.name ?? "—", to: `/deals/${t.dealId}` }
                     : null;
+                  const inCal = isTaskInCalendar(t.id);
+                  const rowTone =
+                    t.status === "Done" ? "opacity-60" :
+                    t.status === "Overdue" ? "bg-warning-soft/30" :
+                    t.priority === "Urgent" ? "bg-destructive/5" : "";
                   return (
-                    <TableRow key={t.id} className={t.status === "Done" ? "opacity-60" : ""}>
+                    <TableRow key={t.id} className={rowTone}>
                       <TableCell>
                         <div className={"font-medium text-sm " + (t.status === "Done" ? "line-through" : "")}>{t.name}</div>
                         {t.note && <div className="text-xs text-muted-foreground truncate max-w-[260px]">{t.note}</div>}
                       </TableCell>
+                      <TableCell className="text-center">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost" size="icon"
+                              className="h-8 w-8"
+                              onClick={() => toggleCalendar(t.id)}
+                              aria-label="toggle calendar"
+                            >
+                              {inCal
+                                ? <CalendarCheck2 className="w-4 h-4 text-primary" />
+                                : <CalendarIcon className="w-4 h-4 text-muted-foreground" />}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>{inCal ? "อยู่ในปฏิทินแล้ว" : "ยังไม่ได้เพิ่มในปฏิทิน"}</TooltipContent>
+                        </Tooltip>
+                      </TableCell>
                       <TableCell className="text-sm">
-                        {t.customerId ? <CustomerLink customerId={t.customerId} /> : <span className="text-muted-foreground">—</span>}
+                        {t.customerId
+                          ? <CustomerLink customerId={t.customerId} />
+                          : <span className="text-muted-foreground">ทั่วไป</span>}
                       </TableCell>
                       <TableCell className="text-sm">
                         {related ? (
@@ -168,7 +333,7 @@ export default function Tasks() {
                           </Link>
                         ) : <span className="text-muted-foreground">—</span>}
                       </TableCell>
-                      <TableCell className="text-sm whitespace-nowrap">{t.dueDate}</TableCell>
+                      <TableCell className="text-sm whitespace-nowrap tabular-nums">{t.dueDate}</TableCell>
                       <TableCell>
                         <Select value={t.priority} onValueChange={(v) => setTaskPriority(t.id, v as Priority)}>
                           <SelectTrigger className={"h-8 w-28 text-xs border " + priorityTone[t.priority]}>
@@ -197,7 +362,7 @@ export default function Tasks() {
                               <MoreHorizontal className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-44">
+                          <DropdownMenuContent align="end" className="w-48">
                             <DropdownMenuItem onClick={() => openEdit(t.id)}>
                               <Pencil className="w-3.5 h-3.5 mr-2" /> แก้ไข
                             </DropdownMenuItem>
@@ -207,9 +372,15 @@ export default function Tasks() {
                             <DropdownMenuItem onClick={() => { setTaskStatus(t.id, "Done"); toast.success("ทำเครื่องหมายเสร็จแล้ว"); }}>
                               <CheckCircle2 className="w-3.5 h-3.5 mr-2" /> ทำเครื่องหมายเสร็จ
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { addTaskCalendarEvent(t.id); toast.success("เพิ่มในปฏิทินแล้ว"); }}>
-                              <CalendarPlus className="w-3.5 h-3.5 mr-2" /> เพิ่มในปฏิทิน
-                            </DropdownMenuItem>
+                            {inCal ? (
+                              <DropdownMenuItem onClick={() => toggleCalendar(t.id)}>
+                                <CalendarX2 className="w-3.5 h-3.5 mr-2" /> ลบออกจากปฏิทิน
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem onClick={() => toggleCalendar(t.id)}>
+                                <CalendarPlus className="w-3.5 h-3.5 mr-2" /> เพิ่มในปฏิทิน
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={() => { deleteTask(t.id, user?.name ?? "Demo"); toast.success("ลบงานแล้ว"); }}
@@ -226,6 +397,7 @@ export default function Tasks() {
             </Table>
           </div>
         </Card>
+        </TooltipProvider>
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
