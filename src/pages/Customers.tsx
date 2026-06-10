@@ -9,7 +9,7 @@ import {
   customers, contacts, deals, quotations, jobs, serviceRecords,
   findCustomer, findJob, fmtTHB,
 } from "@/lib/mockData";
-import { useTick } from "@/lib/store";
+import { useTick, removeCustomer, duplicateCustomer, relatedForCustomer, relatedWarning } from "@/lib/store";
 import { Lock, Search, Mail, Phone, MapPin } from "lucide-react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
