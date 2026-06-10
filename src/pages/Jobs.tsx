@@ -8,7 +8,7 @@ import {
   jobs, findSupplier, fmtTHB, jobStatusThai, type JobStatus,
 } from "@/lib/mockData";
 import { CustomerLink } from "@/components/CustomerLink";
-import { setJobStatus, createServiceFromJob, useTick } from "@/lib/store";
+import { setJobStatus, createServiceFromJob, useTick, removeJob, duplicateJob, relatedForJob, relatedWarning } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarDays, Search, Sparkles, TrendingUp, Truck, Headphones } from "lucide-react";
@@ -81,19 +81,25 @@ export default function Jobs() {
                       <Headphones className="w-3.5 h-3.5 mr-1" /> สร้างแจ้งเตือนบริการ
                     </Button>
                   )}
-                  <RowActions
-                    viewHref={`/jobs/${j.id}`}
-                    onEdit={() => toast.info(`แก้ไข ${j.number}`)}
-                    onPrint={() => toast.info(`พิมพ์ใบงาน ${j.number}`)}
-                    onPdf={() => toast.info(`PDF ${j.number}`)}
-                    onDuplicate={() => toast.success(`ทำสำเนา ${j.number}`)}
-                    onApprove={() => toast.success(`อนุมัติ ${j.number}`)}
-                    onReject={() => toast.error(`ไม่อนุมัติ ${j.number}`)}
-                    onAddToCalendar={() => toast.success("เพิ่มวันส่งมอบในปฏิทินแล้ว")}
-                    onViewLog={() => toast.info("ดูประวัติงาน")}
-                    onDelete={() => toast.success(`ลบ ${j.number}`)}
-                    deleteLabel={`งาน ${j.number}`}
-                  />
+                  {(() => {
+                    const rel = relatedForJob(j.id);
+                    return (
+                      <RowActions
+                        viewHref={`/jobs/${j.id}`}
+                        onEdit={() => toast.info(`เปิดรายละเอียดเพื่อแก้ไข ${j.number}`)}
+                        onPrint={() => toast.info(`พิมพ์ใบงาน ${j.number}`)}
+                        onPdf={() => toast.info(`PDF ${j.number}`)}
+                        onDuplicate={() => { const n = duplicateJob(j.id, user?.name ?? "Demo"); if (n) toast.success(`สร้างสำเนา ${n.number}`); }}
+                        onApprove={() => { setJobStatus(j.id, "In Progress", user?.name ?? "Demo"); toast.success(`เริ่มงาน ${j.number}`); }}
+                        onReject={() => { setJobStatus(j.id, "Problem", user?.name ?? "Demo"); toast.error(`ทำเครื่องหมาย ${j.number} มีปัญหา`); }}
+                        onAddToCalendar={() => toast.success("เพิ่มวันส่งมอบในปฏิทินแล้ว")}
+                        onViewLog={() => toast.info("ดูประวัติงาน")}
+                        onDelete={() => removeJob(j.id, user?.name ?? "Demo")}
+                        deleteLabel={`งาน ${j.number}`}
+                        relatedWarning={relatedWarning({ Invoices: rel.invoices, POs: rel.pos, "Change Orders": rel.changeOrders })}
+                      />
+                    );
+                  })()}
                 </div>
               </div>
 

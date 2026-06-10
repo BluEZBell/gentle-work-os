@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supplierBills, findSupplier, fmtTHB } from "@/lib/mockData";
-import { setBillReview, markBillPaid, useTick } from "@/lib/store";
+import { setBillReview, markBillPaid, useTick, removeBill, duplicateBill } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -138,17 +138,18 @@ export default function SupplierBills() {
                     )}
                     <RowActions
                       viewHref={`/supplier-bills/${b.id}`}
-                      onEdit={() => toast.info(`แก้ไข ${b.number}`)}
+                      onEdit={() => toast.info(`เปิดบิล ${b.number} เพื่อแก้ไข`)}
                       onPrint={() => setPreview(b.number)}
                       onPdf={() => toast.info(`PDF ${b.number}`)}
-                      onDuplicate={() => toast.success(`ทำสำเนา ${b.number}`)}
+                      onDuplicate={() => { const n = duplicateBill(b.id, user?.name ?? "Demo"); if (n) toast.success(`สร้างสำเนา ${n.number}`); }}
                       onSubmitApproval={() => setApproveId(b.id)}
                       onApprove={() => { setBillReview(b.id, "Approved", user?.name ?? "Demo"); toast.success("Bill approved"); }}
                       onReject={() => { setBillReview(b.id, "Rejected", user?.name ?? "Demo"); toast.error("Bill rejected"); }}
                       onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
                       onViewLog={() => toast.info("ดูประวัติบิล")}
-                      onDelete={() => toast.success(`ลบ ${b.number}`)}
+                      onDelete={() => removeBill(b.id, user?.name ?? "Demo")}
                       deleteLabel={`บิล ${b.number}`}
+                      relatedWarning={b.jobId ? `ผูกกับงาน ${b.jobId} • ${fmtTHB(b.total)} — ความสัมพันธ์จะถูกตัด` : undefined}
                     />
                   </div>
                 </TableCell>

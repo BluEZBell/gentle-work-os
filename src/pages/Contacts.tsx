@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { contacts, findCustomer } from "@/lib/mockData";
-import { useTick } from "@/lib/store";
+import { useTick, removeContact, duplicateContact } from "@/lib/store";
 import { Search } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Link } from "react-router-dom";
@@ -63,10 +63,10 @@ export default function Contacts() {
                   <TableCell>
                     <RowActions
                       viewHref={cust ? `/customers/${cust.id}` : undefined}
-                      onEdit={() => toast.info(`แก้ไข ${c.name}`)}
-                      onDuplicate={() => toast.success(`ทำสำเนา ${c.name}`)}
+                      onEdit={() => toast.info(`เปิดบัตรลูกค้าเพื่อแก้ไข ${c.name}`)}
+                      onDuplicate={() => duplicateContact(c.id, "Khun Ploy")}
                       onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
-                      onDelete={() => toast.success(`ลบ ${c.name}`)}
+                      onDelete={() => removeContact(c.id, "Khun Ploy")}
                       deleteLabel={c.name}
                     />
                   </TableCell>

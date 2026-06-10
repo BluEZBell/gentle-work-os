@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   deals, dealStatusThai, findCustomer, fmtTHB, type DealStatus,
 } from "@/lib/mockData";
-import { setDealStatus, createJobFromDeal, useTick } from "@/lib/store";
+import { setDealStatus, createJobFromDeal, useTick, removeDeal, duplicateDeal } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight, Search, Trophy } from "lucide-react";
@@ -177,14 +177,14 @@ export default function Deals() {
                         )}
                         <RowActions
                           viewHref={`/deals/${d.id}`}
-                          onEdit={() => toast.info(`แก้ไข ${d.name}`)}
-                          onDuplicate={() => toast.success(`ทำสำเนา ${d.name}`)}
+                          onEdit={() => toast.info(`เปิดดีลเพื่อแก้ไข ${d.name}`)}
+                          onDuplicate={() => { const n = duplicateDeal(d.id, user?.name ?? "Demo"); if (n) toast.success(`สร้างสำเนา ${n.name}`); }}
                           onSubmitApproval={() => toast.success("ส่งขออนุมัติแล้ว")}
                           onApprove={() => onStatusChange(d.id, "Won")}
                           onReject={() => setLostFor(d.id)}
                           onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
                           onViewLog={() => toast.info("ดูประวัติดีล")}
-                          onDelete={() => toast.success(`ลบ ${d.name}`)}
+                          onDelete={() => removeDeal(d.id, user?.name ?? "Demo")}
                           deleteLabel={d.name}
                         />
                       </div>
