@@ -15,7 +15,9 @@ import {
   Lock, Search, Mail, Phone, MapPin, Eye, Pencil, Plus, StickyNote,
   Activity as ActivityIcon, CalendarPlus, FileText, ShoppingCart, Paperclip, ClipboardList,
   MessageCircle, Star, Receipt, Truck, MoreHorizontal, Copy as CopyIcon, Trash2,
+  ArrowUpRight,
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
