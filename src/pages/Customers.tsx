@@ -45,6 +45,11 @@ import { AddNoteDialog } from "@/components/dialogs/AddNoteDialog";
 import { AddActivityDialog } from "@/components/dialogs/AddActivityDialog";
 import { customerNotes, contactNotes, useNotesTick } from "@/lib/notesStore";
 import type { Contact } from "@/lib/mockData";
+import { removeContact } from "@/lib/store";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 
 const ACTIVITY_THAI: Record<string, string> = {
