@@ -10,10 +10,16 @@ export const users: User[] = [
   { id: "u3", name: "Khun Aim (Viewer)", email: "viewer@mto.demo", role: "Viewer" },
 ];
 
+export type CustomerType =
+  | "New" | "Existing" | "Regular" | "Corporate" | "Juristic" | "Individual"
+  | "Partner" | "Key" | "FollowUp" | "Suspended";
+
 export interface Customer {
   id: string; name: string; contactPerson: string; phone: string; email: string;
-  address: string; type: "New" | "Existing" | "Corporate"; source: string;
+  address: string; type: CustomerType; source: string;
   confidential: boolean; notes: string; createdAt: string; updatedAt: string;
+  status?: "ใช้งานอยู่" | "ลูกค้าที่ต้องติดตาม" | "พักไว้" | "ระงับการซื้อขาย";
+  taxId?: string; branch?: string; memo?: string;
 }
 
 export const customers: Customer[] = [
