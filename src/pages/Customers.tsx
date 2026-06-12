@@ -599,7 +599,7 @@ export function CustomerDetail() {
         </div>
       </div>
 
-      <QuickEditCustomerDialog open={editOpen} onOpenChange={setEditOpen} customer={c} />
+      <QuickEditCustomerDialog open={editOpen} onOpenChange={setEditOpen} customer={c} focus={editFocus} />
       <ContactDialog open={contactOpen} onOpenChange={(v) => { setContactOpen(v); if (!v) setEditingContact(undefined); }}
         contact={editingContact} defaultCustomerId={c.id} />
       <ContactDetailSheet open={!!contactDetailId} onOpenChange={(v) => !v && setContactDetailId(undefined)} contactId={contactDetailId} />
