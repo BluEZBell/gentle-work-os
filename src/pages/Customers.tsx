@@ -568,7 +568,7 @@ export function CustomerDetail() {
           <AlertDialogFooter>
             <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
             <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { if (delContact) { import("@/lib/store").then((m) => m.removeContact(delContact.id, "Khun Ploy")); toast.success(`ลบ ${delContact.name} แล้ว`); } setDelContact(undefined); }}>
+              onClick={() => { if (delContact) { removeContact(delContact.id, "Khun Ploy"); toast.success(`ลบ ${delContact.name} แล้ว`); } setDelContact(undefined); }}>
               ลบ
             </AlertDialogAction>
           </AlertDialogFooter>
