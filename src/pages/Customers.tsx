@@ -174,7 +174,7 @@ export default function Customers() {
                     <div className="text-xs text-muted-foreground">{c.address}</div>
                   </TableCell>
                   <TableCell>
-                    <StatusBadge status={customerTypeThai(c.type)} tone={c.type === "Corporate" ? "primary" : c.type === "Existing" ? "info" : "muted"} />
+                    <StatusBadge status={customerTypeThai(c.type)} tone={c.type === "Corporate" || c.type === "Key" || c.type === "Juristic" ? "primary" : c.type === "Suspended" ? "danger" : c.type === "FollowUp" ? "warning" : c.type === "Existing" || c.type === "Regular" ? "info" : "muted"} />
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">{c.contactPerson}</div>
