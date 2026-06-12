@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { PageHeader } from "@/components/Layout";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -10,7 +11,7 @@ import {
   findCustomer, findJob, fmtTHB,
 } from "@/lib/mockData";
 import { useTick, removeCustomer, duplicateCustomer, relatedForCustomer, relatedWarning } from "@/lib/store";
-import { Lock, Search, Mail, Phone, MapPin } from "lucide-react";
+import { Lock, Search, Mail, Phone, MapPin, Eye, Pencil } from "lucide-react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -27,13 +28,48 @@ import {
 import { BillingRulesTab } from "@/components/BillingRulesTab";
 import { RowActions } from "@/components/RowActions";
 import { toast } from "sonner";
+import { CUSTOMER_TYPES_TH, customerTypeThai, LEAD_SOURCES_TH, leadSourceThai } from "@/lib/thaiOptions";
+import { AddToCalendarDialog } from "@/components/dialogs/AddToCalendarDialog";
+import { QuickEditCustomerDialog } from "@/components/dialogs/QuickEditCustomerDialog";
 
+const ACTIVITY_THAI: Record<string, string> = {
+  "Call": "โทรติดตาม",
+  "Email": "ส่งอีเมล",
+  "LINE message": "คุยทาง Line",
+  "Meeting": "นัด Onsite",
+  "Follow-up": "Service follow-up",
+  "Quotation sent": "ส่งใบเสนอราคา",
+  "Customer replied": "ลูกค้าตอบกลับ",
+  "Internal note": "บันทึกภายใน",
+};
+
+function lastActivityFor(cid: string): { label: string; date?: string } {
+  const acts = activities.filter((a) => a.customerId === cid)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  if (!acts.length) return { label: "ไม่มีความเคลื่อนไหว" };
+  const a = acts[0];
+  return { label: ACTIVITY_THAI[a.type] ?? a.type, date: a.date };
+}
+function nextFollowUpFor(cid: string): string | undefined {
+  const today = new Date().toISOString().slice(0, 10);
+  return activities
+    .filter((a) => a.customerId === cid && a.nextFollowUp && a.nextFollowUp >= today)
+    .map((a) => a.nextFollowUp!)
+    .sort()[0];
+}
+const OPEN_DEAL = new Set(["New Lead", "Contacted", "Need Quotation", "Quotation Sent", "Negotiation"]);
+const ACTIVE_JOB = new Set(["Pending", "In Progress", "Waiting Supplier", "Waiting Customer", "Problem"]);
 
 export default function Customers() {
   useTick();
   const [q, setQ] = useState("");
   const [type, setType] = useState<string>("all");
   const [lead, setLead] = useState<string>("all");
+  const [calOpen, setCalOpen] = useState(false);
+  const [calCustomer, setCalCustomer] = useState<string | undefined>();
+  const [editOpen, setEditOpen] = useState(false);
+  const [editCustomer, setEditCustomer] = useState<typeof customers[number] | undefined>();
+
   const filtered = customers.filter((c) => {
     const matches = c.name.toLowerCase().includes(q.toLowerCase()) ||
       c.contactPerson.toLowerCase().includes(q.toLowerCase());
@@ -41,6 +77,15 @@ export default function Customers() {
     const lOk = lead === "all" || customerLeadSource[c.id] === lead;
     return matches && tOk && lOk;
   });
+
+  const rows = useMemo(() => filtered.map((c) => {
+    const openDeals = deals.filter((d) => d.customerId === c.id && OPEN_DEAL.has(d.status)).length;
+    const activeJobs = jobs.filter((j) => j.customerId === c.id && ACTIVE_JOB.has(j.status)).length;
+    const ar = customerInvoices.filter((i) => i.customerId === c.id && i.status !== "Paid")
+      .reduce((s, i) => s + i.total, 0);
+    return { c, openDeals, activeJobs, ar, last: lastActivityFor(c.id), next: nextFollowUpFor(c.id) };
+  }), [filtered]);
+
   return (
     <>
       <PageHeader title="Customers" thai="ลูกค้า"
@@ -53,41 +98,50 @@ export default function Customers() {
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="ค้นหาลูกค้า…" className="pl-9" />
         </div>
         <Select value={type} onValueChange={setType}>
-          <SelectTrigger className="w-44"><SelectValue placeholder="ประเภท" /></SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="ประเภทลูกค้า" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">ทุกประเภท</SelectItem>
-            <SelectItem value="New">New</SelectItem>
-            <SelectItem value="Existing">Existing</SelectItem>
-            <SelectItem value="Corporate">Corporate</SelectItem>
+            {CUSTOMER_TYPES_TH.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={lead} onValueChange={setLead}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="ที่มา" /></SelectTrigger>
+          <SelectTrigger className="w-52"><SelectValue placeholder="ที่มาของลูกค้า" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">ทุกที่มาของลูกค้า</SelectItem>
-            {LEAD_SOURCES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            <SelectItem value="all">ทุกที่มา</SelectItem>
+            {LEAD_SOURCES_TH.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            {LEAD_SOURCES.filter((s) => !LEAD_SOURCES_TH.some((o) => o.value === s)).map((s) =>
+              <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
+        {(q || type !== "all" || lead !== "all") && (
+          <Button variant="outline" size="sm" onClick={() => { setQ(""); setType("all"); setLead("all"); }}>
+            ล้างตัวกรอง
+          </Button>
+        )}
       </Card>
       <Card className="card-soft overflow-hidden">
-        {filtered.length === 0 ? (
+        {rows.length === 0 ? (
           <EmptyState title="ไม่พบลูกค้าที่ตรงกับการค้นหา" hint="ลองเปลี่ยนคำค้นหรือเปลี่ยนตัวกรองดู" />
         ) : (
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Customer</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead>ประเภทลูกค้า</TableHead>
+              <TableHead>Main Contact</TableHead>
               <TableHead>Lead Source</TableHead>
+              <TableHead>Last Activity</TableHead>
               <TableHead>Updated</TableHead>
-              <TableHead className="text-right">Deals</TableHead>
-              <TableHead className="text-right w-32">การกระทำ</TableHead>
+              <TableHead>Next Follow-up</TableHead>
+              <TableHead className="text-right">Open Deals</TableHead>
+              <TableHead className="text-right">Active Jobs</TableHead>
+              <TableHead className="text-right">AR Outstanding</TableHead>
+              <TableHead className="text-right w-36">การกระทำ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((c) => {
-              const dealCount = deals.filter((d) => d.customerId === c.id).length;
+            {rows.map(({ c, openDeals, activeJobs, ar, last, next }) => {
+              const rel = relatedForCustomer(c.id);
               return (
                 <TableRow key={c.id}>
                   <TableCell>
@@ -98,29 +152,46 @@ export default function Customers() {
                     <div className="text-xs text-muted-foreground">{c.address}</div>
                   </TableCell>
                   <TableCell>
+                    <StatusBadge status={customerTypeThai(c.type)} tone={c.type === "Corporate" ? "primary" : c.type === "Existing" ? "info" : "muted"} />
+                  </TableCell>
+                  <TableCell>
                     <div className="text-sm">{c.contactPerson}</div>
                     <div className="text-xs text-muted-foreground">{c.email}</div>
                   </TableCell>
-                  <TableCell><StatusBadge status={c.type} tone={c.type === "Corporate" ? "primary" : c.type === "Existing" ? "info" : "muted"} /></TableCell>
-                  <TableCell className="text-sm"><StatusBadge status={customerLeadSource[c.id] ?? "Other"} tone="info" /></TableCell>
+                  <TableCell className="text-sm">
+                    <StatusBadge status={leadSourceThai(customerLeadSource[c.id])} tone="info" />
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    <div>{last.label}</div>
+                    {last.date && <div className="text-xs text-muted-foreground">{last.date}</div>}
+                  </TableCell>
                   <TableCell className="text-sm text-muted-foreground">{c.updatedAt}</TableCell>
-                  <TableCell className="text-right font-medium">{dealCount}</TableCell>
+                  <TableCell className="text-sm">
+                    {next ? <span className="text-foreground">{next}</span> : <span className="text-muted-foreground">—</span>}
+                  </TableCell>
+                  <TableCell className="text-right font-medium">{openDeals}</TableCell>
+                  <TableCell className="text-right font-medium">{activeJobs}</TableCell>
+                  <TableCell className={"text-right font-medium " + (ar > 0 ? "text-warning-foreground" : "text-muted-foreground")}>
+                    {ar > 0 ? fmtTHB(ar) : "—"}
+                  </TableCell>
                   <TableCell>
-                    {(() => {
-                      const rel = relatedForCustomer(c.id);
-                      return (
-                        <RowActions
-                          viewHref={`/customers/${c.id}`}
-                          onEdit={() => toast.info(`เปิดหน้าลูกค้าเพื่อแก้ไข ${c.name}`)}
-                          onDuplicate={() => duplicateCustomer(c.id, "Khun Ploy")}
-                          onAddToCalendar={() => toast.success("เพิ่มนัดติดตามในปฏิทินแล้ว")}
-                          onViewLog={() => toast.info("ดูประวัติลูกค้า")}
-                          onDelete={() => removeCustomer(c.id, "Khun Ploy")}
-                          deleteLabel={c.name}
-                          relatedWarning={relatedWarning({ Contacts: rel.contacts, Deals: rel.deals, Jobs: rel.jobs, Invoices: rel.invoices })}
-                        />
-                      );
-                    })()}
+                    <div className="flex items-center justify-end gap-0.5">
+                      <Button asChild size="icon" variant="ghost" className="h-8 w-8" title="ดูโปรไฟล์ลูกค้า">
+                        <Link to={`/customers/${c.id}`}><Eye className="w-4 h-4" /></Link>
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-8 w-8" title="แก้ไขด่วน"
+                        onClick={() => { setEditCustomer(c); setEditOpen(true); }}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <RowActions
+                        onDuplicate={() => duplicateCustomer(c.id, "Khun Ploy")}
+                        onAddToCalendar={() => { setCalCustomer(c.id); setCalOpen(true); }}
+                        onViewLog={() => toast.info("ดูประวัติลูกค้า")}
+                        onDelete={() => removeCustomer(c.id, "Khun Ploy")}
+                        deleteLabel={c.name}
+                        relatedWarning={relatedWarning({ Contacts: rel.contacts, Deals: rel.deals, Jobs: rel.jobs, Invoices: rel.invoices })}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               );
@@ -129,6 +200,9 @@ export default function Customers() {
         </Table>
         )}
       </Card>
+
+      <AddToCalendarDialog open={calOpen} onOpenChange={setCalOpen} defaultCustomerId={calCustomer} />
+      <QuickEditCustomerDialog open={editOpen} onOpenChange={setEditOpen} customer={editCustomer} />
     </>
   );
 }
