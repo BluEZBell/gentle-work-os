@@ -224,8 +224,21 @@ export default function Customers() {
 
 export function CustomerDetail() {
   useTick();
+  useNotesTick();
   const { id } = useParams();
   const c = findCustomer(id!);
+
+  // Profile-level dialog state — declared before any early-return so hook order stays stable.
+  const [editOpen, setEditOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | undefined>();
+  const [contactDetailId, setContactDetailId] = useState<string | undefined>();
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
+  const [contactNoteFor, setContactNoteFor] = useState<Contact | undefined>();
+  const [delContact, setDelContact] = useState<Contact | undefined>();
+
   if (!c) return <div>ไม่พบข้อมูลลูกค้า <Link to="/customers" className="text-primary">กลับ</Link></div>;
 
   const cContacts = contacts.filter((x) => x.customerId === c.id);
@@ -239,8 +252,27 @@ export function CustomerDetail() {
   const cTasks = tasks.filter((t) => t.customerId === c.id || (t.jobId && cJobIds.has(t.jobId)));
   const cActivities = activities.filter((a) => a.customerId === c.id);
   const cSvc = serviceRecords.filter((s) => s.customerId === c.id);
+  const cNotes = customerNotes.filter((n) => n.customerId === c.id);
   const paid = cInvoices.filter((i) => i.status === "Paid").reduce((a, b) => a + b.total, 0);
   const outstanding = cInvoices.filter((i) => i.status !== "Paid").reduce((a, b) => a + b.total, 0);
+  const totalSales = cJobs.reduce((s, j) => s + j.sellPrice, 0);
+  const openDeals = cDeals.filter((d) => !["Won", "Lost", "Failed"].includes(d.status)).length;
+  const openQuots = cQuots.filter((q) => q.status === "Sent" || q.status === "Draft").length;
+  const activeJobs = cJobs.filter((j) => !["Closed", "Delivered"].includes(j.status)).length;
+  const svcDue = cSvc.filter((s) => s.status === "Due" || s.status === "Upcoming").length;
+  const last = lastActivityFor(c.id);
+  const nextFu = nextFollowUpFor(c.id);
+  const mainContact = cContacts.find((x) => x.isMain) ?? cContacts[0];
+
+  const setRoleFlag = (ct: Contact, field: "isMain" | "isBilling" | "isDelivery") => {
+    if (field === "isMain") {
+      cContacts.forEach((x) => { if (x.id !== ct.id && x.isMain) updateContact(x.id, { isMain: false }, "Khun Ploy"); });
+    }
+    updateContact(ct.id, { [field]: true }, "Khun Ploy");
+    toast.success("อัปเดตบทบาทผู้ติดต่อแล้ว");
+  };
+
+  const openAddContact = () => { setEditingContact(undefined); setContactOpen(true); };
 
   return (
     <>
@@ -248,38 +280,59 @@ export function CustomerDetail() {
         title={c.name}
         breadcrumbs={<Breadcrumbs items={[{ label: "Customers (ลูกค้า)", to: "/customers" }, { label: c.name }]} />}
         description={c.confidential ? "ลูกค้าลับ — กรุณาดูแลข้อมูลเป็นพิเศษ" : "โปรไฟล์ 360° — ดูทุกข้อมูลที่เกี่ยวข้องกับลูกค้ารายนี้"}
-        actions={<StatusBadge status={c.type} tone={c.type === "Corporate" ? "primary" : "info"} />}
+        actions={<StatusBadge status={customerTypeThai(c.type)} tone={c.type === "Corporate" ? "primary" : "info"} />}
       />
+
+      {/* Top action bar */}
+      <Card className="card-soft p-3 mb-4">
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => setEditOpen(true)}><Pencil className="w-4 h-4 mr-1" />แก้ไขข้อมูลลูกค้า</Button>
+          <Button size="sm" variant="outline" onClick={openAddContact}><Plus className="w-4 h-4 mr-1" />เพิ่มผู้ติดต่อ</Button>
+          <Button size="sm" variant="outline" onClick={() => setActivityOpen(true)}><ActivityIcon className="w-4 h-4 mr-1" />เพิ่มกิจกรรม</Button>
+          <Button size="sm" variant="outline" onClick={() => setNoteOpen(true)}><StickyNote className="w-4 h-4 mr-1" />เพิ่ม Note</Button>
+          <Button size="sm" variant="outline" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
+          <Button size="sm" variant="outline" asChild><Link to="/deals"><ClipboardList className="w-4 h-4 mr-1" />สร้าง Deal</Link></Button>
+          <Button size="sm" variant="outline" asChild><Link to="/quotations"><FileText className="w-4 h-4 mr-1" />สร้างใบเสนอราคา</Link></Button>
+          <Button size="sm" variant="outline" asChild><Link to="/purchase-orders?type=customer"><ShoppingCart className="w-4 h-4 mr-1" />สร้าง Customer PO</Link></Button>
+          <Button size="sm" variant="outline" onClick={() => toast.info("แนบไฟล์ — ไปที่แท็บ Attachments")}><Paperclip className="w-4 h-4 mr-1" />แนบไฟล์</Button>
+        </div>
+      </Card>
+
+      {/* Header KPI chips */}
+      <Card className="card-soft p-4 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 text-xs">
+          <Kpi label="Main Contact" value={mainContact?.name ?? "—"} sub={mainContact?.role} />
+          <Kpi label="Lead Source" value={leadSourceThai(customerLeadSource[c.id])} />
+          <Kpi label="Last Activity" value={last.label} sub={last.date} />
+          <Kpi label="Next Follow-up" value={nextFu ?? "—"} />
+          <Kpi label="AR Outstanding" value={fmtTHB(outstanding)} tone={outstanding > 0 ? "warn" : undefined} />
+          <Kpi label="Open Deals" value={String(openDeals)} />
+          <Kpi label="Active Jobs" value={String(activeJobs)} />
+          <Kpi label="Service Due" value={String(svcDue)} tone={svcDue > 0 ? "warn" : undefined} />
+        </div>
+      </Card>
 
       <div className="grid lg:grid-cols-3 gap-4">
         <Card className="card-soft p-5 lg:col-span-1 h-fit">
-          <h3 className="font-semibold mb-3">โปรไฟล์ (Profile)</h3>
+          <h3 className="font-semibold mb-3 flex items-center justify-between">โปรไฟล์ (Profile)
+            <Button size="sm" variant="ghost" className="h-7" onClick={() => setEditOpen(true)}><Pencil className="w-3.5 h-3.5" /></Button>
+          </h3>
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-muted-foreground" /> {c.email}</div>
             <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-muted-foreground" /> {c.phone}</div>
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-muted-foreground" /> {c.address}</div>
             <div className="pt-3 border-t mt-3 text-muted-foreground text-xs">
-              ที่มา: {customerLeadSource[c.id] ?? c.source} • สร้างเมื่อ {c.createdAt}
+              ที่มา: {leadSourceThai(customerLeadSource[c.id] ?? c.source)} • สร้างเมื่อ {c.createdAt}
             </div>
             {c.notes && <div className="mt-3 p-3 bg-secondary/60 rounded text-sm">{c.notes}</div>}
           </div>
           <div className="grid grid-cols-2 gap-2 mt-4">
-            <div className="rounded-lg bg-secondary/60 p-3">
-              <div className="text-[11px] text-muted-foreground">ชำระแล้ว</div>
-              <div className="font-display font-semibold text-success">{fmtTHB(paid)}</div>
-            </div>
-            <div className="rounded-lg bg-warning-soft p-3">
-              <div className="text-[11px] text-muted-foreground">ค้างรับ</div>
-              <div className="font-display font-semibold text-warning-foreground">{fmtTHB(outstanding)}</div>
-            </div>
-            <div className="rounded-lg bg-secondary/60 p-3">
-              <div className="text-[11px] text-muted-foreground">งานทั้งหมด</div>
-              <div className="font-display font-semibold">{cJobs.length}</div>
-            </div>
-            <div className="rounded-lg bg-secondary/60 p-3">
-              <div className="text-[11px] text-muted-foreground">ดีล</div>
-              <div className="font-display font-semibold">{cDeals.length}</div>
-            </div>
+            <MiniStat label="ยอดขายรวม" value={fmtTHB(totalSales)} />
+            <MiniStat label="ค้างรับ" value={fmtTHB(outstanding)} tone="warn" />
+            <MiniStat label="ชำระแล้ว" value={fmtTHB(paid)} tone="success" />
+            <MiniStat label="Deal เปิดอยู่" value={String(openDeals)} />
+            <MiniStat label="QT ค้าง" value={String(openQuots)} />
+            <MiniStat label="งานที่ทำอยู่" value={String(activeJobs)} />
           </div>
         </Card>
 
@@ -288,6 +341,7 @@ export function CustomerDetail() {
             <TabsList className="flex flex-wrap h-auto justify-start">
               <TabsTrigger value="overview">Overview (ภาพรวม)</TabsTrigger>
               <TabsTrigger value="contacts">Contacts ({cContacts.length})</TabsTrigger>
+              <TabsTrigger value="notes">Notes ({cNotes.length})</TabsTrigger>
               <TabsTrigger value="deals">Deals ({cDeals.length})</TabsTrigger>
               <TabsTrigger value="pos">Customer PO ({cPOs.length})</TabsTrigger>
               <TabsTrigger value="quotes">Quotations ({cQuots.length})</TabsTrigger>
@@ -325,21 +379,78 @@ export function CustomerDetail() {
               </SectionCard>
             </TabsContent>
 
-            <TabsContent value="contacts" className="mt-4">
-              <Card className="card-soft p-5">
-                {cContacts.length === 0 ? <EmptyState title="ยังไม่มีผู้ติดต่อ" /> :
-                  cContacts.map((ct) => (
-                    <div key={ct.id} className="flex justify-between border-b last:border-0 py-2 text-sm">
-                      <div>
-                        <div className="font-medium">{ct.name}</div>
-                        <div className="text-xs text-muted-foreground">{ct.role} • {ct.department}</div>
+            <TabsContent value="contacts" className="mt-4 space-y-3">
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-muted-foreground">ผู้ติดต่อทั้งหมด {cContacts.length} คน</div>
+                <Button size="sm" onClick={openAddContact}><Plus className="w-4 h-4 mr-1" />เพิ่มผู้ติดต่อ</Button>
+              </div>
+              {cContacts.length === 0 ? (
+                <Card className="card-soft p-5"><EmptyState title="ยังไม่มีผู้ติดต่อ" hint="เพิ่มผู้ติดต่อแรกของลูกค้ารายนี้" /></Card>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-3">
+                  {cContacts.map((ct) => (
+                    <Card key={ct.id} className="card-soft p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="font-medium flex items-center gap-1 flex-wrap">
+                            {ct.name}
+                            {ct.isMain && <Badge className="text-[10px] bg-primary/15 text-primary border-primary/30">Main</Badge>}
+                            {ct.isBilling && <Badge variant="secondary" className="text-[10px]">Billing</Badge>}
+                            {ct.isDelivery && <Badge variant="secondary" className="text-[10px]">Delivery</Badge>}
+                            {ct.isPoApprover && <Badge variant="secondary" className="text-[10px]">PO</Badge>}
+                          </div>
+                          <div className="text-xs text-muted-foreground">{ct.role}{ct.department ? ` • ${ct.department}` : ""}</div>
+                          {ct.contactType && <div className="text-[11px] text-muted-foreground mt-0.5">ประเภท: {ct.contactType}</div>}
+                        </div>
+                        <div className="flex items-center gap-0.5 shrink-0">
+                          <Button size="icon" variant="ghost" className="h-7 w-7" title="ดูรายละเอียด" onClick={() => setContactDetailId(ct.id)}><Eye className="w-3.5 h-3.5" /></Button>
+                          <Button size="icon" variant="ghost" className="h-7 w-7" title="แก้ไข" onClick={() => { setEditingContact(ct); setContactOpen(true); }}><Pencil className="w-3.5 h-3.5" /></Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild><Button size="icon" variant="ghost" className="h-7 w-7"><MoreHorizontal className="w-3.5 h-3.5" /></Button></DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-52">
+                              <DropdownMenuItem onClick={() => setContactNoteFor(ct)}><StickyNote className="w-4 h-4 mr-2" />เพิ่ม Note</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setActivityOpen(true)}><ActivityIcon className="w-4 h-4 mr-2" />เพิ่มกิจกรรม</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-2" />เพิ่มลงปฏิทิน</DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem onClick={() => setRoleFlag(ct, "isMain")}><Star className="w-4 h-4 mr-2" />ตั้งเป็น Main Contact</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setRoleFlag(ct, "isBilling")}><Receipt className="w-4 h-4 mr-2" />ตั้งเป็น Billing Contact</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setRoleFlag(ct, "isDelivery")}><Truck className="w-4 h-4 mr-2" />ตั้งเป็น Delivery Contact</DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem onClick={() => setDelContact(ct)} className="text-destructive focus:text-destructive"><Trash2 className="w-4 h-4 mr-2" />ลบ</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </div>
-                      <div className="text-right text-xs text-muted-foreground">
-                        <div>{ct.email}</div><div>{ct.phone}</div>
+                      <div className="mt-2 space-y-1 text-xs">
+                        {ct.phone && <div className="flex items-center gap-1"><Phone className="w-3 h-3" />{ct.phone}</div>}
+                        {ct.email && <div className="flex items-center gap-1"><Mail className="w-3 h-3" />{ct.email}</div>}
+                        {ct.lineId && <div className="flex items-center gap-1"><MessageCircle className="w-3 h-3" />{ct.lineId}</div>}
                       </div>
-                    </div>
+                      {ct.notes && <div className="mt-2 text-xs p-2 bg-secondary/60 rounded">📝 {ct.notes}</div>}
+                    </Card>
                   ))}
-              </Card>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="notes" className="mt-4 space-y-3">
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-muted-foreground">Notes ทั้งหมด {cNotes.length} รายการ</div>
+                <Button size="sm" onClick={() => setNoteOpen(true)}><Plus className="w-4 h-4 mr-1" />เพิ่ม Note</Button>
+              </div>
+              {cNotes.length === 0 ? (
+                <Card className="card-soft p-5"><EmptyState title="ยังไม่มี Note" hint="บันทึก Memo ลูกค้า เช่น Billing Note หรือ Risk Note" /></Card>
+              ) : (
+                <div className="space-y-2">
+                  {cNotes.map((n) => (
+                    <Card key={n.id} className="card-soft p-3 text-sm">
+                      <div className="flex justify-between"><Badge variant="outline" className="text-[10px]">{n.type}</Badge>
+                        <span className="text-xs text-muted-foreground">{n.user} • {n.createdAt}</span></div>
+                      <div className="mt-1.5">{n.body}</div>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="deals" className="mt-4">
@@ -397,8 +508,12 @@ export function CustomerDetail() {
               )} />
             </TabsContent>
 
-            <TabsContent value="activities" className="mt-4">
-              <ListCard items={cActivities} empty="ยังไม่มีกิจกรรม" render={(a) => (
+            <TabsContent value="activities" className="mt-4 space-y-3">
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-muted-foreground">กิจกรรม {cActivities.length} รายการ</div>
+                <Button size="sm" onClick={() => setActivityOpen(true)}><Plus className="w-4 h-4 mr-1" />เพิ่มกิจกรรม</Button>
+              </div>
+              <ListCard items={cActivities} empty="ยังไม่มีกิจกรรม บันทึกการโทร นัดหมาย หรือ Note แรก" render={(a) => (
                 <Row key={a.id} left={<><span className="font-medium">{a.type}</span></>}
                   right={<span className="text-xs text-muted-foreground">{a.date}</span>}
                   sub={`${a.note} — ${a.user}${a.nextFollowUp ? ` • ติดตาม ${a.nextFollowUp}` : ""}`} />
@@ -416,7 +531,6 @@ export function CustomerDetail() {
               <BillingRulesTab customerId={c.id} />
             </TabsContent>
 
-
             <TabsContent value="attach" className="mt-4">
               <Card className="card-soft p-5"><Attachments module="Customer" id={c.id} /></Card>
             </TabsContent>
@@ -429,9 +543,54 @@ export function CustomerDetail() {
           </Tabs>
         </div>
       </div>
+
+      <QuickEditCustomerDialog open={editOpen} onOpenChange={setEditOpen} customer={c} />
+      <ContactDialog open={contactOpen} onOpenChange={(v) => { setContactOpen(v); if (!v) setEditingContact(undefined); }}
+        contact={editingContact} defaultCustomerId={c.id} />
+      <ContactDetailSheet open={!!contactDetailId} onOpenChange={(v) => !v && setContactDetailId(undefined)} contactId={contactDetailId} />
+      <AddNoteDialog open={noteOpen} onOpenChange={setNoteOpen} target={{ kind: "customer", id: c.id, label: c.name }} />
+      <AddNoteDialog open={!!contactNoteFor} onOpenChange={(v) => !v && setContactNoteFor(undefined)}
+        target={contactNoteFor ? { kind: "contact", id: contactNoteFor.id, label: contactNoteFor.name } : { kind: "contact", id: "" }} />
+      <AddActivityDialog open={activityOpen} onOpenChange={setActivityOpen} defaultCustomerId={c.id} />
+      <AddToCalendarDialog open={calOpen} onOpenChange={setCalOpen} defaultCustomerId={c.id} />
+
+      <AlertDialog open={!!delContact} onOpenChange={(v) => !v && setDelContact(undefined)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>ยืนยันการลบผู้ติดต่อ?</AlertDialogTitle>
+            <AlertDialogDescription>คุณกำลังจะลบ <strong>{delContact?.name}</strong> — การกระทำนี้ไม่สามารถย้อนกลับได้ (เดโม)</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (delContact) { import("@/lib/store").then((m) => m.removeContact(delContact.id, "Khun Ploy")); toast.success(`ลบ ${delContact.name} แล้ว`); } setDelContact(undefined); }}>
+              ลบ
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
+
+function Kpi({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: "warn" }) {
+  return (
+    <div className={"rounded-lg p-2.5 border " + (tone === "warn" ? "bg-warning-soft/40 border-warning/30" : "bg-secondary/40")}>
+      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="text-sm font-semibold truncate">{value}</div>
+      {sub && <div className="text-[10px] text-muted-foreground truncate">{sub}</div>}
+    </div>
+  );
+}
+function MiniStat({ label, value, tone }: { label: string; value: string; tone?: "warn" | "success" }) {
+  return (
+    <div className={"rounded-lg p-3 " + (tone === "warn" ? "bg-warning-soft" : "bg-secondary/60")}>
+      <div className="text-[11px] text-muted-foreground">{label}</div>
+      <div className={"font-display font-semibold " + (tone === "success" ? "text-success" : tone === "warn" ? "text-warning-foreground" : "")}>{value}</div>
+    </div>
+  );
+}
+
 
 function SectionCard({ title, children, empty }: { title: string; children: React.ReactNode; empty?: boolean }) {
   return (
