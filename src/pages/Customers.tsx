@@ -392,7 +392,7 @@ export function CustomerDetail() {
         </Card>
 
         <div className="lg:col-span-2">
-          <Tabs defaultValue="overview">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="flex flex-wrap h-auto justify-start">
               <TabsTrigger value="overview">Overview (ภาพรวม)</TabsTrigger>
               <TabsTrigger value="contacts">Contacts ({cContacts.length})</TabsTrigger>
