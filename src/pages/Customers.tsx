@@ -237,6 +237,8 @@ export function CustomerDetail() {
 
   // Profile-level dialog state — declared before any early-return so hook order stays stable.
   const [editOpen, setEditOpen] = useState(false);
+  const [editFocus, setEditFocus] = useState<"type" | "all">("all");
+  const [activeTab, setActiveTab] = useState("overview");
   const [contactOpen, setContactOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | undefined>();
   const [contactDetailId, setContactDetailId] = useState<string | undefined>();
@@ -245,6 +247,8 @@ export function CustomerDetail() {
   const [calOpen, setCalOpen] = useState(false);
   const [contactNoteFor, setContactNoteFor] = useState<Contact | undefined>();
   const [delContact, setDelContact] = useState<Contact | undefined>();
+
+  const openEdit = (focus: "type" | "all" = "all") => { setEditFocus(focus); setEditOpen(true); };
 
   if (!c) return <div>ไม่พบข้อมูลลูกค้า <Link to="/customers" className="text-primary">กลับ</Link></div>;
 
