@@ -15,7 +15,9 @@ import {
   Lock, Search, Mail, Phone, MapPin, Eye, Pencil, Plus, StickyNote,
   Activity as ActivityIcon, CalendarPlus, FileText, ShoppingCart, Paperclip, ClipboardList,
   MessageCircle, Star, Receipt, Truck, MoreHorizontal, Copy as CopyIcon, Trash2,
+  ArrowUpRight,
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -172,7 +174,7 @@ export default function Customers() {
                     <div className="text-xs text-muted-foreground">{c.address}</div>
                   </TableCell>
                   <TableCell>
-                    <StatusBadge status={customerTypeThai(c.type)} tone={c.type === "Corporate" ? "primary" : c.type === "Existing" ? "info" : "muted"} />
+                    <StatusBadge status={customerTypeThai(c.type)} tone={c.type === "Corporate" || c.type === "Key" || c.type === "Juristic" ? "primary" : c.type === "Suspended" ? "danger" : c.type === "FollowUp" ? "warning" : c.type === "Existing" || c.type === "Regular" ? "info" : "muted"} />
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">{c.contactPerson}</div>
@@ -235,6 +237,8 @@ export function CustomerDetail() {
 
   // Profile-level dialog state — declared before any early-return so hook order stays stable.
   const [editOpen, setEditOpen] = useState(false);
+  const [editFocus, setEditFocus] = useState<"type" | "all">("all");
+  const [activeTab, setActiveTab] = useState("overview");
   const [contactOpen, setContactOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | undefined>();
   const [contactDetailId, setContactDetailId] = useState<string | undefined>();
@@ -243,6 +247,8 @@ export function CustomerDetail() {
   const [calOpen, setCalOpen] = useState(false);
   const [contactNoteFor, setContactNoteFor] = useState<Contact | undefined>();
   const [delContact, setDelContact] = useState<Contact | undefined>();
+
+  const openEdit = (focus: "type" | "all" = "all") => { setEditFocus(focus); setEditOpen(true); };
 
   if (!c) return <div>ไม่พบข้อมูลลูกค้า <Link to="/customers" className="text-primary">กลับ</Link></div>;
 
@@ -285,22 +291,66 @@ export function CustomerDetail() {
         title={c.name}
         breadcrumbs={<Breadcrumbs items={[{ label: "Customers (ลูกค้า)", to: "/customers" }, { label: c.name }]} />}
         description={c.confidential ? "ลูกค้าลับ — กรุณาดูแลข้อมูลเป็นพิเศษ" : "โปรไฟล์ 360° — ดูทุกข้อมูลที่เกี่ยวข้องกับลูกค้ารายนี้"}
-        actions={<StatusBadge status={customerTypeThai(c.type)} tone={c.type === "Corporate" ? "primary" : "info"} />}
+        actions={
+          <TooltipProvider delayDuration={150}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => openEdit("type")}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                >
+                  {customerTypeThai(c.type)}
+                  <Pencil className="w-3 h-3" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>แก้ไขประเภทลูกค้า / สถานะ / Main Contact / Lead Source</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        }
       />
 
-      {/* Top action bar */}
+      {/* Top action bar — Group A: local profile actions | Group B: cross-module actions */}
       <Card className="card-soft p-3 mb-4">
-        <div className="flex flex-wrap gap-2">
-          <Button size="sm" onClick={() => setEditOpen(true)}><Pencil className="w-4 h-4 mr-1" />แก้ไขข้อมูลลูกค้า</Button>
-          <Button size="sm" variant="outline" onClick={openAddContact}><Plus className="w-4 h-4 mr-1" />เพิ่มผู้ติดต่อ</Button>
-          <Button size="sm" variant="outline" onClick={() => setActivityOpen(true)}><ActivityIcon className="w-4 h-4 mr-1" />เพิ่มกิจกรรม</Button>
-          <Button size="sm" variant="outline" onClick={() => setNoteOpen(true)}><StickyNote className="w-4 h-4 mr-1" />เพิ่ม Note</Button>
-          <Button size="sm" variant="outline" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
-          <Button size="sm" variant="outline" asChild><Link to="/deals"><ClipboardList className="w-4 h-4 mr-1" />สร้าง Deal</Link></Button>
-          <Button size="sm" variant="outline" asChild><Link to="/quotations"><FileText className="w-4 h-4 mr-1" />สร้างใบเสนอราคา</Link></Button>
-          <Button size="sm" variant="outline" asChild><Link to="/purchase-orders?type=customer"><ShoppingCart className="w-4 h-4 mr-1" />สร้าง Customer PO</Link></Button>
-          <Button size="sm" variant="outline" onClick={() => toast.info("แนบไฟล์ — ไปที่แท็บ Attachments")}><Paperclip className="w-4 h-4 mr-1" />แนบไฟล์</Button>
-        </div>
+        <TooltipProvider delayDuration={200}>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Group A: local */}
+            <div className="flex flex-wrap gap-2 items-center">
+              <Button size="sm" onClick={() => openEdit("all")}><Pencil className="w-4 h-4 mr-1" />แก้ไขข้อมูลลูกค้า</Button>
+              <Button size="sm" variant="secondary" onClick={openAddContact}><Plus className="w-4 h-4 mr-1" />เพิ่มผู้ติดต่อ</Button>
+              <Button size="sm" variant="secondary" onClick={() => setActivityOpen(true)}><ActivityIcon className="w-4 h-4 mr-1" />เพิ่มกิจกรรม</Button>
+              <Button size="sm" variant="secondary" onClick={() => setNoteOpen(true)}><StickyNote className="w-4 h-4 mr-1" />เพิ่ม Note</Button>
+              <Button size="sm" variant="secondary" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
+              <Button size="sm" variant="secondary" onClick={() => { setActiveTab("attach"); toast.info("เปิดแท็บไฟล์แนบ"); }}>
+                <Paperclip className="w-4 h-4 mr-1" />ไปที่ไฟล์แนบ
+              </Button>
+            </div>
+
+            <div className="h-6 w-px bg-border mx-1" aria-hidden />
+            <span className="text-[11px] text-muted-foreground hidden md:inline">ไปสร้างในโมดูลอื่น →</span>
+
+            {/* Group B: cross-module */}
+            <div className="flex flex-wrap gap-2">
+              {[
+                { to: `/deals?customerId=${c.id}`, icon: ClipboardList, label: "สร้าง Deal" },
+                { to: `/quotations?customerId=${c.id}`, icon: FileText, label: "สร้างใบเสนอราคา" },
+                { to: `/purchase-orders?type=customer&customerId=${c.id}`, icon: ShoppingCart, label: "สร้าง Customer PO" },
+              ].map((b) => (
+                <Tooltip key={b.label}>
+                  <TooltipTrigger asChild>
+                    <Button size="sm" variant="outline" className="border-dashed" asChild>
+                      <Link to={b.to}>
+                        <b.icon className="w-4 h-4 mr-1" />
+                        {b.label}
+                        <ArrowUpRight className="w-3.5 h-3.5 ml-1 text-muted-foreground" />
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>รายการนี้จะสร้างข้อมูลในโมดูลอื่น และเชื่อมกลับมาที่ลูกค้ารายนี้</TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          </div>
+        </TooltipProvider>
       </Card>
 
       {/* Header KPI chips */}
@@ -320,7 +370,7 @@ export function CustomerDetail() {
       <div className="grid lg:grid-cols-3 gap-4">
         <Card className="card-soft p-5 lg:col-span-1 h-fit">
           <h3 className="font-semibold mb-3 flex items-center justify-between">โปรไฟล์ (Profile)
-            <Button size="sm" variant="ghost" className="h-7" onClick={() => setEditOpen(true)}><Pencil className="w-3.5 h-3.5" /></Button>
+            <Button size="sm" variant="ghost" className="h-7" onClick={() => openEdit("all")}><Pencil className="w-3.5 h-3.5" /></Button>
           </h3>
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-muted-foreground" /> {c.email}</div>
@@ -342,7 +392,7 @@ export function CustomerDetail() {
         </Card>
 
         <div className="lg:col-span-2">
-          <Tabs defaultValue="overview">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="flex flex-wrap h-auto justify-start">
               <TabsTrigger value="overview">Overview (ภาพรวม)</TabsTrigger>
               <TabsTrigger value="contacts">Contacts ({cContacts.length})</TabsTrigger>
@@ -549,7 +599,7 @@ export function CustomerDetail() {
         </div>
       </div>
 
-      <QuickEditCustomerDialog open={editOpen} onOpenChange={setEditOpen} customer={c} />
+      <QuickEditCustomerDialog open={editOpen} onOpenChange={setEditOpen} customer={c} focus={editFocus} />
       <ContactDialog open={contactOpen} onOpenChange={(v) => { setContactOpen(v); if (!v) setEditingContact(undefined); }}
         contact={editingContact} defaultCustomerId={c.id} />
       <ContactDetailSheet open={!!contactDetailId} onOpenChange={(v) => !v && setContactDetailId(undefined)} contactId={contactDetailId} />
