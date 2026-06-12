@@ -10,8 +10,12 @@ import {
   customers, contacts, deals, quotations, jobs, serviceRecords,
   findCustomer, findJob, fmtTHB,
 } from "@/lib/mockData";
-import { useTick, removeCustomer, duplicateCustomer, relatedForCustomer, relatedWarning } from "@/lib/store";
-import { Lock, Search, Mail, Phone, MapPin, Eye, Pencil } from "lucide-react";
+import { useTick, removeCustomer, duplicateCustomer, relatedForCustomer, relatedWarning, updateContact } from "@/lib/store";
+import {
+  Lock, Search, Mail, Phone, MapPin, Eye, Pencil, Plus, StickyNote,
+  Activity as ActivityIcon, CalendarPlus, FileText, ShoppingCart, Paperclip, ClipboardList,
+  MessageCircle, Star, Receipt, Truck, MoreHorizontal, Copy as CopyIcon, Trash2,
+} from "lucide-react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -21,6 +25,10 @@ import { EmptyState } from "@/components/EmptyState";
 import { Attachments } from "@/components/Attachments";
 import { Timeline, type TimelineEvent } from "@/components/Timeline";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   customerLeadSource, LEAD_SOURCES, customerInvoices, purchaseOrders, changeOrders,
   tasks, activities,
@@ -31,6 +39,13 @@ import { toast } from "sonner";
 import { CUSTOMER_TYPES_TH, customerTypeThai, LEAD_SOURCES_TH, leadSourceThai } from "@/lib/thaiOptions";
 import { AddToCalendarDialog } from "@/components/dialogs/AddToCalendarDialog";
 import { QuickEditCustomerDialog } from "@/components/dialogs/QuickEditCustomerDialog";
+import { ContactDialog } from "@/components/dialogs/ContactDialog";
+import { ContactDetailSheet } from "@/components/dialogs/ContactDetailSheet";
+import { AddNoteDialog } from "@/components/dialogs/AddNoteDialog";
+import { AddActivityDialog } from "@/components/dialogs/AddActivityDialog";
+import { customerNotes, contactNotes, useNotesTick } from "@/lib/notesStore";
+import type { Contact } from "@/lib/mockData";
+
 
 const ACTIVITY_THAI: Record<string, string> = {
   "Call": "โทรติดตาม",
