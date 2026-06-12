@@ -370,7 +370,7 @@ export function CustomerDetail() {
       <div className="grid lg:grid-cols-3 gap-4">
         <Card className="card-soft p-5 lg:col-span-1 h-fit">
           <h3 className="font-semibold mb-3 flex items-center justify-between">โปรไฟล์ (Profile)
-            <Button size="sm" variant="ghost" className="h-7" onClick={() => setEditOpen(true)}><Pencil className="w-3.5 h-3.5" /></Button>
+            <Button size="sm" variant="ghost" className="h-7" onClick={() => openEdit("all")}><Pencil className="w-3.5 h-3.5" /></Button>
           </h3>
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-muted-foreground" /> {c.email}</div>
