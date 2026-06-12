@@ -24,19 +24,26 @@ export const customers: Customer[] = [
   { id: "c5", name: "Andaman Marine Works", contactPerson: "Khun Suda", phone: "+66 75-220-330", email: "suda@andamanmarine.co.th", address: "Phuket", type: "Corporate", source: "LinkedIn", confidential: true, notes: "Confidential client — NDA on file.", createdAt: "2025-01-25", updatedAt: "2026-03-15" },
 ];
 
+export type ContactType = "Buyer" | "Engineer" | "Accountant" | "Owner" | "Manager" | "Receiver" | "Approver" | "Other";
+export type ContactChannel = "Phone" | "LINE" | "Email" | "Meeting";
+
 export interface Contact {
   id: string; name: string; role: string; department: string; phone: string; email: string;
   customerId: string; notes: string;
+  lineId?: string; contactType?: ContactType;
+  isMain?: boolean; isBilling?: boolean; isDelivery?: boolean; isPoApprover?: boolean;
+  preferredChannel?: ContactChannel; internalNote?: string;
 }
 
 export const contacts: Contact[] = [
-  { id: "ct1", name: "Khun Anan", role: "Purchasing Manager", department: "Procurement", phone: "+66 81-234-5678", email: "anan@siamprecision.co.th", customerId: "c1", notes: "Primary buyer" },
-  { id: "ct2", name: "Khun Mali", role: "Engineer", department: "QA", phone: "+66 81-234-9090", email: "mali@siamprecision.co.th", customerId: "c1", notes: "Technical signoff" },
-  { id: "ct3", name: "Khun Wirat", role: "Owner", department: "Management", phone: "+66 89-555-1212", email: "wirat@napauto.co.th", customerId: "c2", notes: "" },
-  { id: "ct4", name: "Khun Ratchada", role: "Procurement Lead", department: "Procurement", phone: "+66 82-888-7777", email: "ratchada@bluepeak.co.th", customerId: "c3", notes: "" },
-  { id: "ct5", name: "Khun Pichai", role: "Production Manager", department: "Production", phone: "+66 86-101-2020", email: "pichai@kmach.co.th", customerId: "c4", notes: "" },
-  { id: "ct6", name: "Khun Suda", role: "Operations Director", department: "Operations", phone: "+66 75-220-330", email: "suda@andamanmarine.co.th", customerId: "c5", notes: "Signs all POs" },
+  { id: "ct1", name: "Khun Anan", role: "Purchasing Manager", department: "Procurement", phone: "+66 81-234-5678", email: "anan@siamprecision.co.th", customerId: "c1", notes: "Primary buyer", lineId: "anan.spc", contactType: "Buyer", isMain: true, isPoApprover: true, preferredChannel: "LINE" },
+  { id: "ct2", name: "Khun Mali", role: "Engineer", department: "QA", phone: "+66 81-234-9090", email: "mali@siamprecision.co.th", customerId: "c1", notes: "Technical signoff", contactType: "Engineer", preferredChannel: "Email" },
+  { id: "ct3", name: "Khun Wirat", role: "Owner", department: "Management", phone: "+66 89-555-1212", email: "wirat@napauto.co.th", customerId: "c2", notes: "", contactType: "Owner", isMain: true, isPoApprover: true, preferredChannel: "Phone" },
+  { id: "ct4", name: "Khun Ratchada", role: "Procurement Lead", department: "Procurement", phone: "+66 82-888-7777", email: "ratchada@bluepeak.co.th", customerId: "c3", notes: "", contactType: "Buyer", isMain: true, preferredChannel: "Email" },
+  { id: "ct5", name: "Khun Pichai", role: "Production Manager", department: "Production", phone: "+66 86-101-2020", email: "pichai@kmach.co.th", customerId: "c4", notes: "", contactType: "Manager", isMain: true, preferredChannel: "Phone" },
+  { id: "ct6", name: "Khun Suda", role: "Operations Director", department: "Operations", phone: "+66 75-220-330", email: "suda@andamanmarine.co.th", customerId: "c5", notes: "Signs all POs", contactType: "Approver", isMain: true, isBilling: true, isPoApprover: true, preferredChannel: "Email" },
 ];
+
 
 export type DealStatus = "New Lead" | "Contacted" | "Need Quotation" | "Quotation Sent" | "Negotiation" | "Won" | "Lost" | "Failed";
 
