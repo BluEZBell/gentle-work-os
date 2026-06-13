@@ -13,7 +13,7 @@ import { useAuth } from "@/lib/auth";
 import { fmtTHB, findCustomer } from "@/lib/mockData";
 import { poInvoices } from "@/lib/customerPoStore";
 import {
-  findReceipt, useBnTick, findBn, deleteReceipt, printLogFor, logPrint,
+  findReceipt, useBnTick, findBn, deleteReceipt, printLogFor, logPrint, updateReceipt,
 } from "@/lib/billingReceiptStore";
 import { audit } from "@/lib/store";
 import { Printer, FileDown, Pencil, Trash2, History, Info } from "lucide-react";
