@@ -28,6 +28,7 @@ import { Attachments } from "@/components/Attachments";
 import { Timeline, type TimelineEvent } from "@/components/Timeline";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { getPlan as getLtPlan, useLtTick } from "@/lib/leadTimeStore";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
