@@ -224,6 +224,7 @@ function QuotationForm({
     ],
     customerNotes: "ราคามีผล 30 วัน • รับประกัน 1 ปี",
     internalNotes: "",
+    leadStages: editing ? (getPlan(editing.id)?.stages ?? []) : [],
   });
 
   const [f, setF] = useState<FormState>(blank);
