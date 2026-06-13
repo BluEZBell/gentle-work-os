@@ -38,6 +38,7 @@ import { toast } from "sonner";
 export default function PoInvoiceDetail() {
   useCustomerPoTick();
   useBnTick();
+  const { user } = useAuth();
   const { id } = useParams();
   const inv = id ? findPoInvoice(id) : undefined;
   const nav = useNavigate();
@@ -46,6 +47,11 @@ export default function PoInvoiceDetail() {
   const [calOpen, setCalOpen] = useState(false);
   const [printLogOpen, setPrintLogOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [eDate, setEDate] = useState(inv?.date ?? "");
+  const [eDue, setEDue] = useState(inv?.dueDate ?? "");
+  const [eNotes, setENotes] = useState(inv?.notes ?? "");
+  const [eInternal, setEInternal] = useState(inv?.internalNote ?? "");
 
   if (!inv) return (
     <div className="p-6">ไม่พบ Invoice <Link to="/invoices" className="text-primary">กลับ</Link></div>
@@ -57,6 +63,24 @@ export default function PoInvoiceDetail() {
   const linkedBns = bnsForInvoice(inv.id);
   const linkedRcs = receiptsForInvoice(inv.id);
   const paid = isInvoicePaid(inv.id);
+  const pl = printLogFor(inv.id);
+
+  const print = (copyType: "ต้นฉบับ" | "สำเนา", copies: number) => {
+    logPrint({ documentType: "Billing Note", relatedId: inv.id, copyType, copies, printedBy: user?.name ?? "Demo" });
+    toast.success(`พิมพ์${copyType} ${copies > 1 ? `${copies} ชุด ` : ""}แล้ว (เดโม)`);
+  };
+
+  const openEdit = () => {
+    setEDate(inv.date); setEDue(inv.dueDate);
+    setENotes(inv.notes); setEInternal(inv.internalNote);
+    setEditOpen(true);
+  };
+  const saveEdit = () => {
+    if (!eDate || !eDue) { toast.error("กรุณาระบุวันที่และวันครบกำหนด"); return; }
+    updatePoInvoice(inv.id, { date: eDate, dueDate: eDue, notes: eNotes, internalNote: eInternal });
+    toast.success("บันทึก Invoice แล้ว");
+    setEditOpen(false);
+  };
 
   return (
     <>
@@ -67,17 +91,18 @@ export default function PoInvoiceDetail() {
           { label: "Customer Invoices (ใบแจ้งหนี้ลูกค้า)", to: "/invoices" },
           { label: inv.number },
         ]} />}
-        description={`Invoice อ้างอิง PO ${po?.number ?? "—"} • ลูกค้า ${cust?.name ?? "—"}${paid ? " • ชำระแล้ว" : ""}`}
+        description={`Invoice อ้างอิง PO ${po?.number ?? "—"} • ลูกค้า ${cust?.name ?? "—"}`}
         actions={
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" onClick={() => toast.info("แก้ไข Invoice (เดโม)")}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
-            <Button size="sm" variant="outline" onClick={() => toast.success(`พิมพ์ต้นฉบับ ${inv.number} (เดโม)`)}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
-            <Button size="sm" variant="outline" onClick={() => toast.success(`พิมพ์สำเนา ${inv.customerCopies + inv.internalCopies} ชุด (เดโม)`)}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
+          <div className="flex flex-wrap gap-2 items-center">
+            {paid && <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300" variant="outline"><CheckCircle2 className="w-3.5 h-3.5 mr-1" />ชำระแล้ว</Badge>}
+            <Button size="sm" variant="outline" onClick={openEdit}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
+            <Button size="sm" variant="outline" onClick={() => print("ต้นฉบับ", 1)}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
+            <Button size="sm" variant="outline" onClick={() => print("สำเนา", inv.customerCopies + inv.internalCopies)}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
             <Button size="sm" variant="outline" onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" />PDF</Button>
             <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white" onClick={() => setBillingOpen(true)}><Receipt className="w-4 h-4 mr-1" />สร้างใบวางบิลจาก Invoice</Button>
             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setReceiptOpen(true)} disabled={paid}><Receipt className="w-4 h-4 mr-1" />สร้างใบเสร็จรับเงิน</Button>
             <Button size="sm" variant="outline" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
-            <Button size="sm" variant="outline" onClick={() => setPrintLogOpen(true)}><History className="w-4 h-4 mr-1" />Print Log</Button>
+            <Button size="sm" variant="outline" onClick={() => setPrintLogOpen(true)}><History className="w-4 h-4 mr-1" />Print Log ({pl.length})</Button>
             <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={() => setConfirmDelete(true)}><Trash2 className="w-4 h-4 mr-1" />ลบ</Button>
           </div>
         }
