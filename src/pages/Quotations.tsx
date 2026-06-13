@@ -24,7 +24,8 @@ import { FileText, Paperclip, Plus, Printer, FileDown, Trash2 } from "lucide-rea
 import { toast } from "sonner";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { LeadTimePlanning } from "@/components/quotation/LeadTimePlanning";
-import { getPlan, setPlan as savePlan, validateStages, useLtTick, type LtStage } from "@/lib/leadTimeStore";
+import { getPlan, setPlan as savePlan, validateStages, useLtTick, addPlanToCalendar, type LtStage } from "@/lib/leadTimeStore";
+import { Clock, CalendarPlus } from "lucide-react";
 
 export default function Quotations() {
   useTick();
