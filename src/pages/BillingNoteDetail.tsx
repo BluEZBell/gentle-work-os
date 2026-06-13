@@ -58,7 +58,8 @@ export default function BillingNoteDetail() {
   };
 
   const saveDates = () => {
-    updateBillingNote(bn.id, { billingDate: bnDate || bn.billingDate, submissionDate: subDate || bn.submissionDate });
+    if (!bnDate || !subDate || !expDate) { toast.error("กรุณากรอกวันที่ให้ครบทุกช่อง"); return; }
+    updateBillingNote(bn.id, { billingDate: bnDate, submissionDate: subDate, expectedPaymentDate: expDate });
     audit(user?.name ?? "Demo", "Edit Billing Note Dates", bn.number, "Billing Notes");
     toast.success("บันทึกวันที่ใหม่แล้ว");
     setEditOpen(false);
