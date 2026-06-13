@@ -45,6 +45,7 @@ import {
 import PoInvoiceDetail from "@/pages/PoInvoiceDetail";
 import BillingNoteDetail from "@/pages/BillingNoteDetail";
 import ReceiptDetail from "@/pages/ReceiptDetail";
+import PayableForecast from "@/pages/PayableForecast";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
