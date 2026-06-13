@@ -329,6 +329,9 @@ export function CustomerDetail() {
               <Button size="sm" variant="secondary" onClick={() => { setActiveTab("attach"); toast.info("เปิดแท็บไฟล์แนบ"); }}>
                 <Paperclip className="w-4 h-4 mr-1" />ไปที่ไฟล์แนบ
               </Button>
+              <Button size="sm" className="bg-primary/90 hover:bg-primary" onClick={() => setOcrOpen(true)}>
+                <ScanLine className="w-4 h-4 mr-1" />สแกน / นำเข้า PO ลูกค้า
+              </Button>
             </div>
 
             <div className="h-6 w-px bg-border mx-1" aria-hidden />
