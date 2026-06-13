@@ -29,6 +29,7 @@ import { getPlan, setPlan as savePlan, defaultTemplate, validateStages, useLtTic
 
 export default function Quotations() {
   useTick();
+  useLtTick();
   const navigate = useNavigate();
   const [list, setList] = useState<Quotation[]>(seed);
   const [formOpen, setFormOpen] = useState(false);
