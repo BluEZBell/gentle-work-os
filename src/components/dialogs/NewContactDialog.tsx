@@ -15,8 +15,8 @@ export function NewContactDialog() {
   const [open, setOpen] = useState(false);
   const [f, setF] = useState({ name: "", role: "", department: "", phone: "", email: "", customerId: customers[0]?.id ?? "", notes: "" });
   const submit = () => {
-    if (!f.name.trim()) { toast.error("Name required"); return; }
-    addContact(f, user?.name ?? "Demo User"); toast.success("Contact added"); setOpen(false);
+    if (!f.name.trim()) { toast.error("กรุณากรอกชื่อ"); return; }
+    addContact(f, user?.name ?? "Demo User"); toast.success("เพิ่มผู้ติดต่อแล้ว"); setOpen(false);
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

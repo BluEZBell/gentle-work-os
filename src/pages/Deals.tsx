@@ -45,7 +45,7 @@ export default function Deals() {
   });
 
   const onStatusChange = (id: string, next: DealStatus) => {
-    if (!can("edit")) { toast.error("Read-only role"); return; }
+    if (!can("edit")) { toast.error("สิทธิ์อ่านอย่างเดียว"); return; }
     if (next === "Lost" || next === "Failed") { setLostFor(id); return; }
     setDealStatus(id, next, user?.name ?? "Demo");
     toast.success(`Status → ${next}`);
@@ -58,7 +58,7 @@ export default function Deals() {
   const confirmLost = () => {
     if (!lostFor) return;
     setDealStatus(lostFor, "Lost", user?.name ?? "Demo", reason || "Not specified");
-    toast.success("Deal marked Lost");
+    toast.success("ปิดดีล (Lost) แล้ว");
     setLostFor(null); setReason("");
   };
 

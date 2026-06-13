@@ -76,7 +76,7 @@ export default function Jobs() {
                     <Button size="sm" variant="outline" disabled={!can("edit")}
                       onClick={() => {
                         const sv = createServiceFromJob(j.id, user?.name ?? "Demo");
-                        if (sv) toast.success("Service / Calibration reminder created");
+                        if (sv) toast.success("สร้างนัดบริการ / สอบเทียบแล้ว");
                       }}>
                       <Headphones className="w-3.5 h-3.5 mr-1" /> สร้างแจ้งเตือนบริการ
                     </Button>

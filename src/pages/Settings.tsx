@@ -40,11 +40,11 @@ export default function Settings() {
   const tryExport = () => {
     if (!can("export")) {
       audit(user?.name ?? "Demo", "Export Attempt", "Customers CSV", "Settings", "DENIED");
-      toast.error("Export restricted to Owner role");
+      toast.error("เฉพาะเจ้าของบัญชีเท่านั้นที่ส่งออกได้");
       return;
     }
     audit(user?.name ?? "Demo", "Export Data", "Customers CSV", "Settings");
-    toast.success("Export queued (demo)");
+    toast.success("จัดคิวส่งออกแล้ว (เดโม)");
   };
   return (
     <>

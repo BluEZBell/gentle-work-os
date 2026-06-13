@@ -22,10 +22,10 @@ export function NewSupplierDialog() {
     riskLevel: "Low" as "Low" | "Medium" | "High", confidential: false,
   });
   const submit = () => {
-    if (!f.name.trim()) { toast.error("Name required"); return; }
+    if (!f.name.trim()) { toast.error("กรุณากรอกชื่อ"); return; }
     const created = addSupplier(f, user?.name ?? "Demo User");
     if (created) setSupplierKind(created.id, kind);
-    toast.success("Supplier added"); setOpen(false);
+    toast.success("เพิ่ม Supplier / Maker แล้ว"); setOpen(false);
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -34,7 +34,7 @@ export function Attachments({ module, id }: { module: string; id: string }) {
     const next = [...items, n];
     setItems(next);
     seed[`${module}:${id}`] = next;
-    toast.success("File attached (demo)");
+    toast.success("แนบไฟล์แล้ว (เดโม)");
   };
   return (
     <div className="space-y-2">
@@ -52,7 +52,7 @@ export function Attachments({ module, id }: { module: string; id: string }) {
               <div className="text-[11px] text-muted-foreground">{a.module} • {a.uploadedAt} • {a.size}</div>
             </div>
             <Button size="icon" variant="ghost" className="h-7 w-7"
-              onClick={() => toast.info("Mock download in demo mode")}><Download className="w-3.5 h-3.5" /></Button>
+              onClick={() => toast.info("ดาวน์โหลด (เดโม)")}><Download className="w-3.5 h-3.5" /></Button>
           </div>
         ))}
       </div>
