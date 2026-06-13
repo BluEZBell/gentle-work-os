@@ -70,7 +70,7 @@ export default function PoInvoiceDetail() {
             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setReceiptOpen(true)} disabled={paid}><Receipt className="w-4 h-4 mr-1" />สร้างใบเสร็จรับเงิน</Button>
             <Button size="sm" variant="outline" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
             <Button size="sm" variant="outline" onClick={() => setPrintLogOpen(true)}><History className="w-4 h-4 mr-1" />Print Log</Button>
-            <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={() => toast.info("ยืนยันก่อนลบ (เดโม)")}><Trash2 className="w-4 h-4 mr-1" />ลบ</Button>
+            <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={() => setConfirmDelete(true)}><Trash2 className="w-4 h-4 mr-1" />ลบ</Button>
           </div>
         }
       />
