@@ -78,14 +78,37 @@ export default function Quotations() {
           const cost = quotationCost(q);
           const profit = quotationProfit(q);
           const margin = total > 0 ? Math.round((profit / total) * 100) : 0;
+          const plan = getPlan(q.id);
+          const cust = customers.find((c) => c.id === q.customerId);
+          const shortName = (cust?.name ?? "CUST").split(/\s+/)[0].slice(0, 6).toUpperCase();
+          const onAddCal = () => {
+            if (!plan || plan.stages.length === 0) {
+              toast.error("ยังไม่มีแผน Lead Time — เปิดใบเสนอราคาเพื่อสร้างแผน");
+              return;
+            }
+            const evs = addPlanToCalendar(q.id, q.number, shortName);
+            audit("Khun Ploy", "Add Lead Time to Calendar", `${q.number} (${evs.length} stages)`, "Quotations");
+            toast.success(`เพิ่ม ${evs.length} แผนงานลงปฏิทินแล้ว`);
+          };
           return (
             <Card key={q.id} className="card-soft p-5">
               <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <FileText className="w-4 h-4 text-primary" />
                     <Link to={`/quotations/${q.id}`} className="font-display font-semibold text-primary hover:underline">{q.number}</Link>
                     <StatusBadge status={q.status} />
+                    {plan && plan.stages.length > 0 && (
+                      <span className="text-[11px] px-1.5 py-0.5 rounded-full border bg-secondary/60 text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> Lead Time {plan.stages.length} ขั้น
+                        {plan.expectedDelivery ? ` • ส่งมอบ ${plan.expectedDelivery}` : ""}
+                      </span>
+                    )}
+                    {plan?.calendarLinked && (
+                      <span className="text-[11px] px-1.5 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+                        ✓ ผูกปฏิทินแล้ว
+                      </span>
+                    )}
                   </div>
                   <div className="text-sm text-muted-foreground mt-1 flex items-center gap-1 flex-wrap">
                     <CustomerLink customerId={q.customerId} /> <span>• {q.date} → ใช้ได้ถึง {q.validUntil}</span>
@@ -105,14 +128,14 @@ export default function Quotations() {
                     onSubmitApproval={() => setStatus(q, "Sent")}
                     onApprove={() => setStatus(q, "Accepted")}
                     onReject={() => setStatus(q, "Rejected")}
-                    onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
+                    onAddToCalendar={onAddCal}
                     onViewLog={() => navigate(`/quotations/${q.id}`)}
                     onDelete={() => remove(q)}
                     relatedWarning="หากใบเสนอราคานี้ผูกกับ Job หรือ Invoice แล้ว ความสัมพันธ์อาจถูกตัด"
                     deleteLabel={`ใบเสนอราคา ${q.number}`}
                     extraMenu={
                       <button
-                        onClick={() => toast.success("แปลงเป็นงาน (Job) แล้ว")}
+                        onClick={() => toast.info("แปลง Lead Time เป็นแผนงาน Job — เปิดในหน้าใบเสนอราคา")}
                         className="w-full text-left px-2 py-1.5 text-sm hover:bg-accent rounded-sm"
                       >→ แปลงเป็นงาน</button>
                     }
