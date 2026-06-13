@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 
 export default function Suppliers() {
   useTick();
+  useSupPayTick();
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [q, setQ] = useState("");
   const filtered = suppliers.filter((s) =>
