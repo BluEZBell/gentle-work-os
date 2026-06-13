@@ -48,7 +48,7 @@ import { AddActivityDialog } from "@/components/dialogs/AddActivityDialog";
 import { customerNotes, contactNotes, useNotesTick } from "@/lib/notesStore";
 import { POCRIntakeDialog } from "@/components/dialogs/POCRIntakeDialog";
 import { InvoiceFromPODialog } from "@/components/dialogs/InvoiceFromPODialog";
-import { customerPosFor, useCustomerPoTick, PO_OCR_STATUS_TH, itemsForPo } from "@/lib/customerPoStore";
+import { customerPosFor, useCustomerPoTick, PO_OCR_STATUS_TH, itemsForPo, poInvoicesFor } from "@/lib/customerPoStore";
 import type { Contact } from "@/lib/mockData";
 import { removeContact } from "@/lib/store";
 import {
@@ -595,6 +595,22 @@ export function CustomerDetail() {
             </TabsContent>
 
             <TabsContent value="invoices" className="mt-4 space-y-4">
+              {(() => {
+                const poInvs = poInvoicesFor(c.id);
+                return poInvs.length > 0 ? (
+                  <Card className="card-soft p-4">
+                    <div className="text-xs font-semibold mb-2 text-muted-foreground uppercase tracking-wide">Invoice ที่ออกจาก Customer PO ({poInvs.length})</div>
+                    <div className="space-y-1">
+                      {poInvs.map((inv) => (
+                        <Row key={inv.id}
+                          left={<Link to={`/po-invoices/${inv.id}`} className="text-primary hover:underline">{inv.number}</Link>}
+                          right={<><span className="text-muted-foreground mr-2">{fmtTHB(inv.total)}</span><Badge variant="outline" className="bg-success/15 text-success border-success/30 text-[10px]">จาก PO</Badge></>}
+                          sub={`วันที่ ${inv.date} • ครบกำหนด ${inv.dueDate} • ${inv.paymentTerm}`} />
+                      ))}
+                    </div>
+                  </Card>
+                ) : null;
+              })()}
               <ListCard items={cInvoices} empty="ยังไม่มีใบแจ้งหนี้" render={(i) => (
                 <Row key={i.id} left={<Link to={`/invoices/${i.id}`} className="text-primary hover:underline">{i.number}</Link>}
                   right={<><span className="text-muted-foreground mr-2">{fmtTHB(i.total)}</span><StatusBadge status={i.status} /></>}
