@@ -58,6 +58,7 @@ function EventChip({ ev, onClick }: { ev: CalendarEvent; onClick: () => void }) 
 export default function CalendarPage() {
   useBnTick();
   useLtTick();
+  useSupPayTick();
   const [events, setEvents] = useState<CalendarEvent[]>(seedEvents);
   const [cursor, setCursor] = useState(new Date());
   const [view, setView] = useState<"month" | "week" | "list">("month");
@@ -75,8 +76,12 @@ export default function CalendarPage() {
       id: e.id, date: e.date, title: ltEventTitle(e),
       type: "Deliver Job",
     }));
-    return [...events, ...bnEvs, ...ltEvs];
-  }, [events, bnCalendarEvents.length, ltCalendarEvents.length]);
+    const spEvs: CalendarEvent[] = supPayCalendarEvents.map((e) => ({
+      id: e.id, date: e.date, title: e.title,
+      type: e.kind === "bill" ? "Billing Submission" : "Pay Supplier",
+    }));
+    return [...events, ...bnEvs, ...ltEvs, ...spEvs];
+  }, [events, bnCalendarEvents.length, ltCalendarEvents.length, supPayCalendarEvents.length]);
 
   const filtered = useMemo(
     () => combined.filter((e) => filterType === "all" || e.type === filterType),
