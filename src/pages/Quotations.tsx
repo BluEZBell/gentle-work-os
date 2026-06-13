@@ -210,6 +210,37 @@ export default function Quotations() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!ganttFor} onOpenChange={(o) => !o && setGanttFor(null)}>
+        <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              แผนภาพระยะเวลางาน (Gantt Chart) — {ganttFor?.number}
+            </DialogTitle>
+            <DialogDescription>แสดงช่วงเวลาทำงานโดยประมาณจากใบเสนอราคา</DialogDescription>
+          </DialogHeader>
+          {ganttFor && (() => {
+            const p = getPlan(ganttFor.id);
+            if (!p || p.stages.length === 0) {
+              return (
+                <div className="py-8 text-center text-sm text-muted-foreground">
+                  ยังไม่มีแผน Lead Time สำหรับใบเสนอราคานี้ — กด "แก้ไข" เพื่อสร้างแผน
+                </div>
+              );
+            }
+            return <GanttPreview stages={p.stages} />;
+          })()}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setGanttFor(null)}>ปิด</Button>
+            {ganttFor && (
+              <Button onClick={() => { const x = ganttFor; setGanttFor(null); setEditing(x); setFormOpen(true); }}>
+                แก้ไขแผน
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
