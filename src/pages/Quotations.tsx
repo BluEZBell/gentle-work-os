@@ -36,6 +36,7 @@ export default function Quotations() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Quotation | null>(null);
   const [preview, setPreview] = useState<Quotation | null>(null);
+  const [ganttFor, setGanttFor] = useState<Quotation | null>(null);
 
   const duplicate = (q: Quotation) => {
     const num = `QT-2026-${String(60 + list.length + 1).padStart(4, "0")}`;
