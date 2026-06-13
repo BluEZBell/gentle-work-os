@@ -28,6 +28,7 @@ import { Attachments } from "@/components/Attachments";
 import { Timeline, type TimelineEvent } from "@/components/Timeline";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { getPlan as getLtPlan, useLtTick } from "@/lib/leadTimeStore";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -235,6 +236,7 @@ export default function Customers() {
 
 export function CustomerDetail() {
   useTick();
+  useLtTick();
   useNotesTick();
   useCustomerPoTick();
   useBnTick();
@@ -583,11 +585,18 @@ export function CustomerDetail() {
             </TabsContent>
 
             <TabsContent value="quotes" className="mt-4">
-              <ListCard items={cQuots} empty="ยังไม่มีใบเสนอราคา" render={(q) => (
-                <Row key={q.id} left={<Link to={`/quotations/${q.id}`} className="text-primary hover:underline">{q.number}</Link>}
-                  right={<StatusBadge status={q.status} />} sub={`${q.date} → ${q.validUntil}`} />
-              )} />
+              <ListCard items={cQuots} empty="ยังไม่มีใบเสนอราคา" render={(q) => {
+                const plan = getLtPlan(q.id);
+                const ltSummary = plan
+                  ? `Lead Time: ${plan.stages.length} ขั้น${plan.expectedDelivery ? ` • ส่งมอบ ${plan.expectedDelivery}` : ""}${plan.calendarLinked ? " • ✓ ผูกปฏิทิน" : ""}`
+                  : "ยังไม่มีแผน Lead Time";
+                return (
+                  <Row key={q.id} left={<Link to={`/quotations/${q.id}`} className="text-primary hover:underline">{q.number}</Link>}
+                    right={<StatusBadge status={q.status} />} sub={`${q.date} → ${q.validUntil} • ${ltSummary}`} />
+                );
+              }} />
             </TabsContent>
+
 
             <TabsContent value="jobs" className="mt-4">
               <ListCard items={cJobs} empty="ยังไม่มีงาน" render={(j) => (

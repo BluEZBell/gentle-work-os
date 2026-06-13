@@ -23,9 +23,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FileText, Paperclip, Plus, Printer, FileDown, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
+import { LeadTimePlanning } from "@/components/quotation/LeadTimePlanning";
+import { getPlan, setPlan as savePlan, validateStages, useLtTick, type LtStage } from "@/lib/leadTimeStore";
 
 export default function Quotations() {
   useTick();
+  useLtTick();
   const navigate = useNavigate();
   const [list, setList] = useState<Quotation[]>(seed);
   const [formOpen, setFormOpen] = useState(false);
@@ -185,6 +188,7 @@ interface FormState {
   priceIncludesVat: boolean; whtPercent: number;
   items: ItemDraft[];
   customerNotes: string; internalNotes: string;
+  leadStages: LtStage[];
 }
 
 function QuotationForm({
@@ -219,6 +223,7 @@ function QuotationForm({
     ],
     customerNotes: "ราคามีผล 30 วัน • รับประกัน 1 ปี",
     internalNotes: "",
+    leadStages: editing ? (getPlan(editing.id)?.stages ?? []) : [],
   });
 
   const [f, setF] = useState<FormState>(blank);
@@ -241,19 +246,22 @@ function QuotationForm({
   const total = (f.priceIncludesVat ? subtotal : subtotal + vat) - wht;
 
   const save = (status: Quotation["status"]) => {
+    if (f.leadStages.length > 0) {
+      const v = validateStages(f.leadStages);
+      if (!v.ok) { toast.error(v.errors[0]); return; }
+      if (v.warnings.length > 0) toast.warning(v.warnings[0]);
+    }
+    const id = editing?.id ?? `q-${Date.now()}`;
     const q: Quotation = {
-      id: editing?.id ?? `q-${Date.now()}`,
-      number: f.number,
-      customerId: f.customerId,
+      id, number: f.number, customerId: f.customerId,
       dealId: editing?.dealId ?? "",
-      date: f.date,
-      validUntil: f.validUntil,
-      status,
+      date: f.date, validUntil: f.validUntil, status,
       items: f.items.map((it) => ({
         id: it.id, partName: it.partName || "—", partNumber: it.partNumber || "—",
         quantity: it.quantity, sellPrice: it.sellPrice, estimatedCost: it.estimatedCost,
       })),
     };
+    if (f.leadStages.length > 0) savePlan(id, f.leadStages);
     onSave(q);
   };
 
@@ -376,6 +384,15 @@ function QuotationForm({
           <Field label="หมายเหตุ (แสดงในเอกสาร)" full><Textarea rows={2} value={f.customerNotes} onChange={(e) => setField("customerNotes", e.target.value)} /></Field>
           <Field label="โน้ตภายใน (ไม่แสดงในเอกสาร)" full><Textarea rows={2} value={f.internalNotes} onChange={(e) => setField("internalNotes", e.target.value)} /></Field>
         </div>
+
+        <div className="mt-5 pt-4 border-t">
+          <LeadTimePlanning
+            value={f.leadStages}
+            onChange={(s) => setField("leadStages", s)}
+            startHint={f.date}
+          />
+        </div>
+
 
         <div className="flex flex-wrap gap-2 mt-2">
           <Button variant="outline" size="sm"><Paperclip className="w-3.5 h-3.5 mr-1" /> แนบไฟล์</Button>
