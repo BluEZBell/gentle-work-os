@@ -8,6 +8,9 @@ import { useTick, removeSupplier, duplicateSupplier, relatedForSupplier, related
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Eye, EyeOff, Lock, Search } from "lucide-react";
 import { NewSupplierDialog } from "@/components/dialogs/NewSupplierDialog";
+import { PaymentScheduleDialog } from "@/components/dialogs/PaymentScheduleDialog";
+import { Button } from "@/components/ui/button";
+import { getSupplierKind, useSupPayTick, paymentPlans } from "@/lib/supplierPaymentStore";
 import { EmptyState } from "@/components/EmptyState";
 import { RowActions } from "@/components/RowActions";
 import { toast } from "sonner";
@@ -15,6 +18,7 @@ import { Link } from "react-router-dom";
 
 export default function Suppliers() {
   useTick();
+  useSupPayTick();
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [q, setQ] = useState("");
   const filtered = suppliers.filter((s) =>
@@ -40,21 +44,21 @@ export default function Suppliers() {
           <TableHeader>
             <TableRow>
               <TableHead>Supplier</TableHead>
+              <TableHead>ประเภทคู่ค้า</TableHead>
               <TableHead>Contact</TableHead>
-              <TableHead>Type</TableHead>
               <TableHead>Payment Term</TableHead>
-              <TableHead>Bank</TableHead>
               <TableHead>Open bills</TableHead>
-              <TableHead>Active jobs</TableHead>
+              <TableHead>แผนจ่าย</TableHead>
               <TableHead>Risk</TableHead>
-              <TableHead className="text-right w-32">การกระทำ</TableHead>
+              <TableHead className="text-right w-44">การกระทำ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.map((s) => {
               const openBills = supplierBills.filter((b) => b.supplierId === s.id && b.status !== "Paid");
               const openBillTotal = openBills.reduce((a, b) => a + b.total, 0);
-              const sJobs = jobs.filter((j) => j.supplierId === s.id && j.status !== "Closed");
+              const plansForS = paymentPlans.filter((p) => p.supplierId === s.id);
+              const kind = getSupplierKind(s.id);
               return (
               <TableRow key={s.id}>
                 <TableCell>
@@ -65,40 +69,47 @@ export default function Suppliers() {
                   {s.notes && <div className="text-xs text-muted-foreground">{s.notes}</div>}
                 </TableCell>
                 <TableCell>
+                  <StatusBadge status={kind} tone={kind === "Maker" ? "warning" : kind === "Both" ? "info" : "muted"} />
+                  {(kind === "Maker" || kind === "Both") && (
+                    <div className="text-[10px] text-orange-600 mt-1">WHT 3%</div>
+                  )}
+                </TableCell>
+                <TableCell>
                   <div className="text-sm">{s.contactPerson}</div>
                   <div className="text-xs text-muted-foreground">{s.email}</div>
                 </TableCell>
-                <TableCell><StatusBadge status={s.type} tone="muted" /></TableCell>
                 <TableCell>{s.paymentTerm}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2 text-sm font-mono">
-                    {revealed[s.id] ? "1234-5678-" + s.bankInfo.slice(-4) : s.bankInfo}
-                    <button onClick={() => setRevealed((r) => ({ ...r, [s.id]: !r[s.id] }))}
-                      className="text-muted-foreground hover:text-foreground">
-                      {revealed[s.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-                </TableCell>
                 <TableCell className="text-sm">
                   <div className="font-medium">{openBills.length}</div>
                   <div className="text-xs text-muted-foreground">{fmtTHB(openBillTotal)}</div>
                 </TableCell>
-                <TableCell className="text-sm">{sJobs.length}</TableCell>
+                <TableCell className="text-sm">
+                  <div className="font-medium">{plansForS.length}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {plansForS.reduce((a, p) => a + p.installments.length, 0)} งวด
+                  </div>
+                </TableCell>
                 <TableCell><StatusBadge status={s.riskLevel} /></TableCell>
                 <TableCell>
-                  {(() => {
-                    const rel = relatedForSupplier(s.id);
-                    return (
-                      <RowActions
-                        onEdit={() => toast.info(`เปิดรายละเอียดเพื่อแก้ไข ${s.name}`)}
-                        onDuplicate={() => duplicateSupplier(s.id, "Khun Ploy")}
-                        onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
-                        onDelete={() => removeSupplier(s.id, "Khun Ploy")}
-                        deleteLabel={s.name}
-                        relatedWarning={relatedWarning({ Bills: rel.bills, Jobs: rel.jobs, POs: rel.pos })}
-                      />
-                    );
-                  })()}
+                  <div className="flex items-center justify-end gap-1">
+                    <PaymentScheduleDialog
+                      initialSupplierId={s.id}
+                      trigger={<Button size="sm" variant="outline">สร้างแผนจ่าย</Button>}
+                    />
+                    {(() => {
+                      const rel = relatedForSupplier(s.id);
+                      return (
+                        <RowActions
+                          onEdit={() => toast.info(`เปิดรายละเอียดเพื่อแก้ไข ${s.name}`)}
+                          onDuplicate={() => duplicateSupplier(s.id, "Khun Ploy")}
+                          onAddToCalendar={() => toast.success("เพิ่มนัดติดตามแล้ว")}
+                          onDelete={() => removeSupplier(s.id, "Khun Ploy")}
+                          deleteLabel={s.name}
+                          relatedWarning={relatedWarning({ Bills: rel.bills, Jobs: rel.jobs, POs: rel.pos })}
+                        />
+                      );
+                    })()}
+                  </div>
                 </TableCell>
               </TableRow>
             );})}

@@ -2,6 +2,7 @@
 import { reminders, quotations, jobs, supplierBills, serviceRecords } from "./mockData";
 import { tasks, customerInvoices, changeOrders, receivingRecords } from "./mockBusiness";
 import { bnNotifications } from "./billingReceiptStore";
+import { supPayNotifications } from "./supplierPaymentStore";
 
 export type Notif = {
   id: string;
@@ -64,6 +65,10 @@ export const buildNotifications = (): Notif[] => {
       severity: "danger", link: "/jobs", category: "QC" }));
   // Billing notes (Phase 3C)
   bnNotifications.forEach((n) =>
+    out.push({ id: n.id, title: n.title, detail: n.detail, date: n.date,
+      severity: n.severity, link: n.link, category: n.category }));
+  // Supplier/Maker payable (Phase 3E)
+  supPayNotifications.forEach((n) =>
     out.push({ id: n.id, title: n.title, detail: n.detail, date: n.date,
       severity: n.severity, link: n.link, category: n.category }));
   return out.sort((a, b) => a.date.localeCompare(b.date));

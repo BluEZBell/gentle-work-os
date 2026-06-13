@@ -21,6 +21,7 @@ import { RowActions } from "@/components/RowActions";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Printer, FileDown } from "lucide-react";
+import { PaymentScheduleDialog } from "@/components/dialogs/PaymentScheduleDialog";
 
 const flow = [
   { icon: Mail, label: "อีเมลจากซัพพลายเออร์" },
@@ -136,6 +137,13 @@ export default function SupplierBills() {
                         Mark Paid
                       </Button>
                     )}
+                    <PaymentScheduleDialog
+                      initialSupplierId={b.supplierId}
+                      initialAmount={b.total}
+                      billId={b.id}
+                      jobId={b.jobId}
+                      trigger={<Button size="sm" variant="outline">แผนจ่าย</Button>}
+                    />
                     <RowActions
                       viewHref={`/supplier-bills/${b.id}`}
                       onEdit={() => toast.info(`เปิดบิล ${b.number} เพื่อแก้ไข`)}

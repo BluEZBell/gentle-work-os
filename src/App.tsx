@@ -45,6 +45,7 @@ import {
 import PoInvoiceDetail from "@/pages/PoInvoiceDetail";
 import BillingNoteDetail from "@/pages/BillingNoteDetail";
 import ReceiptDetail from "@/pages/ReceiptDetail";
+import PayableForecast from "@/pages/PayableForecast";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -107,6 +108,7 @@ const App = () => (
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/payment-vouchers" element={<PaymentVouchers />} />
               <Route path="/payment-vouchers/:id" element={<PaymentVoucherDetail />} />
+              <Route path="/payable-forecast" element={<PayableForecast />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/audit" element={<AuditLogPage />} />
