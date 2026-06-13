@@ -156,8 +156,8 @@ export function POCRIntakeDialog({ open, onOpenChange, defaultCustomerId }: Prop
       })),
     }, "Khun Ploy");
     try {
-      audit("Customer PO", po.id, "Imported from OCR",
-        `${po.number} — ${items.length} รายการ • ${fmtTHB(total)}`, "Khun Ploy");
+      audit("Khun Ploy", "Import Customer PO (OCR)",
+        `${po.number} — ${items.length} รายการ • ${fmtTHB(total)}`, "Customer PO");
     } catch { /* non-blocking */ }
     toast.success("นำเข้า PO ลูกค้าเรียบร้อยแล้ว");
     onOpenChange(false);
