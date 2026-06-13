@@ -14,7 +14,10 @@ import { findCustomer, fmtTHB } from "@/lib/mockData";
 import { Timeline } from "@/components/Timeline";
 import { Attachments } from "@/components/Attachments";
 import { BillingNoteDialog } from "@/components/dialogs/BillingNoteDialog";
+import { ReceiptDialog } from "@/components/dialogs/ReceiptDialog";
 import { AddToCalendarDialog } from "@/components/dialogs/AddToCalendarDialog";
+import { isInvoicePaid, useBnTick, bnsForInvoice, receiptsForInvoice } from "@/lib/billingReceiptStore";
+import { Badge as B } from "@/components/ui/badge";
 import {
   Printer, FileDown, Pencil, CalendarPlus, Trash2, Receipt, FileText, History, Info,
 } from "lucide-react";
