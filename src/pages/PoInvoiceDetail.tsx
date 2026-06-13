@@ -1,6 +1,6 @@
 // Phase 3B — PO-sourced Invoice detail page.
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/Layout";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Card } from "@/components/ui/card";
@@ -8,7 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   findPoInvoice, linesForPoInvoice, findCustomerPo, useCustomerPoTick,
+  poInvoices,
 } from "@/lib/customerPoStore";
 import { findCustomer, fmtTHB } from "@/lib/mockData";
 import { Timeline } from "@/components/Timeline";
@@ -27,10 +32,12 @@ export default function PoInvoiceDetail() {
   useBnTick();
   const { id } = useParams();
   const inv = id ? findPoInvoice(id) : undefined;
+  const nav = useNavigate();
   const [billingOpen, setBillingOpen] = useState(false);
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
   const [printLogOpen, setPrintLogOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   if (!inv) return (
     <div className="p-6">ไม่พบ Invoice <Link to="/invoices" className="text-primary">กลับ</Link></div>
@@ -63,7 +70,7 @@ export default function PoInvoiceDetail() {
             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setReceiptOpen(true)} disabled={paid}><Receipt className="w-4 h-4 mr-1" />สร้างใบเสร็จรับเงิน</Button>
             <Button size="sm" variant="outline" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
             <Button size="sm" variant="outline" onClick={() => setPrintLogOpen(true)}><History className="w-4 h-4 mr-1" />Print Log</Button>
-            <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={() => toast.info("ยืนยันก่อนลบ (เดโม)")}><Trash2 className="w-4 h-4 mr-1" />ลบ</Button>
+            <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={() => setConfirmDelete(true)}><Trash2 className="w-4 h-4 mr-1" />ลบ</Button>
           </div>
         }
       />
@@ -204,6 +211,35 @@ export default function PoInvoiceDetail() {
           </Card>
         </div>
       )}
+
+      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>ยืนยันการลบ Invoice</AlertDialogTitle>
+            <AlertDialogDescription>
+              {inv.number} จะถูกลบออกจากระบบ (เดโม) และจะไม่ปรากฏใน Customer Profile หรือ Customer Invoices อีก
+              {linkedBns.length + linkedRcs.length > 0 && (
+                <span className="block mt-2 text-warning-foreground">
+                  ⚠️ เอกสารผูกอยู่: ใบวางบิล {linkedBns.length} ฉบับ • ใบเสร็จ {linkedRcs.length} ฉบับ
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                const idx = poInvoices.findIndex((x) => x.id === inv.id);
+                if (idx >= 0) poInvoices.splice(idx, 1);
+                toast.success(`ลบ ${inv.number} เรียบร้อย (เดโม)`);
+                setConfirmDelete(false);
+                nav("/invoices");
+              }}
+            >ลบ</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
