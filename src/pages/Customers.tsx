@@ -235,6 +235,7 @@ export default function Customers() {
 export function CustomerDetail() {
   useTick();
   useNotesTick();
+  useCustomerPoTick();
   const { id } = useParams();
   const c = findCustomer(id!);
 
@@ -250,6 +251,8 @@ export function CustomerDetail() {
   const [calOpen, setCalOpen] = useState(false);
   const [contactNoteFor, setContactNoteFor] = useState<Contact | undefined>();
   const [delContact, setDelContact] = useState<Contact | undefined>();
+  const [ocrOpen, setOcrOpen] = useState(false);
+  const [prepInv, setPrepInv] = useState<string | undefined>();
 
   const openEdit = (focus: "type" | "all" = "all") => { setEditFocus(focus); setEditOpen(true); };
 
