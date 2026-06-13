@@ -37,6 +37,20 @@ export function NewSupplierDialog() {
         <div className="grid gap-3">
           <div className="grid gap-1.5"><Label>Supplier name *</Label>
             <Input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+          <div className="grid gap-1.5">
+            <Label>ประเภทคู่ค้า *</Label>
+            <Select value={kind} onValueChange={(v) => setKind(v as SupplierKind)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Supplier">{SUPPLIER_KIND_TH.Supplier}</SelectItem>
+                <SelectItem value="Maker">{SUPPLIER_KIND_TH.Maker}</SelectItem>
+                <SelectItem value="Both">{SUPPLIER_KIND_TH.Both}</SelectItem>
+              </SelectContent>
+            </Select>
+            {(kind === "Maker" || kind === "Both") && (
+              <div className="text-xs text-orange-600">Maker หัก ณ ที่จ่าย 3% ตามค่าเริ่มต้น</div>
+            )}
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5"><Label>Contact</Label>
               <Input value={f.contactPerson} onChange={(e) => setF({ ...f, contactPerson: e.target.value })} /></div>
