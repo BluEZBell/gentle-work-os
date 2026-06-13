@@ -20,10 +20,11 @@ import { RowActions } from "@/components/RowActions";
 import { useTick, audit } from "@/lib/store";
 import { Link, useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, Paperclip, Plus, Printer, FileDown, Trash2 } from "lucide-react";
+import { FileText, Paperclip, Plus, Printer, FileDown, Trash2, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { LeadTimePlanning } from "@/components/quotation/LeadTimePlanning";
+import { GanttPreview } from "@/components/quotation/GanttPreview";
 import { getPlan, setPlan as savePlan, validateStages, useLtTick, addPlanToCalendar, type LtStage } from "@/lib/leadTimeStore";
 import { Clock, CalendarPlus } from "lucide-react";
 
@@ -35,6 +36,7 @@ export default function Quotations() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Quotation | null>(null);
   const [preview, setPreview] = useState<Quotation | null>(null);
+  const [ganttFor, setGanttFor] = useState<Quotation | null>(null);
 
   const duplicate = (q: Quotation) => {
     const num = `QT-2026-${String(60 + list.length + 1).padStart(4, "0")}`;
@@ -169,6 +171,9 @@ export default function Quotations() {
                 </TableBody>
               </Table>
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+                <Button variant="outline" size="sm" onClick={() => setGanttFor(q)}>
+                  <BarChart3 className="w-3.5 h-3.5 mr-1" /> ดูแผนภาพระยะเวลางาน
+                </Button>
                 <Button variant="outline" size="sm">
                   <Paperclip className="w-3.5 h-3.5 mr-1" /> แนบไฟล์ (ตัวอย่าง)
                 </Button>
@@ -202,6 +207,37 @@ export default function Quotations() {
           <DialogFooter>
             <Button variant="outline" onClick={() => toast.info("พิมพ์ (เดโม)")}><Printer className="w-4 h-4 mr-1" /> พิมพ์</Button>
             <Button onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" /> PDF</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!ganttFor} onOpenChange={(o) => !o && setGanttFor(null)}>
+        <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              แผนภาพระยะเวลางาน (Gantt Chart) — {ganttFor?.number}
+            </DialogTitle>
+            <DialogDescription>แสดงช่วงเวลาทำงานโดยประมาณจากใบเสนอราคา</DialogDescription>
+          </DialogHeader>
+          {ganttFor && (() => {
+            const p = getPlan(ganttFor.id);
+            if (!p || p.stages.length === 0) {
+              return (
+                <div className="py-8 text-center text-sm text-muted-foreground">
+                  ยังไม่มีแผน Lead Time สำหรับใบเสนอราคานี้ — กด "แก้ไข" เพื่อสร้างแผน
+                </div>
+              );
+            }
+            return <GanttPreview stages={p.stages} />;
+          })()}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setGanttFor(null)}>ปิด</Button>
+            {ganttFor && (
+              <Button onClick={() => { const x = ganttFor; setGanttFor(null); setEditing(x); setFormOpen(true); }}>
+                แก้ไขแผน
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

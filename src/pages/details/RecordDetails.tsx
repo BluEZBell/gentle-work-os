@@ -251,10 +251,15 @@ export function QuotationDetail() {
         <>
           {/* Internal planning view */}
           <Card className="card-soft p-5">
-            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-              <h3 className="font-semibold flex items-center gap-2">
-                <Clock className="w-4 h-4 text-primary" /> แผนงานภายใน
-              </h3>
+            <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
+              <div>
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-primary" /> แผนภาพระยะเวลางาน (Gantt Chart)
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  แสดงช่วงเวลาทำงานโดยประมาณจากใบเสนอราคา
+                </p>
+              </div>
               {plan.calendarLinked && (
                 <span className="text-xs px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
                   ผูกกับปฏิทินแล้ว
