@@ -129,7 +129,6 @@ export default function PayableForecast() {
                         <RowActions
                           onEdit={() => toast.info("แก้ไขแผนการจ่ายเงิน (mock)")}
                           onApprove={() => { updateInstallmentStatus(r.planId, r.installmentId, "จ่ายแล้ว"); toast.success("Mark Paid (mock)"); }}
-                          approveLabel="Mark Paid"
                           onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
                           onViewLog={() => toast.info("ดูประวัติ")}
                         />
