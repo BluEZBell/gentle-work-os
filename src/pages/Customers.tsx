@@ -47,7 +47,7 @@ import { AddNoteDialog } from "@/components/dialogs/AddNoteDialog";
 import { AddActivityDialog } from "@/components/dialogs/AddActivityDialog";
 import { customerNotes, contactNotes, useNotesTick } from "@/lib/notesStore";
 import { POCRIntakeDialog } from "@/components/dialogs/POCRIntakeDialog";
-import { PrepareInvoiceDialog } from "@/components/dialogs/PrepareInvoiceDialog";
+import { InvoiceFromPODialog } from "@/components/dialogs/InvoiceFromPODialog";
 import { customerPosFor, useCustomerPoTick, PO_OCR_STATUS_TH, itemsForPo } from "@/lib/customerPoStore";
 import type { Contact } from "@/lib/mockData";
 import { removeContact } from "@/lib/store";
@@ -560,7 +560,7 @@ export function CustomerDetail() {
                               </div>
                               <div className="text-right shrink-0">
                                 <div className="font-semibold">{fmtTHB(p.total)}</div>
-                                <Button size="sm" variant="outline" className="mt-1 h-7 text-xs" onClick={() => setPrepInv(p.number)}>
+                                <Button size="sm" variant="outline" className="mt-1 h-7 text-xs" onClick={() => setPrepInv(p.id)}>
                                   <Receipt className="w-3.5 h-3.5 mr-1" />เตรียมออก Invoice จากรายการ PO
                                 </Button>
                               </div>
@@ -665,7 +665,7 @@ export function CustomerDetail() {
       <AddActivityDialog open={activityOpen} onOpenChange={setActivityOpen} defaultCustomerId={c.id} />
       <AddToCalendarDialog open={calOpen} onOpenChange={setCalOpen} defaultCustomerId={c.id} />
       <POCRIntakeDialog open={ocrOpen} onOpenChange={setOcrOpen} defaultCustomerId={c.id} />
-      <PrepareInvoiceDialog open={!!prepInv} onOpenChange={(v) => !v && setPrepInv(undefined)} poNumber={prepInv} />
+      <InvoiceFromPODialog open={!!prepInv} onOpenChange={(v) => !v && setPrepInv(undefined)} defaultCustomerId={c.id} defaultPoId={prepInv} />
 
       <AlertDialog open={!!delContact} onOpenChange={(v) => !v && setDelContact(undefined)}>
         <AlertDialogContent>

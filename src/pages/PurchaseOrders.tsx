@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Printer, FileDown } from "lucide-react";
 import { POCRIntakeDialog } from "@/components/dialogs/POCRIntakeDialog";
-import { PrepareInvoiceDialog } from "@/components/dialogs/PrepareInvoiceDialog";
+import { InvoiceFromPODialog } from "@/components/dialogs/InvoiceFromPODialog";
 import { customerPos, useCustomerPoTick, PO_OCR_STATUS_TH, itemsForPo } from "@/lib/customerPoStore";
 import { findCustomer } from "@/lib/mockData";
 
@@ -81,7 +81,7 @@ export default function PurchaseOrders() {
                   </div>
                   <div className="text-right">
                     <div className="font-semibold">{fmtTHB(p.total)}</div>
-                    <Button size="sm" variant="outline" className="mt-1 h-7 text-xs" onClick={() => setPrepInv(p.number)}>
+                    <Button size="sm" variant="outline" className="mt-1 h-7 text-xs" onClick={() => setPrepInv(p.id)}>
                       <Receipt className="w-3.5 h-3.5 mr-1" />เตรียมออก Invoice
                     </Button>
                   </div>
@@ -187,7 +187,7 @@ export default function PurchaseOrders() {
       </Dialog>
 
       <POCRIntakeDialog open={ocrOpen} onOpenChange={setOcrOpen} defaultCustomerId={defaultCustomerId} />
-      <PrepareInvoiceDialog open={!!prepInv} onOpenChange={(v) => !v && setPrepInv(undefined)} poNumber={prepInv} />
+      <InvoiceFromPODialog open={!!prepInv} onOpenChange={(v) => !v && setPrepInv(undefined)} defaultCustomerId={defaultCustomerId} defaultPoId={prepInv} />
     </>
   );
 }
