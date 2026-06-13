@@ -41,6 +41,7 @@ export default function BillingNoteDetail() {
   const [delOpen, setDelOpen] = useState(false);
   const [bnDate, setBnDate] = useState(bn?.billingDate ?? "");
   const [subDate, setSubDate] = useState(bn?.submissionDate ?? "");
+  const [expDate, setExpDate] = useState(bn?.expectedPaymentDate ?? "");
 
   if (!bn) return <div className="p-6">ไม่พบใบวางบิล <Link to="/" className="text-primary">กลับ</Link></div>;
 
