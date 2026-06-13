@@ -664,6 +664,8 @@ export function CustomerDetail() {
         target={contactNoteFor ? { kind: "contact", id: contactNoteFor.id, label: contactNoteFor.name } : { kind: "contact", id: "" }} />
       <AddActivityDialog open={activityOpen} onOpenChange={setActivityOpen} defaultCustomerId={c.id} />
       <AddToCalendarDialog open={calOpen} onOpenChange={setCalOpen} defaultCustomerId={c.id} />
+      <POCRIntakeDialog open={ocrOpen} onOpenChange={setOcrOpen} defaultCustomerId={c.id} />
+      <PrepareInvoiceDialog open={!!prepInv} onOpenChange={(v) => !v && setPrepInv(undefined)} poNumber={prepInv} />
 
       <AlertDialog open={!!delContact} onOpenChange={(v) => !v && setDelContact(undefined)}>
         <AlertDialogContent>
