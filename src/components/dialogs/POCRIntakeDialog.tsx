@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { customers, contacts, fmtTHB } from "@/lib/mockData";
-import { addActivity } from "@/lib/store";
+import { audit } from "@/lib/store";
 import {
   generateMockOcr, importCustomerPo, CONFIDENCE_TH, type OcrConfidence,
 } from "@/lib/customerPoStore";
@@ -156,12 +156,9 @@ export function POCRIntakeDialog({ open, onOpenChange, defaultCustomerId }: Prop
       })),
     }, "Khun Ploy");
     try {
-      addActivity({
-        customerId, type: "Internal note",
-        note: `นำเข้า PO ลูกค้าจากเอกสารสแกน — ${po.number} (${items.length} รายการ, ${fmtTHB(total)})`,
-        user: "Khun Ploy",
-      } as never);
-    } catch { /* activity log shape may vary — non-blocking */ }
+      audit("Customer PO", po.id, "Imported from OCR",
+        `${po.number} — ${items.length} รายการ • ${fmtTHB(total)}`, "Khun Ploy");
+    } catch { /* non-blocking */ }
     toast.success("นำเข้า PO ลูกค้าเรียบร้อยแล้ว");
     onOpenChange(false);
   };
