@@ -56,6 +56,7 @@ const zones: Zone[] = [
       { to: "/invoices", icon: FileSpreadsheet, en: "Customer Invoices", th: "ใบแจ้งหนี้ลูกค้า" },
       { to: "/supplier-bills", icon: Receipt, en: "Supplier Bills", th: "บิลซัพพลายเออร์" },
       { to: "/payment-vouchers", icon: BadgeDollarSign, en: "Payment Vouchers", th: "ใบสำคัญจ่าย" },
+      { to: "/payable-forecast", icon: Wallet, en: "Payable Forecast", th: "แผนเงินจ่ายประจำเดือน" },
       { to: "/approvals", icon: CheckSquare, en: "Approvals", th: "อนุมัติเอกสาร" },
     ],
   },
