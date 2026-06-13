@@ -78,7 +78,7 @@ export default function BillingNoteDetail() {
         description={`รวม ${invs.length} ใบแจ้งหนี้ • ${fmtTHB(bn.total)} • สถานะ ${BN_STATUS_TH[bn.status]}`}
         actions={
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" onClick={() => { setBnDate(bn.billingDate); setSubDate(bn.submissionDate); setEditOpen(true); }}><Pencil className="w-4 h-4 mr-1" />แก้ไขวันที่</Button>
+            <Button size="sm" variant="outline" onClick={() => { setBnDate(bn.billingDate); setSubDate(bn.submissionDate); setExpDate(bn.expectedPaymentDate); setEditOpen(true); }}><Pencil className="w-4 h-4 mr-1" />แก้ไขวันที่</Button>
             <Button size="sm" variant="outline" className="border-purple-300 text-purple-700" onClick={() => print("ต้นฉบับ")}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
             <Button size="sm" variant="outline" onClick={() => print("สำเนา")}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
             <Button size="sm" variant="outline" onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" />PDF</Button>
