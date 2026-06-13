@@ -237,6 +237,7 @@ export function CustomerDetail() {
   useTick();
   useNotesTick();
   useCustomerPoTick();
+  useBnTick();
   const { id } = useParams();
   const c = findCustomer(id!);
 
