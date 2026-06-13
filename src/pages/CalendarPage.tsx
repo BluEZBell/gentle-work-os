@@ -15,6 +15,7 @@ import {
   eventTitle,
 } from "@/lib/mockCalendar";
 import { bnCalendarEvents, useBnTick } from "@/lib/billingReceiptStore";
+import { ltCalendarEvents, ltEventTitle, useLtTick } from "@/lib/leadTimeStore";
 import { customers, findCustomer } from "@/lib/mockData";
 import { ChevronLeft, ChevronRight, Plus, AlertTriangle, CalendarDays, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
