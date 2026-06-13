@@ -15,7 +15,7 @@ import {
   Lock, Search, Mail, Phone, MapPin, Eye, Pencil, Plus, StickyNote,
   Activity as ActivityIcon, CalendarPlus, FileText, ShoppingCart, Paperclip, ClipboardList,
   MessageCircle, Star, Receipt, Truck, MoreHorizontal, Copy as CopyIcon, Trash2,
-  ArrowUpRight,
+  ArrowUpRight, ScanLine,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -46,6 +46,9 @@ import { ContactDetailSheet } from "@/components/dialogs/ContactDetailSheet";
 import { AddNoteDialog } from "@/components/dialogs/AddNoteDialog";
 import { AddActivityDialog } from "@/components/dialogs/AddActivityDialog";
 import { customerNotes, contactNotes, useNotesTick } from "@/lib/notesStore";
+import { POCRIntakeDialog } from "@/components/dialogs/POCRIntakeDialog";
+import { PrepareInvoiceDialog } from "@/components/dialogs/PrepareInvoiceDialog";
+import { customerPosFor, useCustomerPoTick, PO_OCR_STATUS_TH, itemsForPo } from "@/lib/customerPoStore";
 import type { Contact } from "@/lib/mockData";
 import { removeContact } from "@/lib/store";
 import {
