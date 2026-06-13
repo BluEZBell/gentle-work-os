@@ -11,9 +11,13 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   findPoInvoice, linesForPoInvoice, findCustomerPo, useCustomerPoTick,
-  poInvoices,
+  poInvoices, updatePoInvoice,
 } from "@/lib/customerPoStore";
 import { findCustomer, fmtTHB } from "@/lib/mockData";
 import { Timeline } from "@/components/Timeline";
@@ -21,9 +25,13 @@ import { Attachments } from "@/components/Attachments";
 import { BillingNoteDialog } from "@/components/dialogs/BillingNoteDialog";
 import { ReceiptDialog } from "@/components/dialogs/ReceiptDialog";
 import { AddToCalendarDialog } from "@/components/dialogs/AddToCalendarDialog";
-import { isInvoicePaid, useBnTick, bnsForInvoice, receiptsForInvoice } from "@/lib/billingReceiptStore";
 import {
-  Printer, FileDown, Pencil, CalendarPlus, Trash2, Receipt, FileText, History, Info,
+  isInvoicePaid, useBnTick, bnsForInvoice, receiptsForInvoice,
+  logPrint, printLogFor,
+} from "@/lib/billingReceiptStore";
+import { useAuth } from "@/lib/auth";
+import {
+  Printer, FileDown, Pencil, CalendarPlus, Trash2, Receipt, FileText, History, Info, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
