@@ -27,10 +27,16 @@ import { findCustomer } from "@/lib/mockData";
 
 export default function PurchaseOrders() {
   useBizTick();
+  useCustomerPoTick();
   const { user, can } = useAuth();
+  const [sp] = useSearchParams();
+  const isCustomerView = sp.get("type") === "customer";
+  const defaultCustomerId = sp.get("customerId") ?? undefined;
   const [q, setQ] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
   const [filter, setFilter] = useState("all");
+  const [ocrOpen, setOcrOpen] = useState(false);
+  const [prepInv, setPrepInv] = useState<string | undefined>();
   const list = purchaseOrders.filter((p) => {
     const sup = findSupplier(p.supplierId);
     const m = p.number.toLowerCase().includes(q.toLowerCase()) ||
@@ -40,9 +46,52 @@ export default function PurchaseOrders() {
   });
   return (
     <>
-      <PageHeader title="Purchase Orders" thai="ใบสั่งซื้อ"
-        description="จัดการใบสั่งซื้อถึงซัพพลายเออร์ ตั้งแต่ออกใบสั่ง จนถึงรับของและตรวจคุณภาพ"
+      <PageHeader
+        title={isCustomerView ? "Customer PO" : "Purchase Orders"}
+        thai={isCustomerView ? "PO ลูกค้า" : "ใบสั่งซื้อ"}
+        description={isCustomerView
+          ? "PO ที่ได้รับจากลูกค้า — สแกน/นำเข้าด้วย OCR แล้วตรวจสอบก่อนบันทึก"
+          : "จัดการใบสั่งซื้อถึงซัพพลายเออร์ ตั้งแต่ออกใบสั่ง จนถึงรับของและตรวจคุณภาพ"}
+        actions={isCustomerView ? (
+          <Button onClick={() => setOcrOpen(true)}><ScanLine className="w-4 h-4 mr-1" />สแกน / นำเข้า PO ลูกค้า</Button>
+        ) : undefined}
       />
+
+      {isCustomerView && customerPos.length > 0 && (
+        <Card className="card-soft p-4 mb-4">
+          <div className="text-xs font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
+            PO ลูกค้าที่นำเข้าจาก OCR ({customerPos.length})
+          </div>
+          <div className="space-y-2">
+            {customerPos.map((p) => {
+              const cust = findCustomer(p.customerId);
+              const its = itemsForPo(p.id);
+              return (
+                <div key={p.id} className="border rounded-lg p-3 bg-secondary/20 flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-medium flex items-center gap-2 flex-wrap">
+                      <span>{p.number}</span>
+                      <StatusBadge status={PO_OCR_STATUS_TH[p.ocrStatus]} tone="success" />
+                      {p.fileName && <Badge variant="outline" className="text-[10px]"><Paperclip className="w-3 h-3 mr-0.5" />{p.fileName}</Badge>}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      {cust ? <Link to={`/customers/${cust.id}`} className="text-primary hover:underline">{cust.name}</Link> : "—"}
+                      {" "}• วันที่ {p.poDate} • ส่ง {p.deliveryDate} • {its.length} รายการ
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold">{fmtTHB(p.total)}</div>
+                    <Button size="sm" variant="outline" className="mt-1 h-7 text-xs" onClick={() => setPrepInv(p.number)}>
+                      <Receipt className="w-3.5 h-3.5 mr-1" />เตรียมออก Invoice
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
       <Card className="card-soft p-4 mb-4 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
