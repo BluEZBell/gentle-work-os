@@ -139,7 +139,9 @@ export function JobDetail() {
 
 // ===================== QUOTATION =====================
 export function QuotationDetail() {
+  useLtTick();
   const { id } = useParams();
+  const [convertOpen, setConvertOpen] = useState(false);
   const q = quotations.find((x) => x.id === id);
   if (!q) return <NotFoundDetail backTo="/quotations" label="Quotations" />;
   const total = q.items.reduce((s, i) => s + i.sellPrice * i.quantity, 0);
@@ -148,10 +150,30 @@ export function QuotationDetail() {
   const margin = Math.round((profit / total) * 100);
   const revs = quotationRevisions.filter((r) => r.quotationId === q.id);
   const relatedJob = jobs.find((j) => j.quotationId === q.id);
+  const cust = findCustomer(q.customerId);
+  const shortName = (cust?.name ?? "CUST").split(/\s+/)[0].slice(0, 6).toUpperCase();
+  const plan = getPlan(q.id);
 
-  const timeline: TimelineEvent[] = revs.map((r) => ({
-    id: r.id, date: r.date, title: `Revision ${r.revision} — ${r.status}`, detail: r.reason, tone: "info",
-  }));
+  const timeline: TimelineEvent[] = [
+    ...revs.map((r) => ({
+      id: r.id, date: r.date, title: `Revision ${r.revision} — ${r.status}`, detail: r.reason, tone: "info" as const,
+    })),
+    ...(plan ? [{
+      id: `lt-${q.id}`, date: plan.createdAt.slice(0, 10),
+      title: "สร้างแผน Lead Time", detail: `${plan.stages.length} ขั้นตอน`, tone: "info" as const,
+    }] : []),
+    ...(plan?.calendarLinked ? [{
+      id: `ltcal-${q.id}`, date: plan.updatedAt.slice(0, 10),
+      title: "เพิ่มแผนงานลงปฏิทินแล้ว", detail: `${plan.stages.length} events`, tone: "success" as const,
+    }] : []),
+  ];
+
+  const onAddToCalendar = () => {
+    if (!plan) { toast.error("กรุณาสร้างแผน Lead Time ในใบเสนอราคาก่อน"); return; }
+    const evs = addPlanToCalendar(q.id, q.number, shortName);
+    audit("Khun Ploy", "Add Lead Time to Calendar", `${q.number} (${evs.length} stages)`, "Quotations");
+    toast.success(`เพิ่ม ${evs.length} แผนงานลงปฏิทินแล้ว`);
+  };
 
   return (
     <DetailShell
@@ -169,13 +191,24 @@ export function QuotationDetail() {
         <MetaRow label="ต้นทุนประมาณ">{fmtTHB(cost)}</MetaRow>
         <MetaRow label="กำไรขั้นต้น"><span className="text-success">{fmtTHB(profit)} ({margin}%)</span></MetaRow>
         <MetaRow label="ดีล">{findDeal(q.dealId)?.name ?? "—"}</MetaRow>
+        {plan?.expectedDelivery && <MetaRow label="คาดส่งมอบ">{plan.expectedDelivery}</MetaRow>}
       </>}
       related={[
         { label: "ดีล", to: `/deals/${q.dealId}`, hint: findDeal(q.dealId)?.name ?? q.dealId },
         ...(relatedJob ? [{ label: "งาน", to: `/jobs/${relatedJob.id}`, hint: relatedJob.number }] : []),
       ]}
       timeline={timeline}
-      actions={<Button variant="outline" size="sm" onClick={() => toast.info("พิมพ์ใบเสนอราคา (เดโม)")}><Printer className="w-3.5 h-3.5 mr-1" /> พิมพ์</Button>}
+      actions={<>
+        <Button variant="outline" size="sm" onClick={onAddToCalendar}>
+          <CalendarPlus className="w-3.5 h-3.5 mr-1" /> เพิ่มแผนงานลงปฏิทิน
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => setConvertOpen(true)}>
+          <ArrowRightCircle className="w-3.5 h-3.5 mr-1" /> แปลง Lead Time เป็นแผนงาน Job
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => toast.info("พิมพ์ใบเสนอราคา (เดโม)")}>
+          <Printer className="w-3.5 h-3.5 mr-1" /> พิมพ์
+        </Button>
+      </>}
     >
       <Card className="card-soft p-5">
         <h3 className="font-semibold mb-3">รายการในใบเสนอราคา</h3>
@@ -199,6 +232,74 @@ export function QuotationDetail() {
           </TableBody>
         </Table>
       </Card>
+
+      {plan && plan.stages.length > 0 && (
+        <>
+          {/* Internal planning view */}
+          <Card className="card-soft p-5">
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <h3 className="font-semibold flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary" /> แผนงานภายใน
+              </h3>
+              {plan.calendarLinked && (
+                <span className="text-xs px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+                  ผูกกับปฏิทินแล้ว
+                </span>
+              )}
+            </div>
+            <GanttPreview stages={plan.stages} />
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-secondary/40 text-xs text-muted-foreground">
+                  <tr>
+                    <th className="p-2 text-left">ขั้นตอน</th>
+                    <th className="p-2 text-left">ช่วงเวลา</th>
+                    <th className="p-2 text-left">ผู้รับผิดชอบ</th>
+                    <th className="p-2 text-left">สถานะ</th>
+                    <th className="p-2 text-left">ปฏิทิน</th>
+                    <th className="p-2 text-left">โน้ต</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {plan.stages.map((s) => {
+                    const c = LT_STATUS_COLOR[s.status];
+                    return (
+                      <tr key={s.id} className="border-t">
+                        <td className="p-2 font-medium">{s.name}</td>
+                        <td className="p-2 text-xs">{s.start} → {s.end} <span className="text-muted-foreground">({s.duration}d)</span></td>
+                        <td className="p-2 text-xs">{s.owner || "—"}</td>
+                        <td className="p-2"><span className={cn("text-[10px] px-1.5 py-0.5 rounded border", c.chip)}>{s.status}</span></td>
+                        <td className="p-2 text-xs">{s.calendarEventId ? "✓ เพิ่มแล้ว" : "—"}</td>
+                        <td className="p-2 text-xs text-muted-foreground">{s.note || "—"}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+
+          {/* Customer-facing preview */}
+          <Card className="card-soft p-5">
+            <h3 className="font-semibold mb-1">กำหนดระยะเวลาดำเนินงานโดยประมาณ</h3>
+            <p className="text-xs text-muted-foreground mb-3">ตัวอย่างส่วนที่จะปรากฏในเอกสารใบเสนอราคาสำหรับลูกค้า</p>
+            <div className="border rounded-md p-4 bg-secondary/20">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {plan.stages.map((s) => (
+                  <div key={s.id} className="flex justify-between border-b pb-2 text-sm">
+                    <span className="font-medium">{s.name}</span>
+                    <span className="text-muted-foreground">{s.start} → {s.end}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 text-xs text-muted-foreground">
+                * กำหนดการนี้เป็นการประมาณการ อาจเปลี่ยนแปลงตามความพร้อมของวัตถุดิบและการอนุมัติแบบ
+              </div>
+            </div>
+          </Card>
+        </>
+      )}
+
       {revs.length > 0 && (
         <Card className="card-soft p-5">
           <h3 className="font-semibold mb-3">การแก้ไขใบเสนอราคา ({revs.length})</h3>
@@ -212,9 +313,27 @@ export function QuotationDetail() {
           </div>
         </Card>
       )}
+
+      <Dialog open={convertOpen} onOpenChange={setConvertOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>แปลง Lead Time เป็นแผนงาน Job</DialogTitle>
+            <DialogDescription>
+              ขั้นตอนถัดไปจะนำ Lead Time จากใบเสนอราคาไปสร้าง Job Planning หลังจากลูกค้าอนุมัติหรือส่ง PO
+            </DialogDescription>
+          </DialogHeader>
+          <div className="text-sm text-muted-foreground">
+            ฟีเจอร์นี้จะเปิดใช้งานในเฟสถัดไป (Job Planning Module)
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConvertOpen(false)}>ปิด</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DetailShell>
   );
 }
+
 
 // ===================== DEAL =====================
 export function DealDetail() {
