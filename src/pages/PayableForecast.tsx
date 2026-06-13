@@ -13,7 +13,7 @@ import {
 import { PaymentScheduleDialog } from "@/components/dialogs/PaymentScheduleDialog";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { AlertTriangle, CalendarPlus, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { RowActions } from "@/components/RowActions";
 
