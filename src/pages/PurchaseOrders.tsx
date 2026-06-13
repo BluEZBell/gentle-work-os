@@ -9,16 +9,21 @@ import { purchaseOrders, poTotal, PO_STATUSES, type POStatus } from "@/lib/mockB
 import { setPOStatus, useBizTick } from "@/lib/storeBusiness";
 import { findSupplier, findJob, fmtTHB } from "@/lib/mockData";
 import { useAuth } from "@/lib/auth";
-import { Search, Truck } from "lucide-react";
+import { Search, Truck, ScanLine, Receipt, Paperclip } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { CustomerLink } from "@/components/CustomerLink";
 import { RowActions } from "@/components/RowActions";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Printer, FileDown } from "lucide-react";
+import { POCRIntakeDialog } from "@/components/dialogs/POCRIntakeDialog";
+import { PrepareInvoiceDialog } from "@/components/dialogs/PrepareInvoiceDialog";
+import { customerPos, useCustomerPoTick, PO_OCR_STATUS_TH, itemsForPo } from "@/lib/customerPoStore";
+import { findCustomer } from "@/lib/mockData";
 
 export default function PurchaseOrders() {
   useBizTick();
