@@ -235,15 +235,41 @@ export default function PoInvoiceDetail() {
       <AddToCalendarDialog open={calOpen} onOpenChange={setCalOpen} defaultCustomerId={inv.customerId} />
 
 
-      {printLogOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setPrintLogOpen(false)}>
-          <Card className="card-soft p-5 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
-            <h3 className="font-semibold mb-2">Print Log</h3>
-            <p className="text-xs text-muted-foreground">ยังไม่มีประวัติการพิมพ์สำหรับ Invoice ฉบับนี้ — ระบบจะบันทึกเมื่อพิมพ์จริง (เดโม)</p>
-            <div className="flex justify-end mt-3"><Button size="sm" onClick={() => setPrintLogOpen(false)}>ปิด</Button></div>
-          </Card>
-        </div>
-      )}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>แก้ไข Invoice {inv.number}</DialogTitle></DialogHeader>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label className="text-xs">วันที่ออก</Label><Input type="date" value={eDate} onChange={(e) => setEDate(e.target.value)} /></div>
+            <div><Label className="text-xs">วันครบกำหนด</Label><Input type="date" value={eDue} onChange={(e) => setEDue(e.target.value)} /></div>
+            <div className="col-span-2"><Label className="text-xs">หมายเหตุ</Label><Textarea rows={2} value={eNotes} onChange={(e) => setENotes(e.target.value)} /></div>
+            <div className="col-span-2"><Label className="text-xs">โน้ตภายใน</Label><Textarea rows={2} value={eInternal} onChange={(e) => setEInternal(e.target.value)} /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>ยกเลิก</Button>
+            <Button onClick={saveEdit}>บันทึก</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={printLogOpen} onOpenChange={setPrintLogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Print Log — {inv.number}</DialogTitle></DialogHeader>
+          {pl.length === 0 ? (
+            <p className="text-xs text-muted-foreground">ยังไม่มีประวัติการพิมพ์ — ระบบจะบันทึกเมื่อพิมพ์</p>
+          ) : (
+            <ul className="text-sm divide-y">
+              {pl.map((e) => (
+                <li key={e.id} className="py-1.5 flex justify-between">
+                  <div>{e.copyType} × {e.copies}</div>
+                  <div className="text-muted-foreground">{e.printedBy} • {e.printedAt}</div>
+                </li>
+              ))}
+            </ul>
+          )}
+          <DialogFooter><Button size="sm" onClick={() => setPrintLogOpen(false)}>ปิด</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>
