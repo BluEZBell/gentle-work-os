@@ -211,6 +211,35 @@ export default function PoInvoiceDetail() {
           </Card>
         </div>
       )}
+
+      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>ยืนยันการลบ Invoice</AlertDialogTitle>
+            <AlertDialogDescription>
+              {inv.number} จะถูกลบออกจากระบบ (เดโม) และจะไม่ปรากฏใน Customer Profile หรือ Customer Invoices อีก
+              {linkedBns.length + linkedRcs.length > 0 && (
+                <span className="block mt-2 text-warning-foreground">
+                  ⚠️ เอกสารผูกอยู่: ใบวางบิล {linkedBns.length} ฉบับ • ใบเสร็จ {linkedRcs.length} ฉบับ
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                const idx = poInvoices.findIndex((x) => x.id === inv.id);
+                if (idx >= 0) poInvoices.splice(idx, 1);
+                toast.success(`ลบ ${inv.number} เรียบร้อย (เดโม)`);
+                setConfirmDelete(false);
+                nav("/invoices");
+              }}
+            >ลบ</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
