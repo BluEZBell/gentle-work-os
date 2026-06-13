@@ -192,7 +192,13 @@ export default function Quotations() {
             <DialogTitle>พรีวิวใบเสนอราคา {preview?.number}</DialogTitle>
             <DialogDescription>ตัวอย่างก่อนพิมพ์หรือดาวน์โหลด PDF (เดโม)</DialogDescription>
           </DialogHeader>
-          {preview && <ThaiDocLayout docTypeId="td1" number={preview.number} />}
+          {preview && (
+            <ThaiDocLayout
+              docTypeId="td1"
+              number={preview.number}
+              leadStages={getPlan(preview.id)?.stages.map((s) => ({ name: s.name, start: s.start, end: s.end }))}
+            />
+          )}
           <DialogFooter>
             <Button variant="outline" onClick={() => toast.info("พิมพ์ (เดโม)")}><Printer className="w-4 h-4 mr-1" /> พิมพ์</Button>
             <Button onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" /> PDF</Button>
