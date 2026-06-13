@@ -67,5 +67,9 @@ export const buildNotifications = (): Notif[] => {
   bnNotifications.forEach((n) =>
     out.push({ id: n.id, title: n.title, detail: n.detail, date: n.date,
       severity: n.severity, link: n.link, category: n.category }));
+  // Supplier/Maker payable (Phase 3E)
+  supPayNotifications.forEach((n) =>
+    out.push({ id: n.id, title: n.title, detail: n.detail, date: n.date,
+      severity: n.severity, link: n.link, category: n.category }));
   return out.sort((a, b) => a.date.localeCompare(b.date));
 };
