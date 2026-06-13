@@ -236,6 +236,7 @@ export default function Customers() {
 
 export function CustomerDetail() {
   useTick();
+  useLtTick();
   useNotesTick();
   useCustomerPoTick();
   useBnTick();
