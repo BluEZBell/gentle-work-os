@@ -24,9 +24,11 @@ import { toast } from "sonner";
 
 export default function PoInvoiceDetail() {
   useCustomerPoTick();
+  useBnTick();
   const { id } = useParams();
   const inv = id ? findPoInvoice(id) : undefined;
   const [billingOpen, setBillingOpen] = useState(false);
+  const [receiptOpen, setReceiptOpen] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
   const [printLogOpen, setPrintLogOpen] = useState(false);
 
@@ -37,30 +39,35 @@ export default function PoInvoiceDetail() {
   const lines = linesForPoInvoice(inv.id);
   const po = findCustomerPo(inv.customerPoId);
   const cust = findCustomer(inv.customerId);
+  const linkedBns = bnsForInvoice(inv.id);
+  const linkedRcs = receiptsForInvoice(inv.id);
+  const paid = isInvoicePaid(inv.id);
 
   return (
     <>
       <PageHeader
         title={inv.number}
-        thai="ใบแจ้งหนี้จาก PO ลูกค้า"
+        thai="ใบแจ้งหนี้"
         breadcrumbs={<Breadcrumbs items={[
           { label: "Customer Invoices (ใบแจ้งหนี้ลูกค้า)", to: "/invoices" },
           { label: inv.number },
         ]} />}
-        description={`ออกจาก PO ${po?.number ?? "—"} • ลูกค้า ${cust?.name ?? "—"}`}
+        description={`Invoice อ้างอิง PO ${po?.number ?? "—"} • ลูกค้า ${cust?.name ?? "—"}${paid ? " • ชำระแล้ว" : ""}`}
         actions={
           <div className="flex flex-wrap gap-2">
             <Button size="sm" variant="outline" onClick={() => toast.info("แก้ไข Invoice (เดโม)")}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
             <Button size="sm" variant="outline" onClick={() => toast.success(`พิมพ์ต้นฉบับ ${inv.number} (เดโม)`)}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
             <Button size="sm" variant="outline" onClick={() => toast.success(`พิมพ์สำเนา ${inv.customerCopies + inv.internalCopies} ชุด (เดโม)`)}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
             <Button size="sm" variant="outline" onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" />PDF</Button>
-            <Button size="sm" onClick={() => setBillingOpen(true)}><Receipt className="w-4 h-4 mr-1" />สร้างใบวางบิลจาก Invoice</Button>
+            <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white" onClick={() => setBillingOpen(true)}><Receipt className="w-4 h-4 mr-1" />สร้างใบวางบิลจาก Invoice</Button>
+            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setReceiptOpen(true)} disabled={paid}><Receipt className="w-4 h-4 mr-1" />สร้างใบเสร็จรับเงิน</Button>
             <Button size="sm" variant="outline" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
             <Button size="sm" variant="outline" onClick={() => setPrintLogOpen(true)}><History className="w-4 h-4 mr-1" />Print Log</Button>
             <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={() => toast.info("ยืนยันก่อนลบ (เดโม)")}><Trash2 className="w-4 h-4 mr-1" />ลบ</Button>
           </div>
         }
       />
+
 
       <Alert className="mb-4 border-info/40 bg-info-soft">
         <Info className="h-4 w-4 text-info" />
