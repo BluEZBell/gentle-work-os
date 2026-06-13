@@ -8,6 +8,9 @@ import { useTick, removeSupplier, duplicateSupplier, relatedForSupplier, related
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Eye, EyeOff, Lock, Search } from "lucide-react";
 import { NewSupplierDialog } from "@/components/dialogs/NewSupplierDialog";
+import { PaymentScheduleDialog } from "@/components/dialogs/PaymentScheduleDialog";
+import { Button } from "@/components/ui/button";
+import { getSupplierKind, useSupPayTick, paymentPlans } from "@/lib/supplierPaymentStore";
 import { EmptyState } from "@/components/EmptyState";
 import { RowActions } from "@/components/RowActions";
 import { toast } from "sonner";
