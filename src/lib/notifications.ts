@@ -2,6 +2,7 @@
 import { reminders, quotations, jobs, supplierBills, serviceRecords } from "./mockData";
 import { tasks, customerInvoices, changeOrders, receivingRecords } from "./mockBusiness";
 import { bnNotifications } from "./billingReceiptStore";
+import { supPayNotifications } from "./supplierPaymentStore";
 
 export type Notif = {
   id: string;
