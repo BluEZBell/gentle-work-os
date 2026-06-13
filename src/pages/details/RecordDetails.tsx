@@ -23,8 +23,16 @@ import {
   warehouses, stockItems, stockTotal, barcodeIssues,
   ocrDocuments, aiEmails, docApprovals, THAI_DOC_TYPES,
 } from "@/lib/mockExtended";
-import { Printer, FileDown } from "lucide-react";
+import { Printer, FileDown, CalendarPlus, ArrowRightCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { GanttPreview } from "@/components/quotation/GanttPreview";
+import {
+  getPlan, addPlanToCalendar, useLtTick, LT_STATUS_COLOR,
+} from "@/lib/leadTimeStore";
+import { audit } from "@/lib/store";
+import { cn } from "@/lib/utils";
 
 const root = (label: string, to: string) => ({ label, to });
 
