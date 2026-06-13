@@ -23,6 +23,9 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ReceiptDetail() {
   useBnTick();
@@ -31,6 +34,10 @@ export default function ReceiptDetail() {
   const r = id ? findReceipt(id) : undefined;
   const [logOpen, setLogOpen] = useState(false);
   const [delOpen, setDelOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [eRcpDate, setERcpDate] = useState(r?.receiptDate ?? "");
+  const [ePaidDate, setEPaidDate] = useState(r?.paymentReceivedDate ?? "");
+  const [eNotes, setENotes] = useState(r?.notes ?? "");
 
   if (!r) return <div className="p-6">ไม่พบใบเสร็จ <Link to="/" className="text-primary">กลับ</Link></div>;
 
@@ -43,6 +50,18 @@ export default function ReceiptDetail() {
     logPrint({ documentType: "Receipt", relatedId: r.id, copyType, copies: 1, printedBy: user?.name ?? "Demo" });
     audit(user?.name ?? "Demo", `Print Receipt (${copyType})`, r.number, "Receipts");
     toast.success(`พิมพ์${copyType}แล้ว (เดโม)`);
+  };
+
+  const openEdit = () => {
+    setERcpDate(r.receiptDate); setEPaidDate(r.paymentReceivedDate); setENotes(r.notes);
+    setEditOpen(true);
+  };
+  const saveEdit = () => {
+    if (!eRcpDate || !ePaidDate) { toast.error("กรุณาระบุวันที่ให้ครบ"); return; }
+    updateReceipt(r.id, { receiptDate: eRcpDate, paymentReceivedDate: ePaidDate, notes: eNotes });
+    audit(user?.name ?? "Demo", "Edit Receipt", r.number, "Receipts");
+    toast.success("บันทึกใบเสร็จแล้ว");
+    setEditOpen(false);
   };
 
   return (
