@@ -291,7 +291,10 @@ function QuotationForm({
         quantity: it.quantity, sellPrice: it.sellPrice, estimatedCost: it.estimatedCost,
       })),
     };
-    if (f.leadStages.length > 0) savePlan(id, f.leadStages);
+    if (f.leadStages.length > 0) {
+      savePlan(id, f.leadStages);
+      audit("Khun Ploy", "Save Lead Time Plan", `${f.number} (${f.leadStages.length} stages)`, "Quotations");
+    }
     onSave(q);
   };
 
