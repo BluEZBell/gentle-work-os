@@ -62,5 +62,9 @@ export const buildNotifications = (): Notif[] => {
   receivingRecords.filter((r) => r.qcStatus === "Failed" || r.qcStatus === "Need Rework").forEach((r) =>
     out.push({ id: `qc-${r.id}`, title: "QC issue", detail: r.qcNote, date: r.receivedDate,
       severity: "danger", link: "/jobs", category: "QC" }));
+  // Billing notes (Phase 3C)
+  bnNotifications.forEach((n) =>
+    out.push({ id: n.id, title: n.title, detail: n.detail, date: n.date,
+      severity: n.severity, link: n.link, category: n.category }));
   return out.sort((a, b) => a.date.localeCompare(b.date));
 };
