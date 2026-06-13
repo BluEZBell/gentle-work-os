@@ -77,7 +77,7 @@ export default function ReceiptDetail() {
         description={`รับชำระ ${fmtTHB(r.amount)} • ${r.method} • วันที่ ${r.paymentReceivedDate}`}
         actions={
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" onClick={() => toast.info("แก้ไขใบเสร็จ (เดโม)")}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
+            <Button size="sm" variant="outline" onClick={openEdit}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
             <Button size="sm" variant="outline" className="border-emerald-300 text-emerald-700" onClick={() => print("ต้นฉบับ")}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
             <Button size="sm" variant="outline" onClick={() => print("สำเนา")}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
             <Button size="sm" variant="outline" onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" />PDF</Button>
