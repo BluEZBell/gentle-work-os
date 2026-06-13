@@ -111,8 +111,11 @@ export function PaymentScheduleDialog({ trigger, initialSupplierId, initialAmoun
                 ))}
               </SelectContent>
             </Select>
-            <div className="text-xs text-muted-foreground">ประเภท: <strong>{kind}</strong>
-              {kind !== "Supplier" && " • Maker หัก ณ ที่จ่าย 3% ตามค่าเริ่มต้น"}
+            <div className="text-xs text-muted-foreground">
+              ประเภท: <strong>{kind}</strong>
+              {kind === "Maker" && <span className="text-orange-600"> • Maker หัก ณ ที่จ่าย 3% ตามค่าเริ่มต้น</span>}
+              {kind === "Both" && <span className="text-orange-600"> • Supplier + Maker — ปรับ WHT ได้ตามรายการ</span>}
+              {kind === "Supplier" && <span> • Supplier ไม่หัก ณ ที่จ่ายโดยปริยาย</span>}
             </div>
           </div>
           <div className="grid gap-1.5">
