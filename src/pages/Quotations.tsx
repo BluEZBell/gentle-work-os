@@ -189,6 +189,7 @@ interface FormState {
   priceIncludesVat: boolean; whtPercent: number;
   items: ItemDraft[];
   customerNotes: string; internalNotes: string;
+  leadStages: LtStage[];
 }
 
 function QuotationForm({
