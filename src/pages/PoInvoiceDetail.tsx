@@ -142,6 +142,38 @@ export default function PoInvoiceDetail() {
             </div>
           </Card>
 
+          {(linkedBns.length > 0 || linkedRcs.length > 0) && (
+            <Card className="card-soft p-5">
+              <h3 className="font-semibold mb-3">เอกสารที่เชื่อมโยง</h3>
+              {linkedBns.length > 0 && (
+                <div className="mb-3">
+                  <div className="text-xs text-muted-foreground mb-1">ใบวางบิล ({linkedBns.length})</div>
+                  <ul className="text-sm space-y-1">
+                    {linkedBns.map((b) => (
+                      <li key={b.id} className="flex justify-between border-b last:border-0 py-1">
+                        <Link to={`/billing-notes/${b.id}`} className="text-purple-700 hover:underline">{b.number}</Link>
+                        <span className="text-muted-foreground">วางบิล {b.submissionDate} • {fmtTHB(b.total)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {linkedRcs.length > 0 && (
+                <div>
+                  <div className="text-xs text-muted-foreground mb-1">ใบเสร็จรับเงิน ({linkedRcs.length})</div>
+                  <ul className="text-sm space-y-1">
+                    {linkedRcs.map((r) => (
+                      <li key={r.id} className="flex justify-between border-b last:border-0 py-1">
+                        <Link to={`/receipts/${r.id}`} className="text-emerald-700 hover:underline">{r.number}</Link>
+                        <span className="text-muted-foreground">รับเงิน {r.paymentReceivedDate} • {fmtTHB(r.amount)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </Card>
+          )}
+
           <Card className="card-soft p-5">
             <h3 className="font-semibold mb-3">Attachments</h3>
             <Attachments module="Customer Invoice" id={inv.id} />
@@ -150,14 +182,18 @@ export default function PoInvoiceDetail() {
           <Card className="card-soft p-5">
             <h3 className="font-semibold mb-3">Timeline</h3>
             <Timeline events={[
-              { id: "create", date: inv.createdAt, title: "สร้าง Invoice จากรายการ PO ลูกค้า", detail: `${inv.number} ← ${po?.number ?? "—"} โดย ${inv.createdBy}`, tone: "success" },
+              { id: "create", date: inv.createdAt, title: "สร้าง Invoice", detail: `${inv.number} โดย ${inv.createdBy}`, tone: "success" },
+              ...linkedBns.map((b) => ({ id: b.id, date: b.createdAt, title: "สร้างใบวางบิลจาก Invoice", detail: `${b.number} • วางบิล ${b.submissionDate}`, tone: "info" as const })),
+              ...linkedRcs.map((r) => ({ id: r.id, date: r.createdAt, title: "ออกใบเสร็จรับเงินจาก Invoice", detail: `${r.number} • ${fmtTHB(r.amount)}`, tone: "success" as const })),
             ]} />
           </Card>
         </div>
       </div>
 
-      <BillingNoteDialog open={billingOpen} onOpenChange={setBillingOpen} invoiceNumber={inv.number} />
+      <BillingNoteDialog open={billingOpen} onOpenChange={setBillingOpen} defaultInvoiceId={inv.id} defaultCustomerId={inv.customerId} />
+      <ReceiptDialog open={receiptOpen} onOpenChange={setReceiptOpen} invoiceId={inv.id} customerId={inv.customerId} />
       <AddToCalendarDialog open={calOpen} onOpenChange={setCalOpen} defaultCustomerId={inv.customerId} />
+
 
       {printLogOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setPrintLogOpen(false)}>
