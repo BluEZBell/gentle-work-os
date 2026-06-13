@@ -52,7 +52,7 @@ export default function Invoices() {
       {poInvoices.length > 0 && (
         <Card className="card-soft p-4 mb-4">
           <div className="text-xs font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
-            Invoice ที่ออกจาก Customer PO ({poInvoices.length})
+            Invoice ({poInvoices.length})
           </div>
           <div className="space-y-2">
             {poInvoices.map((inv) => {
@@ -63,8 +63,7 @@ export default function Invoices() {
                   <div className="min-w-0">
                     <div className="font-medium flex items-center gap-2 flex-wrap">
                       <Link to={`/po-invoices/${inv.id}`} className="text-primary hover:underline">{inv.number}</Link>
-                      <Badge className="bg-success/15 text-success border-success/30 text-[10px]" variant="outline">จาก PO</Badge>
-                      {po && <span className="text-xs text-muted-foreground">← {po.number}</span>}
+                      {po && <span className="text-xs text-muted-foreground">PO อ้างอิง {po.number}</span>}
                     </div>
                     <div className="text-xs text-muted-foreground mt-0.5">
                       วันที่ {inv.date} • ครบกำหนด {inv.dueDate} • {ls.length} รายการ • {inv.paymentTerm}

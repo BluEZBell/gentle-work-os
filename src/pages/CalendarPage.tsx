@@ -14,6 +14,7 @@ import {
   CalendarEvent, EventType, EVENT_TYPES, EVENT_TYPE_COLOR, EVENT_TYPE_THAI,
   eventTitle,
 } from "@/lib/mockCalendar";
+import { bnCalendarEvents, useBnTick } from "@/lib/billingReceiptStore";
 import { customers, findCustomer } from "@/lib/mockData";
 import { ChevronLeft, ChevronRight, Plus, AlertTriangle, CalendarDays, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -53,6 +54,7 @@ function EventChip({ ev, onClick }: { ev: CalendarEvent; onClick: () => void }) 
 }
 
 export default function CalendarPage() {
+  useBnTick();
   const [events, setEvents] = useState<CalendarEvent[]>(seedEvents);
   const [cursor, setCursor] = useState(new Date());
   const [view, setView] = useState<"month" | "week" | "list">("month");
@@ -61,9 +63,17 @@ export default function CalendarPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [addDate, setAddDate] = useState<string>(ymd(new Date()));
 
+  const combined = useMemo<CalendarEvent[]>(() => {
+    const bnEvs: CalendarEvent[] = bnCalendarEvents.map((e) => ({
+      id: e.id, date: e.date, title: e.title,
+      type: e.kind === "submit" ? "Billing Submission" : "Receive Payment",
+    }));
+    return [...events, ...bnEvs];
+  }, [events, bnCalendarEvents.length]);
+
   const filtered = useMemo(
-    () => events.filter((e) => filterType === "all" || e.type === filterType),
-    [events, filterType]
+    () => combined.filter((e) => filterType === "all" || e.type === filterType),
+    [combined, filterType]
   );
 
   const eventsOnDay = (d: Date) => filtered.filter((e) => e.date === ymd(d));
