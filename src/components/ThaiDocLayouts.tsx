@@ -138,7 +138,15 @@ function Shell({ children }: { children: ReactNode }) {
 
 // -------- Per-type layouts --------
 
-export function ThaiDocLayout({ docTypeId, number = "DOC-2026-0001" }: { docTypeId: string; number?: string }) {
+export function ThaiDocLayout({
+  docTypeId,
+  number = "DOC-2026-0001",
+  leadStages,
+}: {
+  docTypeId: string;
+  number?: string;
+  leadStages?: { name: string; start: string; end: string }[];
+}) {
   const today = new Date().toISOString().slice(0, 10);
 
   switch (docTypeId) {
@@ -159,6 +167,22 @@ export function ThaiDocLayout({ docTypeId, number = "DOC-2026-0001" }: { docType
           </div>
           <ItemTable />
           <Totals withVAT withWHT />
+          {leadStages && leadStages.length > 0 && (
+            <div className="border rounded-md p-3 bg-muted/30 text-xs">
+              <div className="font-semibold mb-2">กำหนดระยะเวลาดำเนินงานโดยประมาณ</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+                {leadStages.map((s, i) => (
+                  <div key={i} className="flex justify-between border-b last:border-0 py-1">
+                    <span className="font-medium">{s.name}</span>
+                    <span className="text-muted-foreground">{s.start} → {s.end}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 text-[11px] text-muted-foreground">
+                * กำหนดการเป็นการประมาณ อาจปรับเปลี่ยนตามความพร้อมของวัตถุดิบและการอนุมัติแบบ
+              </div>
+            </div>
+          )}
           <div className="text-xs text-muted-foreground"><b>หมายเหตุ:</b> ราคามีผล 30 วัน • โอน 50% ก่อนเริ่มงาน • รับประกัน 1 ปี</div>
           <Signatures labels={["ผู้จัดทำ", "ผู้ตรวจสอบ", "ผู้อนุมัติ"]} />
         </Shell>
