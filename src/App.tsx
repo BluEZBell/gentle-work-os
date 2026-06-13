@@ -43,6 +43,8 @@ import {
   WarehouseDetail, OcrDocumentDetail, AiEmailDetail,
 } from "@/pages/details/RecordDetails";
 import PoInvoiceDetail from "@/pages/PoInvoiceDetail";
+import BillingNoteDetail from "@/pages/BillingNoteDetail";
+import ReceiptDetail from "@/pages/ReceiptDetail";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
