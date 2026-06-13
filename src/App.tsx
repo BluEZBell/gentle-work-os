@@ -42,6 +42,7 @@ import {
   ChangeOrderDetail, ApprovalDetail, AssetDetail, PayrollDetail,
   WarehouseDetail, OcrDocumentDetail, AiEmailDetail,
 } from "@/pages/details/RecordDetails";
+import PoInvoiceDetail from "@/pages/PoInvoiceDetail";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -76,6 +77,7 @@ const App = () => (
               <Route path="/customer-po/:id" element={<CustomerPODetail />} />
               <Route path="/invoices" element={<Invoices />} />
               <Route path="/invoices/:id" element={<InvoiceDetail />} />
+              <Route path="/po-invoices/:id" element={<PoInvoiceDetail />} />
               <Route path="/change-orders" element={<ChangeOrders />} />
               <Route path="/change-orders/:id" element={<ChangeOrderDetail />} />
               <Route path="/tasks" element={<Tasks />} />
