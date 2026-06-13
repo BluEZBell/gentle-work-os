@@ -13,14 +13,18 @@ import { findCustomer, findJob, fmtTHB } from "@/lib/mockData";
 import { useAuth } from "@/lib/auth";
 import { Link, useSearchParams } from "react-router-dom";
 import { CustomerLink } from "@/components/CustomerLink";
-import { Search, Receipt, Info, Printer, FileDown } from "lucide-react";
+import { Search, Receipt, Info, Printer, FileDown, ScanLine } from "lucide-react";
 import { toast } from "sonner";
 import { RowActions } from "@/components/RowActions";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { InvoiceFromPODialog } from "@/components/dialogs/InvoiceFromPODialog";
+import { poInvoices, useCustomerPoTick, findCustomerPo, linesForPoInvoice } from "@/lib/customerPoStore";
 
 export default function Invoices() {
   useBizTick();
+  useCustomerPoTick();
   const { user, can } = useAuth();
   const [params] = useSearchParams();
   const initial = params.get("filter") ?? "all";
@@ -28,6 +32,7 @@ export default function Invoices() {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState(dueSoon ? "all" : initial);
   const [preview, setPreview] = useState<{ number: string; type: string } | null>(null);
+  const [poInvOpen, setPoInvOpen] = useState(false);
   const list = customerInvoices.filter((i) => {
     const cust = findCustomer(i.customerId);
     const m = i.number.toLowerCase().includes(q.toLowerCase()) ||
