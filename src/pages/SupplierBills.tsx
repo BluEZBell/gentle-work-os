@@ -136,6 +136,13 @@ export default function SupplierBills() {
                         Mark Paid
                       </Button>
                     )}
+                    <PaymentScheduleDialog
+                      initialSupplierId={b.supplierId}
+                      initialAmount={b.total}
+                      billId={b.id}
+                      jobId={b.jobId}
+                      trigger={<Button size="sm" variant="outline">แผนจ่าย</Button>}
+                    />
                     <RowActions
                       viewHref={`/supplier-bills/${b.id}`}
                       onEdit={() => toast.info(`เปิดบิล ${b.number} เพื่อแก้ไข`)}
