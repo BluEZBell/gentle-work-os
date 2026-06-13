@@ -108,6 +108,7 @@ const App = () => (
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/payment-vouchers" element={<PaymentVouchers />} />
               <Route path="/payment-vouchers/:id" element={<PaymentVoucherDetail />} />
+              <Route path="/payable-forecast" element={<PayableForecast />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/audit" element={<AuditLogPage />} />
