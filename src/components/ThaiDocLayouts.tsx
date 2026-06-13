@@ -170,14 +170,29 @@ export function ThaiDocLayout({
           {leadStages && leadStages.length > 0 && (
             <div className="border rounded-md p-3 bg-muted/30 text-xs">
               <div className="font-semibold mb-2">กำหนดระยะเวลาดำเนินงานโดยประมาณ</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
-                {leadStages.map((s, i) => (
-                  <div key={i} className="flex justify-between border-b last:border-0 py-1">
-                    <span className="font-medium">{s.name}</span>
-                    <span className="text-muted-foreground">{s.start} → {s.end}</span>
-                  </div>
-                ))}
-              </div>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b text-muted-foreground">
+                    <th className="py-1 text-left">ขั้นตอน</th>
+                    <th className="py-1 text-left">วันที่เริ่ม</th>
+                    <th className="py-1 text-left">วันที่สิ้นสุด</th>
+                    <th className="py-1 text-right">ระยะเวลา</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leadStages.map((s, i) => {
+                    const days = Math.max(1, Math.round((new Date(s.end).getTime() - new Date(s.start).getTime()) / 86400000) + 1);
+                    return (
+                      <tr key={i} className="border-b last:border-0">
+                        <td className="py-1 font-medium">{s.name}</td>
+                        <td className="py-1">{s.start}</td>
+                        <td className="py-1">{s.end}</td>
+                        <td className="py-1 text-right">{days} วัน</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
               <div className="mt-2 text-[11px] text-muted-foreground">
                 * กำหนดการเป็นการประมาณ อาจปรับเปลี่ยนตามความพร้อมของวัตถุดิบและการอนุมัติแบบ
               </div>
