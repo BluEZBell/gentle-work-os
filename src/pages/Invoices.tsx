@@ -177,6 +177,8 @@ export default function Invoices() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <InvoiceFromPODialog open={poInvOpen} onOpenChange={setPoInvOpen} />
     </>
   );
 }
