@@ -20,10 +20,11 @@ import { RowActions } from "@/components/RowActions";
 import { useTick, audit } from "@/lib/store";
 import { Link, useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, Paperclip, Plus, Printer, FileDown, Trash2 } from "lucide-react";
+import { FileText, Paperclip, Plus, Printer, FileDown, Trash2, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { LeadTimePlanning } from "@/components/quotation/LeadTimePlanning";
+import { GanttPreview } from "@/components/quotation/GanttPreview";
 import { getPlan, setPlan as savePlan, validateStages, useLtTick, addPlanToCalendar, type LtStage } from "@/lib/leadTimeStore";
 import { Clock, CalendarPlus } from "lucide-react";
 
