@@ -66,12 +66,17 @@ export default function PurchaseOrders() {
             {customerPos.map((p) => {
               const cust = findCustomer(p.customerId);
               const its = itemsForPo(p.id);
+              const full = its.length > 0 && its.every((i) => i.invoiceStatus === "full");
+              const partial = its.some((i) => i.invoiceStatus === "partial" || i.invoiceStatus === "full");
               return (
                 <div key={p.id} className="border rounded-lg p-3 bg-secondary/20 flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="font-medium flex items-center gap-2 flex-wrap">
-                      <span>{p.number}</span>
+                      <Link to={`/customer-po/${p.id}`} className="text-primary hover:underline">{p.number}</Link>
                       <StatusBadge status={PO_OCR_STATUS_TH[p.ocrStatus]} tone="success" />
+                      {full ? <Badge variant="outline" className="bg-emerald-100 text-emerald-700 border-emerald-300 text-[10px]">ออก Invoice ครบ</Badge>
+                        : partial ? <Badge variant="outline" className="bg-warning-soft text-warning-foreground border-warning/40 text-[10px]">ออก Invoice บางส่วน</Badge>
+                        : <Badge variant="outline" className="text-[10px]">ยังไม่ออก Invoice</Badge>}
                       {p.fileName && <Badge variant="outline" className="text-[10px]"><Paperclip className="w-3 h-3 mr-0.5" />{p.fileName}</Badge>}
                     </div>
                     <div className="text-xs text-muted-foreground mt-0.5">
@@ -79,11 +84,16 @@ export default function PurchaseOrders() {
                       {" "}• วันที่ {p.poDate} • ส่ง {p.deliveryDate} • {its.length} รายการ
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex flex-col items-end gap-1">
                     <div className="font-semibold">{fmtTHB(p.total)}</div>
-                    <Button size="sm" variant="outline" className="mt-1 h-7 text-xs" onClick={() => setPrepInv(p.id)}>
-                      <Receipt className="w-3.5 h-3.5 mr-1" />เตรียมออก Invoice
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button asChild size="sm" variant="outline" className="h-7 text-xs">
+                        <Link to={`/customer-po/${p.id}`}>เปิดดู</Link>
+                      </Button>
+                      <Button size="sm" variant="outline" className="h-7 text-xs" disabled={full} onClick={() => setPrepInv(p.id)}>
+                        <Receipt className="w-3.5 h-3.5 mr-1" />เตรียมออก Invoice
+                      </Button>
+                    </div>
                   </div>
                 </div>
               );

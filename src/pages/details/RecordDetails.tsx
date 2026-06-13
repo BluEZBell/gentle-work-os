@@ -18,6 +18,20 @@ import {
   activities, quotationRevisions, workSpecs, supplierQuotes, receivingRecords,
 } from "@/lib/mockBusiness";
 import {
+  customerPos, customerPoItems, findCustomerPo, itemsForPo,
+  poInvoicesForPo, useCustomerPoTick, PO_OCR_STATUS_TH, INVOICE_STATUS_TH,
+  type PoInvoiceStatus,
+} from "@/lib/customerPoStore";
+import { Badge } from "@/components/ui/badge";
+import { InvoiceFromPODialog } from "@/components/dialogs/InvoiceFromPODialog";
+import { AddToCalendarDialog } from "@/components/dialogs/AddToCalendarDialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { ScanLine, Receipt, Trash2, Paperclip, CheckCircle2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
   assets, assetMonthlyDep, assetAccumDep, assetBookValue,
   payrollLines, payrollAllowances, payrollDeductions, payrollNetPay,
   warehouses, stockItems, stockTotal, barcodeIssues,
@@ -393,46 +407,228 @@ export function DealDetail() {
 
 // ===================== CUSTOMER PO (mock derived from supplier POs flagged customer) =====================
 export function CustomerPODetail() {
+  useCustomerPoTick();
   const { id } = useParams();
-  // We treat the PO id as a Customer PO record using the same purchaseOrders array
-  const p = purchaseOrders.find((x) => x.id === id);
-  if (!p) return <NotFoundDetail backTo="/purchase-orders?type=customer" label="Customer PO" />;
-  const j = findJob(p.jobId);
+  const cpo = id ? findCustomerPo(id) : undefined;
+
+  // Fallback to legacy supplier-PO record if id isn't an OCR-imported Customer PO.
+  if (!cpo) {
+    const p = id ? purchaseOrders.find((x) => x.id === id) : undefined;
+    if (!p) return <NotFoundDetail backTo="/purchase-orders?type=customer" label="Customer PO" />;
+    const j = findJob(p.jobId);
+    return (
+      <DetailShell
+        module="CustomerPO" recordId={p.id}
+        title={p.number} thai="ใบสั่งซื้อจากลูกค้า"
+        breadcrumbs={[root("Customer PO (PO ลูกค้า)", "/purchase-orders?type=customer"), { label: p.number }]}
+        status={<StatusBadge status={p.status} />}
+        customerId={j?.customerId}
+        jobLink={j ? `/jobs/${j.id}` : undefined}
+        jobLabel={j?.number}
+        meta={<>
+          <MetaRow label="วันที่ PO">{p.date}</MetaRow>
+          <MetaRow label="คาดส่งมอบ">{p.expectedDelivery}</MetaRow>
+          <MetaRow label="มูลค่ารวม">{fmtTHB(poTotal(p))}</MetaRow>
+          <MetaRow label="จำนวนรายการ">{p.items.length}</MetaRow>
+        </>}
+        timeline={[{ id: p.id, date: p.date, title: `PO ${p.status}`, detail: p.number, tone: "info" }]}
+      >
+        <Card className="card-soft p-5">
+          <h3 className="font-semibold mb-3">รายการในใบสั่งซื้อลูกค้า</h3>
+          <Table>
+            <TableHeader><TableRow><TableHead>Item</TableHead><TableHead className="text-right">Qty</TableHead><TableHead className="text-right">Unit</TableHead><TableHead className="text-right">Total</TableHead></TableRow></TableHeader>
+            <TableBody>
+              {p.items.map((it) => (
+                <TableRow key={it.id}>
+                  <TableCell>{it.name}</TableCell><TableCell className="text-right">{it.qty}</TableCell>
+                  <TableCell className="text-right">{fmtTHB(it.unitCost)}</TableCell>
+                  <TableCell className="text-right font-medium">{fmtTHB(it.qty * it.unitCost)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      </DetailShell>
+    );
+  }
+
+  return <OcrCustomerPoDetail cpoId={cpo.id} />;
+}
+
+function statusTone(s: PoInvoiceStatus): "success" | "warning" | "muted" {
+  return s === "full" ? "success" : s === "partial" ? "warning" : "muted";
+}
+
+function OcrCustomerPoDetail({ cpoId }: { cpoId: string }) {
+  const [prepOpen, setPrepOpen] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
+  const [delOpen, setDelOpen] = useState(false);
+  const cpo = findCustomerPo(cpoId)!;
+  const cust = findCustomer(cpo.customerId);
+  const items = itemsForPo(cpo.id);
+  const invs = poInvoicesForPo(cpo.id);
+  const fullyInvoiced = items.length > 0 && items.every((i) => i.invoiceStatus === "full");
+
+  const doDelete = () => {
+    const idx = customerPos.findIndex((x) => x.id === cpo.id);
+    if (idx >= 0) customerPos.splice(idx, 1);
+    // remove related items
+    for (let i = customerPoItems.length - 1; i >= 0; i--) {
+      if (customerPoItems[i].customerPoId === cpo.id) customerPoItems.splice(i, 1);
+    }
+    audit("Khun Ploy", "Delete Customer PO", cpo.number, "Customer PO");
+    toast.success(`ลบ ${cpo.number} เรียบร้อย (เดโม)`);
+    setDelOpen(false);
+    history.back();
+  };
+
   return (
     <DetailShell
-      module="CustomerPO" recordId={p.id}
-      title={p.number} thai="ใบสั่งซื้อจากลูกค้า"
-      breadcrumbs={[root("Customer PO (PO ลูกค้า)", "/purchase-orders?type=customer"), { label: p.number }]}
-      status={<StatusBadge status={p.status} />}
-      customerId={j?.customerId}
-      jobLink={j ? `/jobs/${j.id}` : undefined}
-      jobLabel={j?.number}
+      module="CustomerPO" recordId={cpo.id}
+      title={cpo.number} thai="ใบสั่งซื้อจากลูกค้า (PO ลูกค้า)"
+      breadcrumbs={[root("Customer PO (PO ลูกค้า)", "/purchase-orders?type=customer"), { label: cpo.number }]}
+      status={
+        <div className="flex flex-wrap gap-1.5 items-center">
+          <Badge variant="outline" className="bg-success/15 text-success border-success/30">{PO_OCR_STATUS_TH[cpo.ocrStatus]}</Badge>
+          {fullyInvoiced && <Badge variant="outline" className="bg-emerald-100 text-emerald-700 border-emerald-300"><CheckCircle2 className="w-3 h-3 mr-1" />ออก Invoice ครบ</Badge>}
+        </div>
+      }
+      customerId={cpo.customerId}
+      actions={
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="outline" onClick={() => toast.info("เปิดเอกสารต้นฉบับ PO (เดโม)")}><Paperclip className="w-4 h-4 mr-1" />ดู PO ต้นฉบับ</Button>
+          <Button size="sm" onClick={() => setPrepOpen(true)} disabled={fullyInvoiced}>
+            <Receipt className="w-4 h-4 mr-1" />เตรียมออก Invoice
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
+          <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={() => setDelOpen(true)}><Trash2 className="w-4 h-4 mr-1" />ลบ</Button>
+        </div>
+      }
       meta={<>
-        <MetaRow label="วันที่ PO">{p.date}</MetaRow>
-        <MetaRow label="คาดส่งมอบ">{p.expectedDelivery}</MetaRow>
-        <MetaRow label="มูลค่ารวม">{fmtTHB(poTotal(p))}</MetaRow>
-        <MetaRow label="จำนวนรายการ">{p.items.length}</MetaRow>
+        <MetaRow label="ลูกค้า">{cust ? <Link to={`/customers/${cust.id}`} className="text-primary hover:underline">{cust.name}</Link> : "—"}</MetaRow>
+        <MetaRow label="ผู้ติดต่อ">{cpo.contactName ?? "—"}</MetaRow>
+        <MetaRow label="วันที่ PO">{cpo.poDate}</MetaRow>
+        <MetaRow label="วันส่งของ">{cpo.deliveryDate}</MetaRow>
+        <MetaRow label="สกุลเงิน">{cpo.currency}</MetaRow>
+        <MetaRow label="ยอดรวม">{fmtTHB(cpo.total)}</MetaRow>
+        <MetaRow label="ไฟล์ต้นฉบับ">{cpo.fileName ?? "—"}</MetaRow>
+        <MetaRow label="นำเข้าโดย">{cpo.createdBy} • {cpo.createdAt}</MetaRow>
       </>}
-      timeline={[{ id: p.id, date: p.date, title: `PO ${p.status}`, detail: p.number, tone: "info" }]}
+      timeline={[
+        { id: "imp", date: cpo.createdAt, title: "นำเข้า PO ลูกค้าจาก OCR", detail: `${cpo.number} • ${items.length} รายการ โดย ${cpo.createdBy}`, tone: "success" as const },
+        ...invs.map((iv) => ({ id: iv.id, date: iv.createdAt, title: "ออก Invoice จากรายการ PO", detail: `${iv.number} • ${fmtTHB(iv.total)}`, tone: "info" as const })),
+      ]}
     >
+      <Alert className="border-warning/40 bg-warning-soft">
+        <ScanLine className="h-4 w-4 text-warning-foreground" />
+        <AlertDescription className="text-warning-foreground/90 text-xs">
+          ข้อมูลในใบนี้ถูกอ่านด้วย OCR — กรุณาเทียบกับเอกสารต้นฉบับก่อนใช้งานในการออก Invoice
+        </AlertDescription>
+      </Alert>
+
+      {cpo.notes && (
+        <Card className="card-soft p-4 text-sm">
+          <div className="text-xs text-muted-foreground mb-1">หมายเหตุจาก PO</div>
+          {cpo.notes}
+        </Card>
+      )}
+
       <Card className="card-soft p-5">
-        <h3 className="font-semibold mb-3">รายการในใบสั่งซื้อลูกค้า</h3>
-        <Table>
-          <TableHeader><TableRow><TableHead>Item</TableHead><TableHead className="text-right">Qty</TableHead><TableHead className="text-right">Unit</TableHead><TableHead className="text-right">Total</TableHead></TableRow></TableHeader>
-          <TableBody>
-            {p.items.map((it) => (
-              <TableRow key={it.id}>
-                <TableCell>{it.name}</TableCell><TableCell className="text-right">{it.qty}</TableCell>
-                <TableCell className="text-right">{fmtTHB(it.unitCost)}</TableCell>
-                <TableCell className="text-right font-medium">{fmtTHB(it.qty * it.unitCost)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h3 className="font-semibold">รายการสินค้าใน PO ({items.length})</h3>
+          <div className="text-xs text-muted-foreground">
+            ออกแล้ว {items.filter((i) => i.invoiceStatus !== "none").length} / {items.length} รายการ
+          </div>
+        </div>
+        {items.length === 0 ? (
+          <div className="text-sm text-muted-foreground py-6 text-center">ยังไม่มีรายการสินค้าใน PO นี้</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="text-left text-xs text-muted-foreground border-b">
+                <tr>
+                  <th className="py-1.5">Item No.</th>
+                  <th>คำอธิบาย</th>
+                  <th>วันส่ง</th>
+                  <th className="text-right">PO Qty</th>
+                  <th className="text-right">ออกแล้ว</th>
+                  <th className="text-right">คงเหลือ</th>
+                  <th>หน่วย</th>
+                  <th className="text-right">ราคา/หน่วย</th>
+                  <th className="text-right">ยอดรวม</th>
+                  <th>สถานะ Invoice</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((it) => {
+                  const tone = statusTone(it.invoiceStatus);
+                  const cls = tone === "success" ? "bg-success/15 text-success border-success/30"
+                    : tone === "warning" ? "bg-warning-soft text-warning-foreground border-warning/40"
+                    : "bg-muted text-muted-foreground";
+                  return (
+                    <tr key={it.poItemId} className="border-b last:border-0">
+                      <td className="py-1.5 font-medium">{it.itemNumber}</td>
+                      <td>{it.description}</td>
+                      <td>{it.deliveryDate}</td>
+                      <td className="text-right">{it.quantity}</td>
+                      <td className="text-right">{it.invoicedQuantity}</td>
+                      <td className="text-right font-medium">{it.remainingQuantity}</td>
+                      <td>{it.unit}</td>
+                      <td className="text-right">{fmtTHB(it.unitPrice)}</td>
+                      <td className="text-right">{fmtTHB(it.amount)}</td>
+                      <td><Badge variant="outline" className={"text-[10px] " + cls}>{INVOICE_STATUS_TH[it.invoiceStatus]}</Badge></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
+
+      <Card className="card-soft p-5">
+        <h3 className="font-semibold mb-3">Invoice ที่เชื่อมโยง ({invs.length})</h3>
+        {invs.length === 0 ? (
+          <div className="text-sm text-muted-foreground">ยังไม่มี Invoice — กด "เตรียมออก Invoice" เพื่อสร้าง</div>
+        ) : (
+          <ul className="text-sm divide-y">
+            {invs.map((iv) => (
+              <li key={iv.id} className="py-1.5 flex justify-between">
+                <Link to={`/po-invoices/${iv.id}`} className="text-primary hover:underline">{iv.number}</Link>
+                <span className="text-muted-foreground">{iv.date} • {fmtTHB(iv.total)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      <InvoiceFromPODialog open={prepOpen} onOpenChange={setPrepOpen} defaultCustomerId={cpo.customerId} defaultPoId={cpo.id} />
+      <AddToCalendarDialog open={calOpen} onOpenChange={setCalOpen} defaultCustomerId={cpo.customerId} />
+
+      <AlertDialog open={delOpen} onOpenChange={setDelOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>ลบ Customer PO {cpo.number}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {cpo.number} และ {items.length} รายการสินค้าจะถูกลบออก (เดโม)
+              {invs.length > 0 && (
+                <span className="block mt-2 text-warning-foreground">
+                  ⚠️ มี Invoice ผูกอยู่ {invs.length} ฉบับ — Invoice เดิมจะไม่ถูกลบแต่จะอ้างอิง PO ที่หายไป
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={doDelete}>ลบ</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DetailShell>
   );
 }
+
+
 
 // ===================== PURCHASE ORDER (Supplier PO) =====================
 export function PurchaseOrderDetail() {
