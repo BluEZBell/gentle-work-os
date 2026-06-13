@@ -168,3 +168,125 @@ export function importCustomerPo(p: ImportPayload, user: string): CustomerPo {
 
 export const customerPosFor = (cid: string) => customerPos.filter((p) => p.customerId === cid);
 export const itemsForPo = (poId: string) => customerPoItems.filter((i) => i.customerPoId === poId);
+export const findCustomerPo = (id: string) => customerPos.find((p) => p.id === id);
+
+// ============== PO-sourced Invoices (Phase 3B) ==============
+export interface PoInvoiceLine {
+  id: string; invoiceId: string; poItemId: string;
+  itemNumber: string; description: string; quantity: number;
+  unit: string; unitPrice: number; amount: number;
+}
+
+export interface PoInvoice {
+  id: string;
+  number: string;
+  customerId: string;
+  customerPoId: string;
+  contactId?: string;
+  contactName?: string;
+  jobId?: string;
+  quotationId?: string;
+  date: string;
+  dueDate: string;
+  paymentTerm: string;
+  billingRound: string;
+  address: string;
+  taxId: string;
+  branch: string;
+  notes: string;
+  internalNote: string;
+  discount: number;
+  vatRate: number;
+  whtRate: number;
+  subtotal: number;
+  vat: number;
+  wht: number;
+  total: number;
+  customerCopies: number;
+  internalCopies: number;
+  createdAt: string;
+  createdBy: string;
+}
+
+export const poInvoices: PoInvoice[] = [];
+export const poInvoiceLines: PoInvoiceLine[] = [];
+
+export interface CreatePoInvoicePayload {
+  customerId: string;
+  customerPoId: string;
+  contactId?: string;
+  contactName?: string;
+  jobId?: string;
+  quotationId?: string;
+  number: string;
+  date: string;
+  dueDate: string;
+  paymentTerm: string;
+  billingRound: string;
+  address: string;
+  taxId: string;
+  branch: string;
+  notes: string;
+  internalNote: string;
+  discount: number;
+  vatRate: number;
+  whtRate: number;
+  customerCopies: number;
+  internalCopies: number;
+  lines: Array<{ poItemId: string; quantity: number }>;
+}
+
+export function createPoInvoice(p: CreatePoInvoicePayload, user: string): PoInvoice {
+  const id = uid("pinv");
+  const expanded: PoInvoiceLine[] = [];
+  let subtotal = 0;
+  p.lines.forEach((l) => {
+    const it = customerPoItems.find((i) => i.poItemId === l.poItemId);
+    if (!it) return;
+    const qty = Math.max(0, Math.min(Number(l.quantity) || 0, it.remainingQuantity));
+    if (qty <= 0) return;
+    const amount = qty * it.unitPrice;
+    subtotal += amount;
+    expanded.push({
+      id: uid("pil"), invoiceId: id, poItemId: it.poItemId,
+      itemNumber: it.itemNumber, description: it.description,
+      quantity: qty, unit: it.unit, unitPrice: it.unitPrice, amount,
+    });
+    // Update PO item rollups
+    it.invoicedQuantity += qty;
+    it.remainingQuantity = Math.max(0, it.quantity - it.invoicedQuantity);
+    it.invoiceStatus = it.remainingQuantity <= 0 ? "full"
+      : it.invoicedQuantity > 0 ? "partial" : "none";
+  });
+
+  const base = Math.max(0, subtotal - (p.discount || 0));
+  const vat = +(base * (p.vatRate / 100)).toFixed(2);
+  const wht = +(base * (p.whtRate / 100)).toFixed(2);
+  const total = +(base + vat - wht).toFixed(2);
+
+  const inv: PoInvoice = {
+    id, number: p.number, customerId: p.customerId, customerPoId: p.customerPoId,
+    contactId: p.contactId, contactName: p.contactName, jobId: p.jobId, quotationId: p.quotationId,
+    date: p.date, dueDate: p.dueDate, paymentTerm: p.paymentTerm, billingRound: p.billingRound,
+    address: p.address, taxId: p.taxId, branch: p.branch, notes: p.notes, internalNote: p.internalNote,
+    discount: p.discount, vatRate: p.vatRate, whtRate: p.whtRate,
+    subtotal, vat, wht, total,
+    customerCopies: p.customerCopies, internalCopies: p.internalCopies,
+    createdAt: stamp(), createdBy: user,
+  };
+  poInvoices.unshift(inv);
+  poInvoiceLines.push(...expanded);
+  bump();
+  return inv;
+}
+
+export const poInvoicesFor = (cid: string) => poInvoices.filter((i) => i.customerId === cid);
+export const poInvoicesForPo = (poId: string) => poInvoices.filter((i) => i.customerPoId === poId);
+export const linesForPoInvoice = (invId: string) => poInvoiceLines.filter((l) => l.invoiceId === invId);
+export const findPoInvoice = (id: string) => poInvoices.find((i) => i.id === id);
+
+export function nextInvoiceNumber(): string {
+  const n = poInvoices.length + 1;
+  return `INV-PO-${new Date().getFullYear()}-${String(n).padStart(4, "0")}`;
+}
+

@@ -13,14 +13,18 @@ import { findCustomer, findJob, fmtTHB } from "@/lib/mockData";
 import { useAuth } from "@/lib/auth";
 import { Link, useSearchParams } from "react-router-dom";
 import { CustomerLink } from "@/components/CustomerLink";
-import { Search, Receipt, Info, Printer, FileDown } from "lucide-react";
+import { Search, Receipt, Info, Printer, FileDown, ScanLine } from "lucide-react";
 import { toast } from "sonner";
 import { RowActions } from "@/components/RowActions";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { InvoiceFromPODialog } from "@/components/dialogs/InvoiceFromPODialog";
+import { poInvoices, useCustomerPoTick, findCustomerPo, linesForPoInvoice } from "@/lib/customerPoStore";
 
 export default function Invoices() {
   useBizTick();
+  useCustomerPoTick();
   const { user, can } = useAuth();
   const [params] = useSearchParams();
   const initial = params.get("filter") ?? "all";
@@ -28,6 +32,7 @@ export default function Invoices() {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState(dueSoon ? "all" : initial);
   const [preview, setPreview] = useState<{ number: string; type: string } | null>(null);
+  const [poInvOpen, setPoInvOpen] = useState(false);
   const list = customerInvoices.filter((i) => {
     const cust = findCustomer(i.customerId);
     const m = i.number.toLowerCase().includes(q.toLowerCase()) ||
@@ -41,7 +46,42 @@ export default function Invoices() {
     <>
       <PageHeader title="Customer Invoices" thai="ใบแจ้งหนี้ลูกค้า"
         description="ติดตามใบแจ้งหนี้ลูกค้า ยอดที่ต้องรับ และสถานะการชำระเงิน"
+        actions={<Button onClick={() => setPoInvOpen(true)}><ScanLine className="w-4 h-4 mr-1" />สร้าง Invoice จาก PO ลูกค้า</Button>}
       />
+
+      {poInvoices.length > 0 && (
+        <Card className="card-soft p-4 mb-4">
+          <div className="text-xs font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
+            Invoice ที่ออกจาก Customer PO ({poInvoices.length})
+          </div>
+          <div className="space-y-2">
+            {poInvoices.map((inv) => {
+              const po = findCustomerPo(inv.customerPoId);
+              const ls = linesForPoInvoice(inv.id);
+              return (
+                <div key={inv.id} className="border rounded-lg p-3 bg-secondary/20 flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-medium flex items-center gap-2 flex-wrap">
+                      <Link to={`/po-invoices/${inv.id}`} className="text-primary hover:underline">{inv.number}</Link>
+                      <Badge className="bg-success/15 text-success border-success/30 text-[10px]" variant="outline">จาก PO</Badge>
+                      {po && <span className="text-xs text-muted-foreground">← {po.number}</span>}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      วันที่ {inv.date} • ครบกำหนด {inv.dueDate} • {ls.length} รายการ • {inv.paymentTerm}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold">{fmtTHB(inv.total)}</div>
+                    <Button asChild size="sm" variant="outline" className="mt-1 h-7 text-xs">
+                      <Link to={`/po-invoices/${inv.id}`}>เปิดดู Invoice</Link>
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
 
       <Alert className="mb-4 border-info/40 bg-info-soft">
         <Info className="h-4 w-4 text-info" />
@@ -137,6 +177,8 @@ export default function Invoices() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <InvoiceFromPODialog open={poInvOpen} onOpenChange={setPoInvOpen} />
     </>
   );
 }
