@@ -597,19 +597,55 @@ export function CustomerDetail() {
             <TabsContent value="invoices" className="mt-4 space-y-4">
               {(() => {
                 const poInvs = poInvoicesFor(c.id);
-                return poInvs.length > 0 ? (
-                  <Card className="card-soft p-4">
-                    <div className="text-xs font-semibold mb-2 text-muted-foreground uppercase tracking-wide">Invoice ที่ออกจาก Customer PO ({poInvs.length})</div>
-                    <div className="space-y-1">
-                      {poInvs.map((inv) => (
-                        <Row key={inv.id}
-                          left={<Link to={`/po-invoices/${inv.id}`} className="text-primary hover:underline">{inv.number}</Link>}
-                          right={<><span className="text-muted-foreground mr-2">{fmtTHB(inv.total)}</span><Badge variant="outline" className="bg-success/15 text-success border-success/30 text-[10px]">จาก PO</Badge></>}
-                          sub={`วันที่ ${inv.date} • ครบกำหนด ${inv.dueDate} • ${inv.paymentTerm}`} />
-                      ))}
-                    </div>
-                  </Card>
-                ) : null;
+                const bns = bnsFor(c.id);
+                const rcs = receiptsFor(c.id);
+                const arOut = arOutstandingFor(c.id);
+                return (
+                  <>
+                    {poInvs.length > 0 && (
+                      <Card className="card-soft p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Invoice ({poInvs.length})</div>
+                          <div className="text-xs">AR ค้างรับ: <span className="font-semibold text-warning">{fmtTHB(arOut)}</span></div>
+                        </div>
+                        <div className="space-y-1">
+                          {poInvs.map((inv) => (
+                            <Row key={inv.id}
+                              left={<Link to={`/po-invoices/${inv.id}`} className="text-primary hover:underline">{inv.number}</Link>}
+                              right={<><span className="text-muted-foreground mr-2">{fmtTHB(inv.total)}</span>{isInvoicePaid(inv.id) ? <Badge variant="outline" className="bg-success/15 text-success border-success/30 text-[10px]">ชำระแล้ว</Badge> : <Badge variant="outline" className="bg-warning/15 text-warning border-warning/30 text-[10px]">ยังไม่ชำระ</Badge>}</>}
+                              sub={`วันที่ ${inv.date} • ครบกำหนด ${inv.dueDate} • ${inv.paymentTerm}`} />
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+                    {bns.length > 0 && (
+                      <Card className="card-soft p-4 border-purple-200">
+                        <div className="text-xs font-semibold mb-2 text-purple-700 uppercase tracking-wide">ใบวางบิล ({bns.length})</div>
+                        <div className="space-y-1">
+                          {bns.map((b) => (
+                            <Row key={b.id}
+                              left={<Link to={`/billing-notes/${b.id}`} className="text-purple-700 hover:underline">{b.number}</Link>}
+                              right={<><span className="text-muted-foreground mr-2">{fmtTHB(b.total)}</span><Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-[10px]">{b.status}</Badge></>}
+                              sub={`วันวางบิล ${b.submissionDate} • คาดรับเงิน ${b.expectedPaymentDate} • ${b.invoiceIds.length} ใบ`} />
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+                    {rcs.length > 0 && (
+                      <Card className="card-soft p-4 border-emerald-200">
+                        <div className="text-xs font-semibold mb-2 text-emerald-700 uppercase tracking-wide">ใบเสร็จรับเงิน ({rcs.length})</div>
+                        <div className="space-y-1">
+                          {rcs.map((r) => (
+                            <Row key={r.id}
+                              left={<Link to={`/receipts/${r.id}`} className="text-emerald-700 hover:underline">{r.number}</Link>}
+                              right={<><span className="text-muted-foreground mr-2">{fmtTHB(r.amount)}</span><Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">{r.method}</Badge></>}
+                              sub={`รับเงิน ${r.paymentReceivedDate}`} />
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+                  </>
+                );
               })()}
               <ListCard items={cInvoices} empty="ยังไม่มีใบแจ้งหนี้" render={(i) => (
                 <Row key={i.id} left={<Link to={`/invoices/${i.id}`} className="text-primary hover:underline">{i.number}</Link>}
@@ -627,6 +663,7 @@ export function CustomerDetail() {
                 </Card>
               )}
             </TabsContent>
+
 
             <TabsContent value="service" className="mt-4">
               <ListCard items={cSvc} empty="ยังไม่มีงานบริการ" render={(s) => (
