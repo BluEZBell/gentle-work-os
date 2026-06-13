@@ -32,10 +32,12 @@ export default function PoInvoiceDetail() {
   useBnTick();
   const { id } = useParams();
   const inv = id ? findPoInvoice(id) : undefined;
+  const nav = useNavigate();
   const [billingOpen, setBillingOpen] = useState(false);
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
   const [printLogOpen, setPrintLogOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   if (!inv) return (
     <div className="p-6">ไม่พบ Invoice <Link to="/invoices" className="text-primary">กลับ</Link></div>
