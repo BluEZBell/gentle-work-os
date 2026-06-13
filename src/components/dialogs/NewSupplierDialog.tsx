@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addSupplier } from "@/lib/store";
+import { setSupplierKind, SUPPLIER_KIND_TH, type SupplierKind } from "@/lib/supplierPaymentStore";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
@@ -13,6 +14,7 @@ import { Plus } from "lucide-react";
 export function NewSupplierDialog() {
   const { user, can } = useAuth();
   const [open, setOpen] = useState(false);
+  const [kind, setKind] = useState<SupplierKind>("Supplier");
   const [f, setF] = useState({
     name: "", contactPerson: "", phone: "", email: "",
     paymentTerm: "30 Days" as "Cash" | "30 Days" | "60 Days",
@@ -21,7 +23,9 @@ export function NewSupplierDialog() {
   });
   const submit = () => {
     if (!f.name.trim()) { toast.error("Name required"); return; }
-    addSupplier(f, user?.name ?? "Demo User"); toast.success("Supplier added"); setOpen(false);
+    const created = addSupplier(f, user?.name ?? "Demo User");
+    if (created) setSupplierKind(created.id, kind);
+    toast.success("Supplier added"); setOpen(false);
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
