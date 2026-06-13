@@ -192,6 +192,7 @@ export default function BillingNoteDetail() {
           <div className="grid gap-3">
             <div><Label className="text-xs">วันที่ใบวางบิล</Label><Input type="date" value={bnDate} onChange={(e) => setBnDate(e.target.value)} /></div>
             <div><Label className="text-xs">วันวางบิล</Label><Input type="date" value={subDate} onChange={(e) => setSubDate(e.target.value)} /></div>
+            <div><Label className="text-xs">วันคาดว่าจะรับเงิน</Label><Input type="date" value={expDate} onChange={(e) => setExpDate(e.target.value)} /></div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditOpen(false)}>ยกเลิก</Button>
