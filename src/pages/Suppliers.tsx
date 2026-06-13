@@ -44,21 +44,21 @@ export default function Suppliers() {
           <TableHeader>
             <TableRow>
               <TableHead>Supplier</TableHead>
+              <TableHead>ประเภทคู่ค้า</TableHead>
               <TableHead>Contact</TableHead>
-              <TableHead>Type</TableHead>
               <TableHead>Payment Term</TableHead>
-              <TableHead>Bank</TableHead>
               <TableHead>Open bills</TableHead>
-              <TableHead>Active jobs</TableHead>
+              <TableHead>แผนจ่าย</TableHead>
               <TableHead>Risk</TableHead>
-              <TableHead className="text-right w-32">การกระทำ</TableHead>
+              <TableHead className="text-right w-44">การกระทำ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.map((s) => {
               const openBills = supplierBills.filter((b) => b.supplierId === s.id && b.status !== "Paid");
               const openBillTotal = openBills.reduce((a, b) => a + b.total, 0);
-              const sJobs = jobs.filter((j) => j.supplierId === s.id && j.status !== "Closed");
+              const plansForS = paymentPlans.filter((p) => p.supplierId === s.id);
+              const kind = getSupplierKind(s.id);
               return (
               <TableRow key={s.id}>
                 <TableCell>
