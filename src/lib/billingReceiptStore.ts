@@ -165,6 +165,13 @@ export function createReceipt(p: CreateReceiptPayload, user: string): Receipt {
   return r;
 }
 
+export function updateReceipt(id: string, patch: Partial<Receipt>) {
+  const r = receipts.find((x) => x.id === id);
+  if (!r) return;
+  Object.assign(r, patch);
+  bump();
+}
+
 export function deleteReceipt(id: string) {
   const i = receipts.findIndex((x) => x.id === id);
   if (i >= 0) {

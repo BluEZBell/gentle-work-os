@@ -11,9 +11,13 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   findPoInvoice, linesForPoInvoice, findCustomerPo, useCustomerPoTick,
-  poInvoices,
+  poInvoices, updatePoInvoice,
 } from "@/lib/customerPoStore";
 import { findCustomer, fmtTHB } from "@/lib/mockData";
 import { Timeline } from "@/components/Timeline";
@@ -21,15 +25,20 @@ import { Attachments } from "@/components/Attachments";
 import { BillingNoteDialog } from "@/components/dialogs/BillingNoteDialog";
 import { ReceiptDialog } from "@/components/dialogs/ReceiptDialog";
 import { AddToCalendarDialog } from "@/components/dialogs/AddToCalendarDialog";
-import { isInvoicePaid, useBnTick, bnsForInvoice, receiptsForInvoice } from "@/lib/billingReceiptStore";
 import {
-  Printer, FileDown, Pencil, CalendarPlus, Trash2, Receipt, FileText, History, Info,
+  isInvoicePaid, useBnTick, bnsForInvoice, receiptsForInvoice,
+  logPrint, printLogFor,
+} from "@/lib/billingReceiptStore";
+import { useAuth } from "@/lib/auth";
+import {
+  Printer, FileDown, Pencil, CalendarPlus, Trash2, Receipt, FileText, History, Info, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function PoInvoiceDetail() {
   useCustomerPoTick();
   useBnTick();
+  const { user } = useAuth();
   const { id } = useParams();
   const inv = id ? findPoInvoice(id) : undefined;
   const nav = useNavigate();
@@ -38,6 +47,11 @@ export default function PoInvoiceDetail() {
   const [calOpen, setCalOpen] = useState(false);
   const [printLogOpen, setPrintLogOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [eDate, setEDate] = useState(inv?.date ?? "");
+  const [eDue, setEDue] = useState(inv?.dueDate ?? "");
+  const [eNotes, setENotes] = useState(inv?.notes ?? "");
+  const [eInternal, setEInternal] = useState(inv?.internalNote ?? "");
 
   if (!inv) return (
     <div className="p-6">ไม่พบ Invoice <Link to="/invoices" className="text-primary">กลับ</Link></div>
@@ -49,6 +63,24 @@ export default function PoInvoiceDetail() {
   const linkedBns = bnsForInvoice(inv.id);
   const linkedRcs = receiptsForInvoice(inv.id);
   const paid = isInvoicePaid(inv.id);
+  const pl = printLogFor(inv.id);
+
+  const print = (copyType: "ต้นฉบับ" | "สำเนา", copies: number) => {
+    logPrint({ documentType: "Billing Note", relatedId: inv.id, copyType, copies, printedBy: user?.name ?? "Demo" });
+    toast.success(`พิมพ์${copyType} ${copies > 1 ? `${copies} ชุด ` : ""}แล้ว (เดโม)`);
+  };
+
+  const openEdit = () => {
+    setEDate(inv.date); setEDue(inv.dueDate);
+    setENotes(inv.notes); setEInternal(inv.internalNote);
+    setEditOpen(true);
+  };
+  const saveEdit = () => {
+    if (!eDate || !eDue) { toast.error("กรุณาระบุวันที่และวันครบกำหนด"); return; }
+    updatePoInvoice(inv.id, { date: eDate, dueDate: eDue, notes: eNotes, internalNote: eInternal });
+    toast.success("บันทึก Invoice แล้ว");
+    setEditOpen(false);
+  };
 
   return (
     <>
@@ -59,17 +91,18 @@ export default function PoInvoiceDetail() {
           { label: "Customer Invoices (ใบแจ้งหนี้ลูกค้า)", to: "/invoices" },
           { label: inv.number },
         ]} />}
-        description={`Invoice อ้างอิง PO ${po?.number ?? "—"} • ลูกค้า ${cust?.name ?? "—"}${paid ? " • ชำระแล้ว" : ""}`}
+        description={`Invoice อ้างอิง PO ${po?.number ?? "—"} • ลูกค้า ${cust?.name ?? "—"}`}
         actions={
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" onClick={() => toast.info("แก้ไข Invoice (เดโม)")}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
-            <Button size="sm" variant="outline" onClick={() => toast.success(`พิมพ์ต้นฉบับ ${inv.number} (เดโม)`)}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
-            <Button size="sm" variant="outline" onClick={() => toast.success(`พิมพ์สำเนา ${inv.customerCopies + inv.internalCopies} ชุด (เดโม)`)}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
+          <div className="flex flex-wrap gap-2 items-center">
+            {paid && <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300" variant="outline"><CheckCircle2 className="w-3.5 h-3.5 mr-1" />ชำระแล้ว</Badge>}
+            <Button size="sm" variant="outline" onClick={openEdit}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
+            <Button size="sm" variant="outline" onClick={() => print("ต้นฉบับ", 1)}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
+            <Button size="sm" variant="outline" onClick={() => print("สำเนา", inv.customerCopies + inv.internalCopies)}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
             <Button size="sm" variant="outline" onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" />PDF</Button>
             <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white" onClick={() => setBillingOpen(true)}><Receipt className="w-4 h-4 mr-1" />สร้างใบวางบิลจาก Invoice</Button>
             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setReceiptOpen(true)} disabled={paid}><Receipt className="w-4 h-4 mr-1" />สร้างใบเสร็จรับเงิน</Button>
             <Button size="sm" variant="outline" onClick={() => setCalOpen(true)}><CalendarPlus className="w-4 h-4 mr-1" />เพิ่มลงปฏิทิน</Button>
-            <Button size="sm" variant="outline" onClick={() => setPrintLogOpen(true)}><History className="w-4 h-4 mr-1" />Print Log</Button>
+            <Button size="sm" variant="outline" onClick={() => setPrintLogOpen(true)}><History className="w-4 h-4 mr-1" />Print Log ({pl.length})</Button>
             <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={() => setConfirmDelete(true)}><Trash2 className="w-4 h-4 mr-1" />ลบ</Button>
           </div>
         }
@@ -202,15 +235,41 @@ export default function PoInvoiceDetail() {
       <AddToCalendarDialog open={calOpen} onOpenChange={setCalOpen} defaultCustomerId={inv.customerId} />
 
 
-      {printLogOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setPrintLogOpen(false)}>
-          <Card className="card-soft p-5 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
-            <h3 className="font-semibold mb-2">Print Log</h3>
-            <p className="text-xs text-muted-foreground">ยังไม่มีประวัติการพิมพ์สำหรับ Invoice ฉบับนี้ — ระบบจะบันทึกเมื่อพิมพ์จริง (เดโม)</p>
-            <div className="flex justify-end mt-3"><Button size="sm" onClick={() => setPrintLogOpen(false)}>ปิด</Button></div>
-          </Card>
-        </div>
-      )}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>แก้ไข Invoice {inv.number}</DialogTitle></DialogHeader>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label className="text-xs">วันที่ออก</Label><Input type="date" value={eDate} onChange={(e) => setEDate(e.target.value)} /></div>
+            <div><Label className="text-xs">วันครบกำหนด</Label><Input type="date" value={eDue} onChange={(e) => setEDue(e.target.value)} /></div>
+            <div className="col-span-2"><Label className="text-xs">หมายเหตุ</Label><Textarea rows={2} value={eNotes} onChange={(e) => setENotes(e.target.value)} /></div>
+            <div className="col-span-2"><Label className="text-xs">โน้ตภายใน</Label><Textarea rows={2} value={eInternal} onChange={(e) => setEInternal(e.target.value)} /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>ยกเลิก</Button>
+            <Button onClick={saveEdit}>บันทึก</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={printLogOpen} onOpenChange={setPrintLogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Print Log — {inv.number}</DialogTitle></DialogHeader>
+          {pl.length === 0 ? (
+            <p className="text-xs text-muted-foreground">ยังไม่มีประวัติการพิมพ์ — ระบบจะบันทึกเมื่อพิมพ์</p>
+          ) : (
+            <ul className="text-sm divide-y">
+              {pl.map((e) => (
+                <li key={e.id} className="py-1.5 flex justify-between">
+                  <div>{e.copyType} × {e.copies}</div>
+                  <div className="text-muted-foreground">{e.printedBy} • {e.printedAt}</div>
+                </li>
+              ))}
+            </ul>
+          )}
+          <DialogFooter><Button size="sm" onClick={() => setPrintLogOpen(false)}>ปิด</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>

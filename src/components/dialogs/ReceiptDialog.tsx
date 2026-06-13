@@ -185,7 +185,12 @@ export function ReceiptDialog({ open, onOpenChange, invoiceId, billingNoteId, cu
         <DialogFooter className="gap-2">
           {step === "preview" && <Button variant="outline" onClick={() => setStep("form")}><ArrowLeft className="w-4 h-4 mr-1" />ย้อนกลับ</Button>}
           {step === "form" ? (
-            <Button onClick={() => { if (!inv) return toast.error("เลือก Invoice"); setStep("preview"); }}>ถัดไป<ArrowRight className="w-4 h-4 ml-1" /></Button>
+            <Button onClick={() => {
+              if (!inv) return toast.error("กรุณาเลือก Invoice");
+              if (!rcpDate || !paidDate) return toast.error("กรุณากรอกวันที่ใบเสร็จและวันที่รับชำระ");
+              if ((Number(amount) || 0) <= 0) return toast.error("ยอดรับชำระต้องมากกว่า 0");
+              setStep("preview");
+            }}>ถัดไป<ArrowRight className="w-4 h-4 ml-1" /></Button>
           ) : (
             <Button onClick={submit} className="bg-emerald-600 hover:bg-emerald-700 text-white"><Check className="w-4 h-4 mr-1" />สร้างใบเสร็จรับเงิน</Button>
           )}

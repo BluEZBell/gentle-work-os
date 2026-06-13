@@ -285,6 +285,13 @@ export const poInvoicesForPo = (poId: string) => poInvoices.filter((i) => i.cust
 export const linesForPoInvoice = (invId: string) => poInvoiceLines.filter((l) => l.invoiceId === invId);
 export const findPoInvoice = (id: string) => poInvoices.find((i) => i.id === id);
 
+export function updatePoInvoice(id: string, patch: Partial<PoInvoice>) {
+  const inv = poInvoices.find((x) => x.id === id);
+  if (!inv) return;
+  Object.assign(inv, patch);
+  bump();
+}
+
 export function nextInvoiceNumber(): string {
   const n = poInvoices.length + 1;
   return `INV-PO-${new Date().getFullYear()}-${String(n).padStart(4, "0")}`;

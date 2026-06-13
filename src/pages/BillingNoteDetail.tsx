@@ -41,6 +41,7 @@ export default function BillingNoteDetail() {
   const [delOpen, setDelOpen] = useState(false);
   const [bnDate, setBnDate] = useState(bn?.billingDate ?? "");
   const [subDate, setSubDate] = useState(bn?.submissionDate ?? "");
+  const [expDate, setExpDate] = useState(bn?.expectedPaymentDate ?? "");
 
   if (!bn) return <div className="p-6">ไม่พบใบวางบิล <Link to="/" className="text-primary">กลับ</Link></div>;
 
@@ -57,7 +58,8 @@ export default function BillingNoteDetail() {
   };
 
   const saveDates = () => {
-    updateBillingNote(bn.id, { billingDate: bnDate || bn.billingDate, submissionDate: subDate || bn.submissionDate });
+    if (!bnDate || !subDate || !expDate) { toast.error("กรุณากรอกวันที่ให้ครบทุกช่อง"); return; }
+    updateBillingNote(bn.id, { billingDate: bnDate, submissionDate: subDate, expectedPaymentDate: expDate });
     audit(user?.name ?? "Demo", "Edit Billing Note Dates", bn.number, "Billing Notes");
     toast.success("บันทึกวันที่ใหม่แล้ว");
     setEditOpen(false);
@@ -76,7 +78,7 @@ export default function BillingNoteDetail() {
         description={`รวม ${invs.length} ใบแจ้งหนี้ • ${fmtTHB(bn.total)} • สถานะ ${BN_STATUS_TH[bn.status]}`}
         actions={
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" onClick={() => { setBnDate(bn.billingDate); setSubDate(bn.submissionDate); setEditOpen(true); }}><Pencil className="w-4 h-4 mr-1" />แก้ไขวันที่</Button>
+            <Button size="sm" variant="outline" onClick={() => { setBnDate(bn.billingDate); setSubDate(bn.submissionDate); setExpDate(bn.expectedPaymentDate); setEditOpen(true); }}><Pencil className="w-4 h-4 mr-1" />แก้ไขวันที่</Button>
             <Button size="sm" variant="outline" className="border-purple-300 text-purple-700" onClick={() => print("ต้นฉบับ")}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
             <Button size="sm" variant="outline" onClick={() => print("สำเนา")}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
             <Button size="sm" variant="outline" onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" />PDF</Button>
@@ -190,6 +192,7 @@ export default function BillingNoteDetail() {
           <div className="grid gap-3">
             <div><Label className="text-xs">วันที่ใบวางบิล</Label><Input type="date" value={bnDate} onChange={(e) => setBnDate(e.target.value)} /></div>
             <div><Label className="text-xs">วันวางบิล</Label><Input type="date" value={subDate} onChange={(e) => setSubDate(e.target.value)} /></div>
+            <div><Label className="text-xs">วันคาดว่าจะรับเงิน</Label><Input type="date" value={expDate} onChange={(e) => setExpDate(e.target.value)} /></div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditOpen(false)}>ยกเลิก</Button>

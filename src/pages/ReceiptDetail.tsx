@@ -13,7 +13,7 @@ import { useAuth } from "@/lib/auth";
 import { fmtTHB, findCustomer } from "@/lib/mockData";
 import { poInvoices } from "@/lib/customerPoStore";
 import {
-  findReceipt, useBnTick, findBn, deleteReceipt, printLogFor, logPrint,
+  findReceipt, useBnTick, findBn, deleteReceipt, printLogFor, logPrint, updateReceipt,
 } from "@/lib/billingReceiptStore";
 import { audit } from "@/lib/store";
 import { Printer, FileDown, Pencil, Trash2, History, Info } from "lucide-react";
@@ -23,6 +23,9 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ReceiptDetail() {
   useBnTick();
@@ -31,6 +34,10 @@ export default function ReceiptDetail() {
   const r = id ? findReceipt(id) : undefined;
   const [logOpen, setLogOpen] = useState(false);
   const [delOpen, setDelOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [eRcpDate, setERcpDate] = useState(r?.receiptDate ?? "");
+  const [ePaidDate, setEPaidDate] = useState(r?.paymentReceivedDate ?? "");
+  const [eNotes, setENotes] = useState(r?.notes ?? "");
 
   if (!r) return <div className="p-6">ไม่พบใบเสร็จ <Link to="/" className="text-primary">กลับ</Link></div>;
 
@@ -43,6 +50,18 @@ export default function ReceiptDetail() {
     logPrint({ documentType: "Receipt", relatedId: r.id, copyType, copies: 1, printedBy: user?.name ?? "Demo" });
     audit(user?.name ?? "Demo", `Print Receipt (${copyType})`, r.number, "Receipts");
     toast.success(`พิมพ์${copyType}แล้ว (เดโม)`);
+  };
+
+  const openEdit = () => {
+    setERcpDate(r.receiptDate); setEPaidDate(r.paymentReceivedDate); setENotes(r.notes);
+    setEditOpen(true);
+  };
+  const saveEdit = () => {
+    if (!eRcpDate || !ePaidDate) { toast.error("กรุณาระบุวันที่ให้ครบ"); return; }
+    updateReceipt(r.id, { receiptDate: eRcpDate, paymentReceivedDate: ePaidDate, notes: eNotes });
+    audit(user?.name ?? "Demo", "Edit Receipt", r.number, "Receipts");
+    toast.success("บันทึกใบเสร็จแล้ว");
+    setEditOpen(false);
   };
 
   return (
@@ -58,7 +77,7 @@ export default function ReceiptDetail() {
         description={`รับชำระ ${fmtTHB(r.amount)} • ${r.method} • วันที่ ${r.paymentReceivedDate}`}
         actions={
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" onClick={() => toast.info("แก้ไขใบเสร็จ (เดโม)")}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
+            <Button size="sm" variant="outline" onClick={openEdit}><Pencil className="w-4 h-4 mr-1" />แก้ไข</Button>
             <Button size="sm" variant="outline" className="border-emerald-300 text-emerald-700" onClick={() => print("ต้นฉบับ")}><Printer className="w-4 h-4 mr-1" />พิมพ์ต้นฉบับ</Button>
             <Button size="sm" variant="outline" onClick={() => print("สำเนา")}><Printer className="w-4 h-4 mr-1" />พิมพ์สำเนา</Button>
             <Button size="sm" variant="outline" onClick={() => toast.info("ดาวน์โหลด PDF (เดโม)")}><FileDown className="w-4 h-4 mr-1" />PDF</Button>
@@ -111,6 +130,21 @@ export default function ReceiptDetail() {
           </Card>
         </div>
       </div>
+
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>แก้ไขใบเสร็จ {r.number}</DialogTitle></DialogHeader>
+          <div className="grid gap-3">
+            <div><Label className="text-xs">วันที่ใบเสร็จ</Label><Input type="date" value={eRcpDate} onChange={(e) => setERcpDate(e.target.value)} /></div>
+            <div><Label className="text-xs">วันที่ได้รับชำระ</Label><Input type="date" value={ePaidDate} onChange={(e) => setEPaidDate(e.target.value)} /></div>
+            <div><Label className="text-xs">หมายเหตุ</Label><Textarea rows={2} value={eNotes} onChange={(e) => setENotes(e.target.value)} /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>ยกเลิก</Button>
+            <Button onClick={saveEdit}>บันทึก</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={logOpen} onOpenChange={setLogOpen}>
         <DialogContent className="max-w-lg">
