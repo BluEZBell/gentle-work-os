@@ -247,19 +247,22 @@ function QuotationForm({
   const total = (f.priceIncludesVat ? subtotal : subtotal + vat) - wht;
 
   const save = (status: Quotation["status"]) => {
+    if (f.leadStages.length > 0) {
+      const v = validateStages(f.leadStages);
+      if (!v.ok) { toast.error(v.errors[0]); return; }
+      if (v.warnings.length > 0) toast.warning(v.warnings[0]);
+    }
+    const id = editing?.id ?? `q-${Date.now()}`;
     const q: Quotation = {
-      id: editing?.id ?? `q-${Date.now()}`,
-      number: f.number,
-      customerId: f.customerId,
+      id, number: f.number, customerId: f.customerId,
       dealId: editing?.dealId ?? "",
-      date: f.date,
-      validUntil: f.validUntil,
-      status,
+      date: f.date, validUntil: f.validUntil, status,
       items: f.items.map((it) => ({
         id: it.id, partName: it.partName || "—", partNumber: it.partNumber || "—",
         quantity: it.quantity, sellPrice: it.sellPrice, estimatedCost: it.estimatedCost,
       })),
     };
+    if (f.leadStages.length > 0) savePlan(id, f.leadStages);
     onSave(q);
   };
 
