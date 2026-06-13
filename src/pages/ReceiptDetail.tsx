@@ -131,6 +131,21 @@ export default function ReceiptDetail() {
         </div>
       </div>
 
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>แก้ไขใบเสร็จ {r.number}</DialogTitle></DialogHeader>
+          <div className="grid gap-3">
+            <div><Label className="text-xs">วันที่ใบเสร็จ</Label><Input type="date" value={eRcpDate} onChange={(e) => setERcpDate(e.target.value)} /></div>
+            <div><Label className="text-xs">วันที่ได้รับชำระ</Label><Input type="date" value={ePaidDate} onChange={(e) => setEPaidDate(e.target.value)} /></div>
+            <div><Label className="text-xs">หมายเหตุ</Label><Textarea rows={2} value={eNotes} onChange={(e) => setENotes(e.target.value)} /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>ยกเลิก</Button>
+            <Button onClick={saveEdit}>บันทึก</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={logOpen} onOpenChange={setLogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>Print Log — {r.number}</DialogTitle></DialogHeader>
