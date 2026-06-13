@@ -21,6 +21,7 @@ import { RowActions } from "@/components/RowActions";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Printer, FileDown } from "lucide-react";
+import { PaymentScheduleDialog } from "@/components/dialogs/PaymentScheduleDialog";
 
 const flow = [
   { icon: Mail, label: "อีเมลจากซัพพลายเออร์" },
