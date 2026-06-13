@@ -123,7 +123,7 @@ export default function PoInvoiceDetail() {
           </div>
           <Info2 label="ลูกค้า" value={cust ? <Link to={`/customers/${cust.id}`} className="text-primary hover:underline">{cust.name}</Link> : "—"} />
           <Info2 label="ผู้ติดต่อ" value={inv.contactName ?? "—"} />
-          <Info2 label="อ้างอิง Customer PO" value={po ? <Link to={`/purchase-orders?type=customer`} className="text-primary hover:underline">{po.number}</Link> : "—"} />
+          <Info2 label="อ้างอิง Customer PO" value={po ? <Link to={`/customer-po/${po.id}`} className="text-primary hover:underline">{po.number}</Link> : "—"} />
           <Info2 label="วันที่ออก" value={inv.date} />
           <Info2 label="วันครบกำหนด" value={inv.dueDate} />
           <Info2 label="เงื่อนไขชำระ" value={inv.paymentTerm} />
