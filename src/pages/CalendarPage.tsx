@@ -14,6 +14,7 @@ import {
   CalendarEvent, EventType, EVENT_TYPES, EVENT_TYPE_COLOR, EVENT_TYPE_THAI,
   eventTitle,
 } from "@/lib/mockCalendar";
+import { bnCalendarEvents, useBnTick } from "@/lib/billingReceiptStore";
 import { customers, findCustomer } from "@/lib/mockData";
 import { ChevronLeft, ChevronRight, Plus, AlertTriangle, CalendarDays, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
