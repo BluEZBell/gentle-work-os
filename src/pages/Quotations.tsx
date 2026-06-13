@@ -386,6 +386,15 @@ function QuotationForm({
           <Field label="โน้ตภายใน (ไม่แสดงในเอกสาร)" full><Textarea rows={2} value={f.internalNotes} onChange={(e) => setField("internalNotes", e.target.value)} /></Field>
         </div>
 
+        <div className="mt-5 pt-4 border-t">
+          <LeadTimePlanning
+            value={f.leadStages}
+            onChange={(s) => setField("leadStages", s)}
+            startHint={f.date}
+          />
+        </div>
+
+
         <div className="flex flex-wrap gap-2 mt-2">
           <Button variant="outline" size="sm"><Paperclip className="w-3.5 h-3.5 mr-1" /> แนบไฟล์</Button>
           <Button variant="outline" size="sm">ลายเซ็นอิเล็กทรอนิกส์</Button>
