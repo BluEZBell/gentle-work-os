@@ -185,6 +185,9 @@ export default function PurchaseOrders() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <POCRIntakeDialog open={ocrOpen} onOpenChange={setOcrOpen} defaultCustomerId={defaultCustomerId} />
+      <PrepareInvoiceDialog open={!!prepInv} onOpenChange={(v) => !v && setPrepInv(undefined)} poNumber={prepInv} />
     </>
   );
 }
