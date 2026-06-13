@@ -20,7 +20,7 @@ import { RowActions } from "@/components/RowActions";
 import { useTick, audit } from "@/lib/store";
 import { Link, useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, Paperclip, Plus, Printer, FileDown, Trash2, BarChart3 } from "lucide-react";
+import { FileText, Paperclip, Plus, Printer, FileDown, Trash2, BarChart3, ChevronDown, ChevronUp, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
 import { ThaiDocLayout } from "@/components/ThaiDocLayouts";
 import { LeadTimePlanning } from "@/components/quotation/LeadTimePlanning";
@@ -37,6 +37,7 @@ export default function Quotations() {
   const [editing, setEditing] = useState<Quotation | null>(null);
   const [preview, setPreview] = useState<Quotation | null>(null);
   const [ganttFor, setGanttFor] = useState<Quotation | null>(null);
+  const [collapsedGantt, setCollapsedGantt] = useState<Record<string, boolean>>({});
 
   const duplicate = (q: Quotation) => {
     const num = `QT-2026-${String(60 + list.length + 1).padStart(4, "0")}`;
@@ -170,10 +171,42 @@ export default function Quotations() {
                   ))}
                 </TableBody>
               </Table>
-              <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
-                <Button variant="outline" size="sm" onClick={() => setGanttFor(q)}>
-                  <BarChart3 className="w-3.5 h-3.5 mr-1" /> ดูแผนภาพระยะเวลางาน
-                </Button>
+              {/* Inline Gantt — always visible (collapsible) */}
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4 text-primary" />
+                    <div className="font-display font-semibold text-[15px]">แผนภาพระยะเวลางาน</div>
+                    <span className="text-xs text-muted-foreground">(Gantt Chart)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {plan && plan.stages.length > 0 && (
+                      <Button variant="ghost" size="sm"
+                        onClick={() => setCollapsedGantt((s) => ({ ...s, [q.id]: !s[q.id] }))}>
+                        {collapsedGantt[q.id]
+                          ? <><ChevronDown className="w-3.5 h-3.5 mr-1" /> ขยายแผนงาน</>
+                          : <><ChevronUp className="w-3.5 h-3.5 mr-1" /> ย่อแผนงาน</>}
+                      </Button>
+                    )}
+                    <Button variant="outline" size="sm" onClick={() => setGanttFor(q)}>
+                      <Maximize2 className="w-3.5 h-3.5 mr-1" /> เปิดแผนภาพแบบเต็ม
+                    </Button>
+                  </div>
+                </div>
+                {plan && plan.stages.length > 0 ? (
+                  !collapsedGantt[q.id] && (
+                    <div className="bg-secondary/20 border rounded-lg p-3">
+                      <GanttPreview stages={plan.stages} compact />
+                    </div>
+                  )
+                ) : (
+                  <div className="text-sm text-muted-foreground bg-secondary/20 border border-dashed rounded-lg px-3 py-4 text-center">
+                    ยังไม่มีแผน Lead Time — กด <button className="underline text-primary" onClick={() => { setEditing(q); setFormOpen(true); }}>แก้ไข</button> เพื่อเพิ่มขั้นตอน
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2 mt-4">
                 <Button variant="outline" size="sm">
                   <Paperclip className="w-3.5 h-3.5 mr-1" /> แนบไฟล์ (ตัวอย่าง)
                 </Button>
