@@ -73,12 +73,18 @@ export function PaymentScheduleDialog({ trigger, initialSupplierId, initialAmoun
 
   const submit = () => {
     if (!supplierId) { toast.error("เลือกคู่ค้า"); return; }
+    if (!total || Number(total) <= 0) { toast.error("กรอกยอดรวมก่อนหัก ให้มากกว่า 0"); return; }
     if (Math.round(sumPercent) !== 100) { toast.error("เปอร์เซ็นต์รวมต้องเท่ากับ 100%"); return; }
+    if (rows.some((r) => !r.billingDueDate || !r.paymentDueDate)) {
+      toast.error("กรอกวันวางบิลและวันจ่ายเงินให้ครบทุกงวด"); return;
+    }
     createPaymentPlan({
       supplierId, totalAmount: Number(total), whtEnabled, whtRate: Number(whtRate),
       poId, billId, jobId, notes, rows,
     });
-    toast.success("บันทึกแผนการจ่ายเงินแล้ว — เพิ่มลงปฏิทินและแจ้งเตือน");
+    toast.success("บันทึกแผนการจ่ายเงินแล้ว", {
+      description: "เพิ่มลงปฏิทิน และสร้างการแจ้งเตือนวันวางบิล / วันจ่าย",
+    });
     setOpen(false);
   };
 
@@ -105,8 +111,11 @@ export function PaymentScheduleDialog({ trigger, initialSupplierId, initialAmoun
                 ))}
               </SelectContent>
             </Select>
-            <div className="text-xs text-muted-foreground">ประเภท: <strong>{kind}</strong>
-              {kind !== "Supplier" && " • Maker หัก ณ ที่จ่าย 3% ตามค่าเริ่มต้น"}
+            <div className="text-xs text-muted-foreground">
+              ประเภท: <strong>{kind}</strong>
+              {kind === "Maker" && <span className="text-orange-600"> • Maker หัก ณ ที่จ่าย 3% ตามค่าเริ่มต้น</span>}
+              {kind === "Both" && <span className="text-orange-600"> • Supplier + Maker — ปรับ WHT ได้ตามรายการ</span>}
+              {kind === "Supplier" && <span> • Supplier ไม่หัก ณ ที่จ่ายโดยปริยาย</span>}
             </div>
           </div>
           <div className="grid gap-1.5">
