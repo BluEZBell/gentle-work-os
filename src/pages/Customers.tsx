@@ -407,7 +407,7 @@ export function CustomerDetail() {
               <TabsTrigger value="contacts">Contacts ({cContacts.length})</TabsTrigger>
               <TabsTrigger value="notes">Notes ({cNotes.length})</TabsTrigger>
               <TabsTrigger value="deals">Deals ({cDeals.length})</TabsTrigger>
-              <TabsTrigger value="pos">Customer PO ({cPOs.length})</TabsTrigger>
+              <TabsTrigger value="pos">Customer PO ({cPOs.length + customerPosFor(c.id).length})</TabsTrigger>
               <TabsTrigger value="quotes">Quotations ({cQuots.length})</TabsTrigger>
               <TabsTrigger value="jobs">Jobs ({cJobs.length})</TabsTrigger>
               <TabsTrigger value="invoices">Invoices ({cInvoices.length})</TabsTrigger>
