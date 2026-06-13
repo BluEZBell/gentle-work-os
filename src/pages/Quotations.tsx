@@ -171,6 +171,9 @@ export default function Quotations() {
                 </TableBody>
               </Table>
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+                <Button variant="outline" size="sm" onClick={() => setGanttFor(q)}>
+                  <BarChart3 className="w-3.5 h-3.5 mr-1" /> ดูแผนภาพระยะเวลางาน
+                </Button>
                 <Button variant="outline" size="sm">
                   <Paperclip className="w-3.5 h-3.5 mr-1" /> แนบไฟล์ (ตัวอย่าง)
                 </Button>
