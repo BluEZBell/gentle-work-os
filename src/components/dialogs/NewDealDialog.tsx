@@ -20,7 +20,7 @@ export function NewDealDialog() {
   });
   const disabled = !can("edit");
   const submit = () => {
-    if (!f.name.trim()) { toast.error("Deal name required"); return; }
+    if (!f.name.trim()) { toast.error("กรุณากรอกชื่อดีล"); return; }
     addDeal(f, user?.name ?? "Demo User");
     toast.success(`Deal "${f.name}" created`);
     setOpen(false);

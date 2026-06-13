@@ -18,10 +18,10 @@ export default function Login() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (login(email)) {
-      toast.success("Welcome back");
+      toast.success("ยินดีต้อนรับกลับ");
       navigate("/", { replace: true });
     } else {
-      toast.error("Use one of the demo accounts below");
+      toast.error("กรุณาใช้บัญชีเดโมด้านล่าง");
     }
   };
 

@@ -37,13 +37,13 @@ export function ActivityLog({ scope, title = "Activity & Follow-ups" }: { scope:
   );
 
   const submit = () => {
-    if (!note.trim()) { toast.error("Add a short note"); return; }
+    if (!note.trim()) { toast.error("กรุณาใส่โน้ตสั้นๆ"); return; }
     addActivity({
       date: new Date().toISOString().slice(0, 10),
       type, user: user?.name ?? "Demo",
       note, nextFollowUp: next || undefined, ...scope,
     });
-    setNote(""); setNext(""); toast.success("Activity logged");
+    setNote(""); setNext(""); toast.success("บันทึกกิจกรรมแล้ว");
   };
 
   return (

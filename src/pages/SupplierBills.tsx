@@ -133,7 +133,7 @@ export default function SupplierBills() {
                   <div className="flex items-center justify-end gap-1">
                     {b.reviewStatus === "Approved" && b.status !== "Paid" && (
                       <Button size="sm" variant="ghost" disabled={!can("edit")}
-                        onClick={() => { markBillPaid(b.id, user?.name ?? "Demo"); toast.success("Marked paid"); }}>
+                        onClick={() => { markBillPaid(b.id, user?.name ?? "Demo"); toast.success("บันทึกว่าจ่ายแล้ว"); }}>
                         Mark Paid
                       </Button>
                     )}
@@ -151,8 +151,8 @@ export default function SupplierBills() {
                       onPdf={() => toast.info(`PDF ${b.number}`)}
                       onDuplicate={() => { const n = duplicateBill(b.id, user?.name ?? "Demo"); if (n) toast.success(`สร้างสำเนา ${n.number}`); }}
                       onSubmitApproval={() => setApproveId(b.id)}
-                      onApprove={() => { setBillReview(b.id, "Approved", user?.name ?? "Demo"); toast.success("Bill approved"); }}
-                      onReject={() => { setBillReview(b.id, "Rejected", user?.name ?? "Demo"); toast.error("Bill rejected"); }}
+                      onApprove={() => { setBillReview(b.id, "Approved", user?.name ?? "Demo"); toast.success("อนุมัติบิลแล้ว"); }}
+                      onReject={() => { setBillReview(b.id, "Rejected", user?.name ?? "Demo"); toast.error("ปฏิเสธบิลแล้ว"); }}
                       onAddToCalendar={() => toast.success("เพิ่มลงปฏิทินแล้ว")}
                       onViewLog={() => toast.info("ดูประวัติบิล")}
                       onDelete={() => removeBill(b.id, user?.name ?? "Demo")}
@@ -182,12 +182,12 @@ export default function SupplierBills() {
             <Button variant="outline" onClick={() => {
               if (!approveId) return;
               setBillReview(approveId, "Rejected", user?.name ?? "Demo");
-              toast.success("Bill rejected"); setApproveId(null);
+              toast.success("ปฏิเสธบิลแล้ว"); setApproveId(null);
             }}>Reject</Button>
             <AlertDialogAction onClick={() => {
               if (!approveId) return;
               setBillReview(approveId, "Approved", user?.name ?? "Demo");
-              toast.success("Bill approved"); setApproveId(null);
+              toast.success("อนุมัติบิลแล้ว"); setApproveId(null);
             }}>Approve</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

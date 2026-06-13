@@ -73,7 +73,7 @@ export function PrintPreview({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => toast.info("Mock print in demo mode")}>
+          <Button variant="outline" onClick={() => toast.info("พิมพ์ (เดโม)")}>
             <Printer className="w-4 h-4 mr-1.5" />Print
           </Button>
         </DialogFooter>
